@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: cookbook-openshift3
-# Providers:: ose_setup_cluster
+# Providers:: openshift_setup_cluster
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
@@ -8,7 +8,7 @@ require 'socket'
 require 'timeout'
 
 use_inline_resources
-provides :ose_setup_cluster if defined? provides
+provides :openshift_setup_cluster if defined? provides
 
 def whyrun_supported?
   true

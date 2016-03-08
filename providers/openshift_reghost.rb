@@ -1,11 +1,11 @@
 #
 # Cookbook Name:: cookbook-openshift3
-# Providers:: ose_reghost
+# Providers:: openshift_reghost
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
 use_inline_resources
-provides :ose_reghost if defined? provides
+provides :openshift_reghost if defined? provides
 
 def whyrun_supported?
   true

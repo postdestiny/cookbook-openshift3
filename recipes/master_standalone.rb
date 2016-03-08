@@ -4,7 +4,7 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-node_servers = Chef::Config[:solo] ? node['chef-solo']['osev3-node_label'] : search(:node, %(role:"#{node['cookbook-openshift3']['osev3-node_label']}")).sort!
+node_servers = Chef::Config[:solo] ? node['chef-solo']['openshiftv3-node_label'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-node_label']}")).sort!
 
 execute 'Create the master certificates' do
   command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} ca create-master-certs \
@@ -22,10 +22,10 @@ end
 
 ruby_block 'Configure OpenShift settings Master' do
   block do
-    ose_settings = Chef::Util::FileEdit.new("/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master")
-    ose_settings.search_file_replace_line(/^OPTIONS=/, "OPTIONS=--loglevel=#{node['cookbook-openshift3']['openshift_master_debug_level']}")
-    ose_settings.search_file_replace_line(/^CONFIG_FILE=/, "CONFIG_FILE=#{node['cookbook-openshift3']['openshift_master_config_file']}")
-    ose_settings.write_file
+    openshift_settings = Chef::Util::FileEdit.new("/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master")
+    openshift_settings.search_file_replace_line(/^OPTIONS=/, "OPTIONS=--loglevel=#{node['cookbook-openshift3']['openshift_master_debug_level']}")
+    openshift_settings.search_file_replace_line(/^CONFIG_FILE=/, "CONFIG_FILE=#{node['cookbook-openshift3']['openshift_master_config_file']}")
+    openshift_settings.write_file
   end
 end
 

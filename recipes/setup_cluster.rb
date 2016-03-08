@@ -6,13 +6,13 @@
 
 master_hosts = []
 
-master_servers = Chef::Config[:solo] ? node['chef-solo']['master_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['osev3-master_cluster_label']}")).sort!
+master_servers = Chef::Config[:solo] ? node['chef-solo']['master_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-master_cluster_label']}")).sort!
 
 master_servers.each do |master_member|
   master_hosts << master_member['ipaddress']
 end
 
-ose_setup_cluster 'Setup Pacemaker' do
+openshift_setup_cluster 'Setup Pacemaker' do
   master_hosts master_hosts
   cluster_password node['cookbook-openshift3']['openshift_master_cluster_password']
 end

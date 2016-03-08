@@ -4,9 +4,9 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-master_servers = Chef::Config[:solo] ? node['chef-solo']['master_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['osev3-master_cluster_label']}")).sort!
-etcd_servers = Chef::Config[:solo] ? node['chef-solo']['etcd_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['osev3-etcd_cluster_label']}")).sort!
-master_peers = Chef::Config[:solo] ? node['chef-solo']['master_peers'] : search(:node, %(role:"#{node['cookbook-openshift3']['osev3-master_cluster_label']}" NOT name:"#{master_servers.first['fqdn']}"))
+master_servers = Chef::Config[:solo] ? node['chef-solo']['master_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-master_cluster_label']}")).sort!
+etcd_servers = Chef::Config[:solo] ? node['chef-solo']['etcd_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-etcd_cluster_label']}")).sort!
+master_peers = Chef::Config[:solo] ? node['chef-solo']['master_peers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-master_cluster_label']}" NOT name:"#{master_servers.first['fqdn']}"))
 
 node['cookbook-openshift3']['enabled_firewall_rules_master_cluster'].each do |rule|
   iptables_rule rule do
@@ -104,7 +104,7 @@ if master_servers.first['fqdn'] == node['fqdn']
       creates "#{node['cookbook-openshift3']['master_generated_certs_dir']}/openshift-#{peer_server['fqdn']}/master.server.crt"
     end
 
-    if node['roles'].include? node['cookbook-openshift3']['osev3-master_cluster_label']
+    if node['roles'].include? node['cookbook-openshift3']['openshiftv3-master_cluster_label']
       %w(client.crt client.key).each do |remove_etcd_certificate|
         file "#{node['cookbook-openshift3']['master_generated_certs_dir']}/openshift-#{peer_server['fqdn']}/#{node['cookbook-openshift3']['master_etcd_cert_prefix']}#{remove_etcd_certificate}" do
           action :delete
@@ -171,10 +171,10 @@ end
 
 ruby_block 'Configure OpenShift settings Master' do
   block do
-    ose_settings = Chef::Util::FileEdit.new("/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master")
-    ose_settings.search_file_replace_line(/^OPTIONS=/, "OPTIONS=--loglevel=#{node['cookbook-openshift3']['openshift_master_debug_level']}")
-    ose_settings.search_file_replace_line(/^CONFIG_FILE=/, "CONFIG_FILE=#{node['cookbook-openshift3']['openshift_master_config_file']}")
-    ose_settings.write_file
+    openshift_settings = Chef::Util::FileEdit.new("/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master")
+    openshift_settings.search_file_replace_line(/^OPTIONS=/, "OPTIONS=--loglevel=#{node['cookbook-openshift3']['openshift_master_debug_level']}")
+    openshift_settings.search_file_replace_line(/^CONFIG_FILE=/, "CONFIG_FILE=#{node['cookbook-openshift3']['openshift_master_config_file']}")
+    openshift_settings.write_file
   end
 end
 
@@ -225,7 +225,7 @@ else
   if master_servers.first['fqdn'] == node['fqdn']
     include_recipe 'cookbook-openshift3::setup_cluster'
 
-    ose_setup_cluster 'Wait until the VIP is up and running on the master server' do
+    openshift_setup_cluster 'Wait until the VIP is up and running on the master server' do
       action :init
     end
   end

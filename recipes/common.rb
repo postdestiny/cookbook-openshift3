@@ -36,7 +36,7 @@ if node['cookbook-openshift3']['register_dns']
     Chef::Log.warn("#{cookbook_name}::#{recipe_name} \"Register DNS\" will be skipped...")
     return
   else
-    ose_reghost node['fqdn'] do
+    openshift_reghost node['fqdn'] do
       type :a
       keyalgo node['cookbook-openshift3']['nameserver']['key_algorithm']
       keyname node['cookbook-openshift3']['nameserver']['key_name']
@@ -78,9 +78,9 @@ end
 
 ruby_block 'Change HTTPD port xfer' do
   block do
-    ose_settings = Chef::Util::FileEdit.new('/etc/httpd/conf/httpd.conf')
-    ose_settings.search_file_replace_line(/^Listen/, "Listen #{node['cookbook-openshift3']['httpd_xfer_port']}")
-    ose_settings.write_file
+    openshift_settings = Chef::Util::FileEdit.new('/etc/httpd/conf/httpd.conf')
+    openshift_settings.search_file_replace_line(/^Listen/, "Listen #{node['cookbook-openshift3']['httpd_xfer_port']}")
+    openshift_settings.write_file
   end
   action :nothing
   notifies :restart, 'service[httpd]', :immediately

@@ -4,7 +4,7 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-etcd_servers = Chef::Config[:solo] ? node['chef-solo']['etcd_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['osev3-etcd_cluster_label']}")).sort!
+etcd_servers = Chef::Config[:solo] ? node['chef-solo']['etcd_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-etcd_cluster_label']}")).sort!
 
 if etcd_servers.size.odd? && etcd_servers.size >= 3
   if etcd_servers.first['fqdn'] == node['fqdn']

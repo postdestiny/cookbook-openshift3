@@ -1,11 +1,11 @@
 #
 # Cookbook Name:: cookbook-openshift3
-# Resources:: ose_reghost
+# Resources:: openshift_reghost
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-provides :ose_reghost
-resource_name :ose_reghost
+provides :openshift_reghost
+resource_name :openshift_reghost
 
 actions :create, :delete
 

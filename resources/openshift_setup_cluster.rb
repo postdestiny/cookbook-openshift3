@@ -1,11 +1,11 @@
 #
 # Cookbook Name:: cookbook-openshift3
-# Resources:: ose_setup_cluster
+# Resources:: openshift_setup_cluster
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-provides :ose_setup_cluster
-resource_name :ose_setup_cluster
+provides :openshift_setup_cluster
+resource_name :openshift_setup_cluster
 
 actions :setup, :init
 

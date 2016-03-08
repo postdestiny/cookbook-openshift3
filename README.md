@@ -248,10 +248,10 @@ In general, override attributes in the environment should be used when changing 
     "cookbook-openshift3": {
       "openshift_HA": true,
       "openshift_cluster_name": "ose-cluster.domain.local",
-      "osev3-master_label": "common-master",
-      "osev3-master_cluster_label": "common-master",
-      "osev3-etcd_cluster_label": "common-master",
-      "osev3-node_label": "common-node"
+      "openshiftv3-master_label": "common-master",
+      "openshiftv3-master_cluster_label": "common-master",
+      "openshiftv3-etcd_cluster_label": "common-master",
+      "openshiftv3-node_label": "common-node"
     }
   }
 }
@@ -277,10 +277,10 @@ In general, override attributes in the environment should be used when changing 
       "openshift_HA_method": "pcs",
       "openshift_master_cluster_vip": "192.168.124.99",
       "openshift_cluster_name": "ose-cluster.domain.local",
-      "osev3-master_label": "common-master",
-      "osev3-master_cluster_label": "common-master",
-      "osev3-etcd_cluster_label": "common-master",
-      "osev3-node_label": "common-node"
+      "openshiftv3-master_label": "common-master",
+      "openshiftv3-master_cluster_label": "common-master",
+      "openshiftv3-etcd_cluster_label": "common-master",
+      "openshiftv3-node_label": "common-node"
     }
   }
 }
@@ -302,8 +302,8 @@ In general, override attributes in the environment should be used when changing 
   },
   "override_attributes": {
     "cookbook-openshift3": {
-      "osev3-master_label": "common-master",
-      "osev3-node_label": "common-node"
+      "openshiftv3-master_label": "common-master",
+      "openshiftv3-node_label": "common-node"
     }
   }
 }
