@@ -1,0 +1,33 @@
+allowDisabledDocker: false
+apiVersion: v1
+dnsDomain: <%=node['cookbook-openshift3']['osn_cluster_dns_domain'] %>
+dnsIP: <%= @osn_cluster_dns_ip %>
+dockerConfig:
+  execHandlerName: ""
+iptablesSyncPeriod: "<%= node['cookbook-openshift3']['openshift_node_iptables_sync_period'] %>"
+imageConfig:
+  format: <%= node['cookbook-openshift3']['openshift_common_registry_url'] %>
+  latest: false
+kind: NodeConfig
+masterKubeConfig: system:node:<%= node['fqdn'] %>.kubeconfig
+networkPluginName: <%= node['cookbook-openshift3']['openshift_common_sdn_network_plugin_name'] %>
+# networkConfig struct introduced in origin 1.0.6 and OSE 3.0.2 which
+# deprecates networkPluginName above. The two should match.
+networkConfig:
+   mtu: <%= node['cookbook-openshift3']['openshift_node_sdn_mtu_sdn'] %>
+   networkPluginName: redhat/openshift-ovs-subnet
+nodeIP: <%= node['cookbook-openshift3']['openshift_common_ip'] %>
+nodeName: <%= node['fqdn'] %>
+podManifestConfig:
+servingInfo:
+  bindAddress: 0.0.0.0:10250
+  certFile: server.crt
+  clientCA: ca.crt
+  keyFile: server.key
+volumeDirectory: <%= node['cookbook-openshift3']['openshift_data_dir'] %>/openshift.local.volumes
+kubeletArguments:
+  max-pods:
+    - "<%= node['cookbook-openshift3']['openshift_node_max_pod'] %>"
+proxyArguments:
+  proxy-mode:
+    - iptables
