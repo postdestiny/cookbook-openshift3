@@ -4,7 +4,7 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-node_servers = Chef::Config[:solo] ? node['chef-solo']['openshiftv3-node_label'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-node_label']}")).sort!
+node_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['node_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-node_label']}")).sort!
 
 execute 'Create the master certificates' do
   command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} ca create-master-certs \

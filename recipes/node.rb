@@ -6,7 +6,7 @@
 
 master_label = node['cookbook-openshift3']['openshift_cluster_name'].nil? ? node['cookbook-openshift3']['openshiftv3-master_label'] : node['cookbook-openshift3']['openshiftv3-master_cluster_label']
 
-master_servers = Chef::Config[:solo] ? node['chef-solo']['master_servers'] : search(:node, %(role:"#{master_label}")).sort!
+master_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['master_servers'] : search(:node, %(role:"#{master_label}")).sort!
 
 osn_cluster_dns_ip = node['cookbook-openshift3']['openshift_HA'] == true ? Mixlib::ShellOut.new("dig +short #{node['cookbook-openshift3']['openshift_common_public_hostname']}").run_command.stdout.strip : master_servers.first['ipaddress']
 

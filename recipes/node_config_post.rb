@@ -6,8 +6,8 @@
 
 master_label = node['cookbook-openshift3']['openshift_cluster_name'].nil? ? node['cookbook-openshift3']['openshiftv3-master_label'] : node['cookbook-openshift3']['openshiftv3-master_cluster_label']
 
-master_servers = Chef::Config[:solo] ? node['chef-solo']['master_servers'] : search(:node, %(role:"#{master_label}")).sort!
-node_servers = Chef::Config[:solo] ? node['chef-solo']['node_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-node_label']}")).sort!
+master_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['master_servers'] : search(:node, %(role:"#{master_label}")).sort!
+node_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['node_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-node_label']}")).sort!
 
 if master_servers.first['fqdn'] == node['fqdn']
   infra_node = []

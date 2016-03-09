@@ -6,7 +6,7 @@
 
 master_hosts = []
 
-master_servers = Chef::Config[:solo] ? node['chef-solo']['master_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-master_cluster_label']}")).sort!
+master_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['master_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-master_cluster_label']}")).sort!
 
 master_servers.each do |master_member|
   master_hosts << master_member['ipaddress']

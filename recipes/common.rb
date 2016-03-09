@@ -53,6 +53,7 @@ if node['cookbook-openshift3']['install_method'].eql? 'yum'
       gpgcheck repo['gpgcheck'] if repo.key?(:gpgcheck) && !repo['gpgcheck'].nil?
       gpgkey repo['gpgkey'] if repo.key?(:gpgkey) && !repo['gpgkey'].nil?
       sslverify repo['sslverify'] if repo.key?(:sslverify) && !repo['sslverify'].nil?
+      exclude repo['exclude'] if repo.key?(:exclude) && !repo['exclude'].nil?
       action :create
     end
   end
