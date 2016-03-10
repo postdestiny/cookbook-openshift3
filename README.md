@@ -371,11 +371,31 @@ knife node run_list add NODE_NAME 'role[common-node]'
 knife node run_list add NODE_NAME 'role[common-master], role[common-node], recipe[cookbook-openshift3::node_config_post]'
 ```
 
-Development
+Test (ORIGIN)
 ==================
 
+There is a way to quickly test this cookbook. 
+You will need a CentOS 7.1+  with "Minimal" installation option and at least 10GB left on the Volume group. (Later used by Docker)
+
+* Deploy ORIGIN ALL IN THE BOX Flavour (MASTER + NODE)
+```
+bash <(curl -s https://raw.githubusercontent.com/IshentRas/cookbook-openshift3/master/origin_deploy.sh)
+```
+
+Development
+==================
 
 License and Author
 ==================
 
-- Author: William Burton (<wburton@redhat.com>)
+Author: William Burton (<wburton@redhat.com>)
+
+The MIT License (MIT)
+
+Copyright (C) 2014 OpenBet Limited
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
