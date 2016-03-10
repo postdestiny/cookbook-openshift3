@@ -1,5 +1,21 @@
 #!/bin/bash
 #
+clear
+cat << EOF
+
+############################################################
+# This installer is suitable for a standalone installation #
+# "All in the box" (Master and Node in a server)           #
+############################################################
+
+EOF
+read -p "Please enter the FQDN of the server: " FQDN
+read -p "Please enter the IP of the server: " IP
+#
+# Add the above information in /etc/hosts
+# Remove existing entries
+sed -i "/$IP/d" /etc/hosts
+echo -e "$IP\t$FQDN" >> /etc/hosts
 ### Update the server
 yum -y update
 ### Create the chef-local mode infrastructure
@@ -13,10 +29,21 @@ EOF
 ### Installing dependencies
 yum -y install rubygem-bundler kernel-devel ruby-devel gcc make git
 ### Installing gems 
+if [ ! -f ~/.gemrc ]
+then 
+  echo "gem: --no-document" > ~/.gemrc
+fi
 bundle
+# Make sure we've got the latest version of CHEF
+gem update chef
 ### Create a kitchen by knife
 knife solo init .
 ### Modify the librarian Cheffile for manage the cookbooks
+if [ ! -f Cheffile ]
+then
+  librarian-chef init
+fi
+sed -i '/cookbook-openshift3/d' Cheffile
 echo "cookbook 'cookbook-openshift3', :git => 'https://github.com/IshentRas/cookbook-openshift3.git'" >> Cheffile 
 librarian-chef install
 ### Create the dedicated environment for Origin deployment
@@ -37,14 +64,14 @@ cat << EOF > environments/origin.json
       "openshift_deployment_type": "origin",
       "master_servers": [
         {
-          "fqdn": "$(hostname -f)",
-          "ipaddress": "$(hostname -i)"
+          "fqdn": "$FQDN",
+          "ipaddress": "$IP"
         }
       ],
       "node_servers": [
         {
-          "fqdn": "$(hostname -f)",
-          "ipaddress": "$(hostname -i)"
+          "fqdn": "$FQDN",
+          "ipaddress": "$IP"
         }
       ]
     }
@@ -90,4 +117,31 @@ solo true
 EOF
 ### Deploy OSE !!!!
 chef-client -z --environment origin -j roles/origin.json -c ~/chef-solo-example/solo.rb
-echo -e "\nThe END\n"
+if ! $(oc get project test --config=/etc/origin/master/admin.kubeconfig &> /dev/null)
+then 
+  # Create a demo project
+  oadm new-project demo --display-name="Origin Demo Project" --admin=demo
+  # Set password for user demo
+fi
+# Reset password for demo user
+htpasswd -b /etc/origin/openshift-passwd demo 1234
+cat << EOF
+
+##### Installation DONE ######
+#####                   ######
+Your installation of Origin is completed.
+
+A demo user has been created for you.
+Password is : 1234
+
+You can login via : oc login -u demo
+
+Next steps for you (To be performed as system:admin --> oc login -u system:admin):
+
+1) Deploy registry -> oadm registry --service-account=registry --credentials=/etc/origin/master/openshift-registry.kubeconfig --config=/etc/origin/master/admin.kubeconfig
+2) Deploy router -> oadm router --service-account=router --credentials=/etc/origin/master/openshift-router.kubeconfig
+3) Read the documentation : https://docs.openshift.org/latest/welcome/index.html
+
+You should disconnect and reconnect so as to get the benefit of bash-completion on commands
+
+EOF
