@@ -371,9 +371,19 @@ knife node run_list add NODE_NAME 'role[common-node]'
 knife node run_list add NODE_NAME 'role[common-master], role[common-node], recipe[cookbook-openshift3::node_config_post]'
 ```
 
-Development
+Test (ORIGIN)
 ==================
 
+There is a way to quickly test this cookbook. 
+You will need a CentOS 7.1+  with "Minimal" installation option and at least 10GB left on the Volume group. (Later used by Docker)
+
+* Deploy ORIGIN ALL IN THE BOX Flavour (MASTER + NODE)
+```
+bash <(curl -s https://raw.githubusercontent.com/IshentRas/cookbook-openshift3/master/origin_deploy.sh)
+```
+
+Development
+==================
 
 License and Author
 ==================

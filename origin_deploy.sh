@@ -110,7 +110,6 @@ cookbook_path [
 environment_path '/root/chef-solo-example/environments'
 file_backup_path '/root/chef-solo-example/backup'
 file_cache_path '/root/chef-solo-example/cache'
-log_level :info
 log_location STDOUT
 solo true
 EOF
