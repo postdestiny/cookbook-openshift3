@@ -27,15 +27,14 @@ gem 'knife-solo'
 gem 'librarian-chef'
 EOF
 ### Installing dependencies
-yum -y install rubygem-bundler kernel-devel ruby-devel gcc make git
+yum -y install ruby-devel gcc make git
 ### Installing gems 
 if [ ! -f ~/.gemrc ]
 then 
   echo "gem: --no-document" > ~/.gemrc
 fi
+gem install bundle
 bundle
-# Make sure we've got the latest version of CHEF
-gem update chef
 ### Create a kitchen by knife
 knife solo init .
 ### Modify the librarian Cheffile for manage the cookbooks
