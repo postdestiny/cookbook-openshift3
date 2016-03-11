@@ -50,6 +50,10 @@ execute 'Extract certificate to Node folder' do
   action :nothing
 end
 
+template '/etc/sysconfig/docker-storage-setup' do
+  source 'docker-storage.erb'
+end
+
 template node['cookbook-openshift3']['openshift_node_config_file'] do
   source 'node.yaml.erb'
   variables osn_cluster_dns_ip: osn_cluster_dns_ip

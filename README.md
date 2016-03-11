@@ -145,7 +145,27 @@ Override Attributes
 }
 ```
 
-Usage
+* `node['cookbook-openshift3']['openshift_node_docker-storage']`
+
+```json
+{
+ "DEVS": ["/dev/sdb","/dev/sdc"],
+ "VG": "docker-vg",
+ "DATA_SIZE": "80%FREE"
+}
+```
+
+* `node['cookbook-openshift3']['openshift_master_named_certificates']`
+
+```json
+[
+  {
+   "certfile": "/etc/where_is/my_certfile",
+   "keyfile": "/etc/where_is/my_keyfile",
+   "names": ["domain.local","*.domain.local"]
+  }
+]
+```
 =====
 
 Include the recipes in roles so as to ease the deployment. 
