@@ -53,7 +53,8 @@ template node['cookbook-openshift3']['openshift_master_config_file'] do
   source 'master.yaml.erb'
   variables(
     erb_corsAllowedOrigins: node['cookbook-openshift3']['erb_corsAllowedOrigins'].uniq,
-    single_instance: node_servers.size.eql?(1) && node_servers.first['fqdn'].eql?(node['fqdn']) ? true : false
+    single_instance: node_servers.size.eql?(1) && node_servers.first['fqdn'].eql?(node['fqdn']) ? true : false,
+    erb_master_named_certificates: node['cookbook-openshift3']['openshift_master_named_certificates']
   )
   notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master]", :immediately
 end
