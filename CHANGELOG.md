@@ -1,6 +1,11 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.0.4
+### Improvement
+- Detect the CN or SAN from certificates file when using named certificates.
+- Fix some typos
+
 ## v1.0.3
 ### Improvement
 - Add possibility to customise docker-storage-setup

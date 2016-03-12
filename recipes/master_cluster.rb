@@ -47,7 +47,7 @@ if master_servers.first['fqdn'] == node['fqdn']
   end
 end
 
-remote_file "Retreive client certificate from Master[#{master_servers.first['fqdn']}]" do
+remote_file "Retrieve client certificate from Master[#{master_servers.first['fqdn']}]" do
   path "#{node['cookbook-openshift3']['openshift_master_config_dir']}/openshift-master-#{node['fqdn']}.tgz"
   source "http://#{master_servers.first['ipaddress']}:#{node['cookbook-openshift3']['httpd_xfer_port']}/master/generated_certs/openshift-master-#{node['fqdn']}.tgz"
   action :create_if_missing
@@ -120,7 +120,7 @@ if master_servers.first['fqdn'] == node['fqdn']
 end
 
 if master_servers.first['fqdn'] != node['fqdn']
-  remote_file "Retreive peer certificate from Master[#{master_servers.first['fqdn']}]" do
+  remote_file "Retrieve peer certificate from Master[#{master_servers.first['fqdn']}]" do
     path "#{node['cookbook-openshift3']['openshift_master_config_dir']}/openshift-#{node['fqdn']}.tgz"
     source "http://#{master_servers.first['ipaddress']}:#{node['cookbook-openshift3']['httpd_xfer_port']}/master/generated_certs/openshift-#{node['fqdn']}.tgz"
     action :create_if_missing
@@ -160,13 +160,12 @@ if node['cookbook-openshift3']['oauth_Identity'] == 'HTPasswdPasswordIdentityPro
   end
 end
 
-template node['cookbook-openshift3']['openshift_master_config_file'] do
-  source 'master.yaml.erb'
-  variables(
-    erb_corsAllowedOrigins: node['cookbook-openshift3']['erb_corsAllowedOrigins'].uniq,
-    etcd_servers: etcd_servers,
-    masters_size: master_servers.size
-  )
+openshift_create_master 'Create master configuration file' do
+  named_certificate node['cookbook-openshift3']['openshift_master_named_certificates']
+  origins node['cookbook-openshift3']['erb_corsAllowedOrigins'].uniq
+  master_file node['cookbook-openshift3']['openshift_master_config_file']
+  etcd_servers etcd_servers
+  masters_size master_servers.size
 end
 
 ruby_block 'Configure OpenShift settings Master' do
