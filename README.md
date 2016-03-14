@@ -157,12 +157,13 @@ Override Attributes
 
 * `node['cookbook-openshift3']['openshift_master_named_certificates']`
 
+* CN or SAN names are automatically detected from the certificate file.
+
 ```json
 [
   {
    "certfile": "/etc/where_is/my_certfile",
-   "keyfile": "/etc/where_is/my_keyfile",
-   "names": ["domain.local","*.domain.local"]
+   "keyfile": "/etc/where_is/my_keyfile"
   }
 ]
 ```

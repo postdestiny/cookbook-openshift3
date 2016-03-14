@@ -35,7 +35,7 @@ package "#{node['cookbook-openshift3']['openshift_service_type']}-sdn-ovs" do
   only_if { node['cookbook-openshift3']['openshift_common_use_openshift_sdn'] == true }
 end
 
-remote_file "Retreive certificate from Master[#{master_servers.first['fqdn']}]" do
+remote_file "Retrieve certificate from Master[#{master_servers.first['fqdn']}]" do
   path "#{node['cookbook-openshift3']['openshift_node_config_dir']}/#{node['fqdn']}.tgz"
   source "http://#{master_servers.first['ipaddress']}:#{node['cookbook-openshift3']['httpd_xfer_port']}/generated-configs/#{node['fqdn']}.tgz"
   action :create_if_missing
