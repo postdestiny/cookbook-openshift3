@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 #
 clear
 cat << EOF
@@ -16,6 +16,8 @@ read -p "Please enter the IP of the server: " IP
 # Remove existing entries
 sed -i "/$IP/d" /etc/hosts
 echo -e "$IP\t$FQDN" >> /etc/hosts
+hostnamectl set-hostname $FQDN
+systemctl restart systemd-hostnamed.service
 ### Update the server
 yum -y update
 ### Create the chef-local mode infrastructure
