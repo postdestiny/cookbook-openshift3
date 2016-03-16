@@ -17,9 +17,9 @@ A demo user has been created for you.
 
 Password is : 1234
 
-Access the console via : https://console.${IP}.xip.io:8443/console
+Access the console via : https://console.${IP}.nip.io:8443/console
 
-(More about [xip.io](http://xip.io/))
+(More about [nip.io](http://nip.io/))
 
 You can also login via CLI : oc login -u demo
 

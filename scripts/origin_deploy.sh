@@ -63,7 +63,7 @@ cat << EOF > environments/origin.json
   },
   "override_attributes": {
     "cookbook-openshift3": {
-      "openshift_common_public_hostname": "console.${IP}.xip.io",
+      "openshift_common_public_hostname": "console.${IP}.nip.io",
       "openshift_deployment_type": "origin",
       "master_servers": [
         {
@@ -136,7 +136,7 @@ Your installation of Origin is completed.
 A demo user has been created for you.
 Password is : 1234
 
-Access the console here : https://console.${IP}.xip.io:8443/console
+Access the console here : https://console.${IP}.nip.io:8443/console
 
 You can also login via CLI : oc login -u demo
 
