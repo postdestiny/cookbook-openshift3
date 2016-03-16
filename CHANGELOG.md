@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.0.5
+### Bug
+- Fix bug when enabling HTTPD at startup
+
 ## v1.0.4
 ### Improvement
 - Detect the CN or SAN from certificates file when using named certificates.

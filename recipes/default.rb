@@ -20,9 +20,7 @@ service "#{node['cookbook-openshift3']['openshift_service_type']}-node" do
   retry_delay 5
 end
 
-service 'httpd' do
-  action :enable
-end
+service 'httpd'
 
 service 'etcd'
 

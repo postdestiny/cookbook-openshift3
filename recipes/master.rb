@@ -12,6 +12,7 @@ package node['cookbook-openshift3']['openshift_service_type']
 
 package 'httpd' do
   notifies :run, 'ruby_block[Change HTTPD port xfer]', :immediately
+  notifies :enable, 'service[httpd]', :immediately
 end
 
 node['cookbook-openshift3']['enabled_firewall_rules_master'].each do |rule|
