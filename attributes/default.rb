@@ -34,7 +34,7 @@ default['cookbook-openshift3']['enabled_firewall_additional_rules_node'] = []
 default['cookbook-openshift3']['enabled_firewall_rules_etcd'] = %w(firewall_etcd)
 default['cookbook-openshift3']['openshift_deployment_type'] = 'enterprise'
 default['cookbook-openshift3']['openshift_service_type'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'atomic-openshift' : 'origin'
-default['cookbook-openshift3']['yum_repositories'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? %w() : [{ 'name' => 'maxamillion-origin-next', 'baseurl' => 'https://copr-be.cloud.fedoraproject.org/results/maxamillion/origin-next/epel-7-$basearch/', 'gpgcheck' => true, 'gpgkey' => ['https://copr-be.cloud.fedoraproject.org/results/maxamillion/origin-next/pubkey.gpg'], 'exclude' => 'docker' }]
+default['cookbook-openshift3']['yum_repositories'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? %w() : [{ 'name' => 'maxamillion-origin-next', 'baseurl' => 'https://copr-be.cloud.fedoraproject.org/results/maxamillion/origin-next/epel-7-$basearch/', 'gpgcheck' => true, 'gpgkey' => ['https://copr-be.cloud.fedoraproject.org/results/maxamillion/origin-next/pubkey.gpg'] }]
 default['cookbook-openshift3']['openshift_data_dir'] = '/var/lib/origin'
 default['cookbook-openshift3']['openshift_master_cluster_password'] = 'openshift_cluster'
 default['cookbook-openshift3']['openshift_common_master_dir'] = '/etc/origin'
