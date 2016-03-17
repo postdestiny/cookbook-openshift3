@@ -21,11 +21,12 @@ else
   default['cookbook-openshift3']['master_etcd_cert_prefix'] = ''
 end
 
+default['cookbook-openshift3']['docker_version'] = nil
 default['cookbook-openshift3']['install_method'] = 'yum'
 default['cookbook-openshift3']['httpd_xfer_port'] = '9999'
 default['cookbook-openshift3']['set_nameserver'] = false
 default['cookbook-openshift3']['register_dns'] = false
-default['cookbook-openshift3']['core_packages'] = %w(libselinux-python wget vim-enhanced net-tools bind-utils git bash-completion docker bash-completion)
+default['cookbook-openshift3']['core_packages'] = %w(libselinux-python wget vim-enhanced net-tools bind-utils git bash-completion bash-completion)
 default['cookbook-openshift3']['osn_cluster_dns_domain'] = 'cluster.local'
 default['cookbook-openshift3']['enabled_firewall_rules_master'] = %w(firewall_master)
 default['cookbook-openshift3']['enabled_firewall_rules_master_cluster'] = %w(firewall_master_cluster)
