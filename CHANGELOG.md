@@ -1,6 +1,15 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.0.6
+### Improvement
+- Add delay/retry before installing servcieaccount
+- Change xip.io for nip.io (STABLE)
+
+### Bug
+- Fix scripts/origin_deploy.sh
+- Fix hostname for origin_deploy.sh
+
 ## v1.0.5
 ### Bug
 - Fix bug when enabling HTTPD at startup
