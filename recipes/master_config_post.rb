@@ -14,12 +14,16 @@ service_accounts.each do |serviceaccount|
       'namespace' => serviceaccount['namespace']
     )
     not_if "#{node['cookbook-openshift3']['openshift_common_client_binary']} get sa #{serviceaccount['name']} -n #{serviceaccount['namespace']}"
+    retries 5
+    retry_delay 5
   end
 
   next unless serviceaccount.key?('scc')
   execute "Add SCC to service account: \"#{serviceaccount['name']}\" ; Namespace: \"#{serviceaccount['namespace']}\"" do
     command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} policy add-scc-to-user privileged system:serviceaccount:#{serviceaccount['namespace']}:#{serviceaccount['name']}"
     not_if "#{node['cookbook-openshift3']['openshift_common_client_binary']} get scc/privileged -n default -o yaml | grep default:#{serviceaccount['name']}"
+    retries 5
+    retry_delay 5
   end
 end
 
