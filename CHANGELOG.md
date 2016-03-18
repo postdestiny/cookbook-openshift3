@@ -1,6 +1,15 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.0.7
+### Improvement
+- Add possibility to disable yum repositories
+- Fix etcd certificate (Simplify the call for peers members)
+- Add possibility to specify a version to be installed for docker
+
+### Bug
+- Fix permissions for directory (Set to Apache in case of a dodgy umask number)
+
 ## v1.0.6
 ### Improvement
 - Add delay/retry before installing servcieaccount

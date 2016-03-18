@@ -69,6 +69,10 @@ node['cookbook-openshift3']['core_packages'].each do |pkg|
   package pkg
 end
 
+package 'docker' do
+  version node['cookbook-openshift3']['docker_version'] unless node['cookbook-openshift3']['docker_version'].nil?
+end
+
 bash "Configure Docker to use the default FS type for #{node['fqdn']}" do
   code <<-EOF
     correct_fs=$(df -T /var | egrep -o 'xfs|ext4')

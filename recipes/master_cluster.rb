@@ -17,7 +17,9 @@ end
 if master_servers.first['fqdn'] == node['fqdn']
   master_servers.each do |master_server|
     directory "#{node['cookbook-openshift3']['master_generated_certs_dir']}/openshift-master-#{master_server['fqdn']}" do
-      mode '0700'
+      mode '0755'
+      owner 'apache'
+      group 'apache'
       recursive true
     end
 
@@ -84,7 +86,9 @@ if master_servers.first['fqdn'] == node['fqdn']
 
   master_peers.each do |peer_server|
     directory "#{node['cookbook-openshift3']['master_generated_certs_dir']}/openshift-#{peer_server['fqdn']}" do
-      mode '0700'
+      mode '0755'
+      owner 'apache'
+      group 'apache'
       recursive true
     end
 
@@ -104,11 +108,9 @@ if master_servers.first['fqdn'] == node['fqdn']
       creates "#{node['cookbook-openshift3']['master_generated_certs_dir']}/openshift-#{peer_server['fqdn']}/master.server.crt"
     end
 
-    if node['roles'].include? node['cookbook-openshift3']['openshiftv3-master_cluster_label']
-      %w(client.crt client.key).each do |remove_etcd_certificate|
-        file "#{node['cookbook-openshift3']['master_generated_certs_dir']}/openshift-#{peer_server['fqdn']}/#{node['cookbook-openshift3']['master_etcd_cert_prefix']}#{remove_etcd_certificate}" do
-          action :delete
-        end
+    %w(client.crt client.key).each do |remove_etcd_certificate|
+      file "#{node['cookbook-openshift3']['master_generated_certs_dir']}/openshift-#{peer_server['fqdn']}/#{node['cookbook-openshift3']['master_etcd_cert_prefix']}#{remove_etcd_certificate}" do
+        action :delete
       end
     end
 
