@@ -34,6 +34,10 @@ kubeletArguments:
     - "<%= node['cookbook-openshift3']['openshift_node_maximum_dead_containers_per_container'] %>"
   maxumum-dead-containers:
     - "<%= node['cookbook-openshift3']['openshift_node_maximum_dead_containers'] %>"
+  image-gc-high-threshold:
+    - "<%= node['cookbook-openshift3']['openshift_node_image_gc_high_threshold'] %>"
+  image-gc-low-threshold:
+    - "<%= node['cookbook-openshift3']['openshift_node_image_gc_low_threshold'] %>"
 proxyArguments:
   proxy-mode:
     - iptables

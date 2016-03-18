@@ -104,6 +104,8 @@ default['cookbook-openshift3']['openshift_node_sdn_mtu_sdn'] = '1450'
 default['cookbook-openshift3']['openshift_node_minimum_container_ttl_duration'] = '10s'
 default['cookbook-openshift3']['openshift_node_maximum_dead_containers_per_container'] = '2'
 default['cookbook-openshift3']['openshift_node_maximum_dead_containers'] = '100'
+default['cookbook-openshift3']['openshift_node_image_gc_high_threshold'] = '90'
+default['cookbook-openshift3']['openshift_node_image_gc_low_threshold'] = '80'
 
 default['cookbook-openshift3']['erb_corsAllowedOrigins'] = ['127.0.0.1', 'localhost', node['cookbook-openshift3']['openshift_common_hostname'], node['cookbook-openshift3']['openshift_common_ip'], node['cookbook-openshift3']['openshift_common_public_hostname'], node['cookbook-openshift3']['openshift_common_public_ip']] + node['cookbook-openshift3']['openshift_common_svc_names']
 
