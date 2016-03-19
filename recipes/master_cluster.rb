@@ -206,6 +206,14 @@ if node['cookbook-openshift3']['openshift_HA_method'] == 'native'
     notifies :disable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master]", :immediately
   end
 
+  # Use ruby_block as systemd service provider does not support 'mask' action
+  # https://tickets.opscode.com/browse/CHEF-3369
+  ruby_block "Mask #{node['cookbook-openshift3']['openshift_service_type']}-master" do
+    block do
+      Mixlib::ShellOut.new("systemctl mask #{node['cookbook-openshift3']['openshift_service_type']}-master").run_command
+    end
+  end
+
   execute 'Wait for API to become available' do
     command "echo | openssl s_client -connect #{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}"
     retries 24

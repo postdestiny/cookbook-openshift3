@@ -80,6 +80,7 @@ ruby_block 'Configure Docker settings' do
     openshift_settings.write_file
   end
   notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node],service[docker]", :immediately
+  notifies :enable, 'service[docker]', :immediately
 end
 
 selinux_policy_boolean 'virt_use_nfs' do

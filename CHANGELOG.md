@@ -1,6 +1,14 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.0.8
+### Improvement
+- Add kubeletArguments for node servers
+
+### Bug
+- Enable Docker at startup
+- Mask master service when running native HA
+
 ## v1.0.7
 ### Improvement
 - Add possibility to disable yum repositories
