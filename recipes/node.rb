@@ -8,8 +8,6 @@ master_label = node['cookbook-openshift3']['openshift_cluster_name'].nil? ? node
 
 master_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['master_servers'] : search(:node, %(role:"#{master_label}")).sort!
 
-osn_cluster_dns_ip = node['cookbook-openshift3']['openshift_HA'] == true ? Mixlib::ShellOut.new("dig +short #{node['cookbook-openshift3']['openshift_common_public_hostname']}").run_command.stdout.strip : master_servers.first['ipaddress']
-
 file '/usr/local/etc/.firewall_node_additional.txt' do
   content node['cookbook-openshift3']['enabled_firewall_additional_rules_node'].join('\n')
   owner 'root'
@@ -56,7 +54,6 @@ end
 
 template node['cookbook-openshift3']['openshift_node_config_file'] do
   source 'node.yaml.erb'
-  variables osn_cluster_dns_ip: osn_cluster_dns_ip
   notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
   notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
 end

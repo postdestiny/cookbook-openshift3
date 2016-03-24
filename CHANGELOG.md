@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.0.9
+### Bug
+- Remove dnsIP from node definiton. Default to use the kubernetes service network 172.x.x.1
+
 ## v1.0.8
 ### Improvement
 - Add kubeletArguments for node servers
