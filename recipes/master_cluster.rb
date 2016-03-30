@@ -170,13 +170,8 @@ openshift_create_master 'Create master configuration file' do
   masters_size master_servers.size
 end
 
-ruby_block 'Configure OpenShift settings Master' do
-  block do
-    openshift_settings = Chef::Util::FileEdit.new("/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master")
-    openshift_settings.search_file_replace_line(/^OPTIONS=/, "OPTIONS=--loglevel=#{node['cookbook-openshift3']['openshift_master_debug_level']}")
-    openshift_settings.search_file_replace_line(/^CONFIG_FILE=/, "CONFIG_FILE=#{node['cookbook-openshift3']['openshift_master_config_file']}")
-    openshift_settings.write_file
-  end
+template "/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master" do
+  source 'service_master.sysconfig.erb'
 end
 
 if node['cookbook-openshift3']['openshift_HA_method'] == 'native'

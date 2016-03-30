@@ -1,6 +1,12 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.0
+### Bug
+- Fix docker restrart when running CHEF
+- Fix openshift-master restart when running CHEF
+- Fix openshift-node restart when running CHEF
+
 ## v1.0.9
 ### Bug
 - Remove dnsIP from node definiton. Default to use the kubernetes service network 172.x.x.1

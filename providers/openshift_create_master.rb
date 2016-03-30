@@ -46,5 +46,4 @@ action :create do
       masters_size: new_resource.masters_size
     )
   end
-  new_resource.updated_by_last_action(true)
 end

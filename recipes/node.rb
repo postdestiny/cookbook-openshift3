@@ -58,24 +58,13 @@ template node['cookbook-openshift3']['openshift_node_config_file'] do
   notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
 end
 
-ruby_block 'Configure OpenShift settings Node' do
-  block do
-    openshift_settings = Chef::Util::FileEdit.new("/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-node")
-    openshift_settings.search_file_replace_line(/^OPTIONS=/, "OPTIONS=--loglevel=#{node['cookbook-openshift3']['openshift_node_debug_level']}")
-    openshift_settings.search_file_replace_line(/^CONFIG_FILE=/, "CONFIG_FILE=#{node['cookbook-openshift3']['openshift_node_config_file']}")
-    openshift_settings.write_file
-  end
+template "/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-node" do
+  source 'service_node.sysconfig.erb'
   notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
 end
 
-ruby_block 'Configure Docker settings' do
-  block do
-    openshift_settings = Chef::Util::FileEdit.new('/etc/sysconfig/docker')
-    openshift_settings.search_file_replace_line(/^OPTIONS=/, "OPTIONS='--insecure-registry=#{node['cookbook-openshift3']['openshift_docker_insecure_registries'].join(' --insecure-registry=')} --selinux-enabled'")
-    openshift_settings.search_file_replace_line(/^ADD_REGISTRY=.*/, "ADD_REGISTRY='--add-registry #{node['cookbook-openshift3']['openshift_docker_add_registry_arg'].join(' --add-registry ')} --add-registry registry.access.redhat.com'") unless node['cookbook-openshift3']['openshift_docker_add_registry_arg'].nil?
-    openshift_settings.search_file_replace_line(/^[# ]*BLOCK_REGISTRY=.*/, "BLOCK_REGISTRY='--block-registry #{node['cookbook-openshift3']['openshift_docker_block_registry_arg'].join(' --block-registry ')}'") unless node['cookbook-openshift3']['openshift_docker_block_registry_arg'].nil?
-    openshift_settings.write_file
-  end
+template '/etc/sysconfig/docker' do
+  source 'service_docker.sysconfig.erb'
   notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node],service[docker]", :immediately
   notifies :enable, 'service[docker]', :immediately
 end
