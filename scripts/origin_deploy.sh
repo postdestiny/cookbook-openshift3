@@ -63,6 +63,7 @@ cat << EOF > environments/origin.json
   },
   "override_attributes": {
     "cookbook-openshift3": {
+      "docker_version": "1.8.2-10.el7",
       "openshift_common_public_hostname": "console.${IP}.nip.io",
       "openshift_deployment_type": "origin",
       "master_servers": [
