@@ -37,7 +37,7 @@ if etcd_servers.size.odd? && etcd_servers.size >= 3
     end
 
     execute "ETCD Generate CA certificate for #{node['fqdn']}" do
-      command "openssl req -config #{node['cookbook-openshift3']['etcd_openssl_conf']} -newkey rsa:4096 -keyout ca.key -new -out ca.crt -x509 -extensions etcd_v3_ca_self -batch -nodes -subj /CN=etcd-signer@$(date +%s)"
+      command "openssl req -config #{node['cookbook-openshift3']['etcd_openssl_conf']} -newkey rsa:4096 -keyout ca.key -new -out ca.crt -x509 -extensions etcd_v3_ca_self -batch -nodes -days #{node['cookbook-openshift3']['etcd_default_days']} -subj /CN=etcd-signer@$(date +%s)"
       environment 'SAN' => ''
       cwd node['cookbook-openshift3']['etcd_ca_dir']
       creates "#{node['cookbook-openshift3']['etcd_ca_dir']}/ca.crt"
