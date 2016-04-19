@@ -1,6 +1,14 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.1
+### Bug
+- Fix issue for ETCD certificate lifetime
+- Fix IP discovery for origin_deploy.sh
+
+### Improvement
+- Add capability for enabling or not a yum repository
+
 ## v1.10.0
 ### Bug
 - Fix docker restrart when running CHEF
