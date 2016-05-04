@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.2
+### Bug
+- Fix issue for nodes certificate SAN
+
 ## v1.10.1
 ### Bug
 - Fix issue for ETCD certificate lifetime
