@@ -31,7 +31,7 @@ node_servers.each do |node_server|
 
   execute "Generate the node server certificate for #{node_server['fqdn']}" do
     command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} create-server-cert --cert=server.crt --key=server.key --overwrite=true \
-            --hostnames=#{node_server['fqdn']} --signer-cert=#{node['cookbook-openshift3']['openshift_common_master_dir']}/master/ca.crt --signer-key=#{node['cookbook-openshift3']['openshift_common_master_dir']}/master/ca.key \
+            --hostnames=#{node_server['fqdn'] + "," + node_server['ipaddress']} --signer-cert=#{node['cookbook-openshift3']['openshift_common_master_dir']}/master/ca.crt --signer-key=#{node['cookbook-openshift3']['openshift_common_master_dir']}/master/ca.key \
             --signer-serial=#{node['cookbook-openshift3']['openshift_common_master_dir']}/master/ca.serial.txt"
     cwd "#{node['cookbook-openshift3']['openshift_master_generated_configs_dir']}/#{node_server['fqdn']}"
     creates "#{node['cookbook-openshift3']['openshift_master_generated_configs_dir']}/#{node_server['fqdn']}.tgz"
