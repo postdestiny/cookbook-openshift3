@@ -31,6 +31,7 @@ echo -e "$IP\t$FQDN" >> /etc/hosts
 hostnamectl set-hostname $FQDN
 systemctl restart systemd-hostnamed.service
 ### Update the server
+echo "Updating system, please wait..."
 yum -y update -q -e 0
 ### Create the chef-local mode infrastructure
 mkdir -p chef-solo-example/{backup,cache}
@@ -41,6 +42,7 @@ gem 'knife-solo'
 gem 'librarian-chef'
 EOF
 ### Installing dependencies
+echo "Installing prerequisite packages, please wait..."
 yum -y install -q ruby-devel gcc make git
 ### Installing gems 
 if [ ! -f ~/.gemrc ]
@@ -95,8 +97,8 @@ cat << EOF > environments/origin.json
   }
 }
 EOF
-cat << EOF > environments/origin.json
 else
+cat << EOF > environments/origin.json
 {
   "name": "origin",
   "description": "",
@@ -175,6 +177,8 @@ then
 fi
 # Reset password for demo user
 htpasswd -b /etc/origin/openshift-passwd demo 1234
+# Label the node as infra
+oc label node $FQDN region=infra --config=/etc/origin/master/admin.kubeconfig &> /dev/null
 cat << EOF
 
 ##### Installation DONE ######
