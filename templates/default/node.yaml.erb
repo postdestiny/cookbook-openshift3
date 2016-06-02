@@ -14,7 +14,7 @@ networkPluginName: <%= node['cookbook-openshift3']['openshift_common_sdn_network
 # deprecates networkPluginName above. The two should match.
 networkConfig:
    mtu: <%= node['cookbook-openshift3']['openshift_node_sdn_mtu_sdn'] %>
-   networkPluginName: redhat/openshift-ovs-subnet
+   networkPluginName: <%= node['cookbook-openshift3']['openshift_common_sdn_network_plugin_name'] %>
 nodeIP: <%= node['cookbook-openshift3']['openshift_common_ip'] %>
 nodeName: <%= node['fqdn'] %>
 podManifestConfig:

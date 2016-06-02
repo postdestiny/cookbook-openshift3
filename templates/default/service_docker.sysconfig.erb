@@ -9,7 +9,7 @@ DOCKER_CERT_PATH=/etc/docker
 # pull use the ADD_REGISTRY option to list a set of registries, each prepended
 # with --add-registry flag. The first registry added will be the first registry
 # searched.
-<% if node['cookbook-openshift3']['openshift_docker_add_registry_arg'].nil? %>
+<% if node['cookbook-openshift3']['openshift_docker_add_registry_arg'].empty? %>
 ADD_REGISTRY='--add-registry registry.access.redhat.com'
 <% else -%>
 ADD_REGISTRY='--add-registry <%= node['cookbook-openshift3']['openshift_docker_add_registry_arg'].join(' --add-registry ') %> --add-registry registry.access.redhat.com'
@@ -19,7 +19,7 @@ ADD_REGISTRY='--add-registry <%= node['cookbook-openshift3']['openshift_docker_a
 # option and give it a set of registries, each prepended with --block-registry
 # flag. For example adding docker.io will stop users from downloading images
 # from docker.io
-<% if node['cookbook-openshift3']['openshift_docker_block_registry_arg'].nil? %>
+<% if node['cookbook-openshift3']['openshift_docker_block_registry_arg'].empty? %>
 # BLOCK_REGISTRY='--block-registry'
 <% else -%>
 BLOCK_REGISTRY='--block-registry <%= node['cookbook-openshift3']['openshift_docker_block_registry_arg'].join(' --block-registry ') %>'

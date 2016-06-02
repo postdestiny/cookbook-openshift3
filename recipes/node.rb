@@ -24,13 +24,52 @@ directory node['cookbook-openshift3']['openshift_node_config_dir'] do
   recursive true
 end
 
+if node['cookbook-openshift3']['deploy_containerized']
+  execute 'Pull NODE docker image' do
+    command "docker pull #{node['cookbook-openshift3']['openshift_docker_node_image']}:#{node['cookbook-openshift3']['openshift_docker_image_version']}"
+    not_if "docker images  | grep #{node['cookbook-openshift3']['openshift_docker_node_image']}.*#{node['cookbook-openshift3']['openshift_docker_image_version']}"
+  end
+
+  execute 'Pull OVS docker image' do
+    command "docker pull #{node['cookbook-openshift3']['openshift_docker_ovs_image']}:#{node['cookbook-openshift3']['openshift_docker_image_version']}"
+    not_if "docker images  | grep #{node['cookbook-openshift3']['openshift_docker_ovs_image']}.*#{node['cookbook-openshift3']['openshift_docker_image_version']}"
+  end
+
+  template "/etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node-dep.service" do
+    source 'service_node-deps-containerized.service.erb'
+    notifies :reload, 'service[daemon-reload]', :immediately
+  end
+
+  template "/etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node.service" do
+    source 'service_node-containerized.service.erb'
+    notifies :reload, 'service[daemon-reload]', :immediately
+  end
+
+  template '/etc/systemd/system/openvswitch.service' do
+    source 'service_openvsitch-containerized.service.erb'
+    notifies :reload, 'service[daemon-reload]', :immediately
+  end
+
+  template '/etc/sysconfig/openvswitch' do
+    source 'service_openvswitch.sysconfig.erb'
+    notifies :restart, 'service[openvswitch]', :immediately
+  end
+end
+
+template "/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-node" do
+  source 'service_node.sysconfig.erb'
+  notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :delayed
+end
+
 package "#{node['cookbook-openshift3']['openshift_service_type']}-node" do
   action :install
+  not_if { node['cookbook-openshift3']['deploy_containerized'] }
 end
 
 package "#{node['cookbook-openshift3']['openshift_service_type']}-sdn-ovs" do
   action :install
   only_if { node['cookbook-openshift3']['openshift_common_use_openshift_sdn'] == true }
+  not_if { node['cookbook-openshift3']['deploy_containerized'] }
 end
 
 remote_file "Retrieve certificate from Master[#{master_servers.first['fqdn']}]" do
@@ -48,25 +87,20 @@ execute 'Extract certificate to Node folder' do
   action :nothing
 end
 
-template '/etc/sysconfig/docker-storage-setup' do
-  source 'docker-storage.erb'
+template '/etc/dnsmasq.d/origin-dns.conf' do
+  source 'origin-dns.conf.erb'
+end
+
+template '/etc/NetworkManager/dispatcher.d/99-origin-dns.sh' do
+  source '99-origin-dns.sh.erb'
+  mode '0755'
+  notifies :restart, 'service[NetworkManager]', :immediately
 end
 
 template node['cookbook-openshift3']['openshift_node_config_file'] do
   source 'node.yaml.erb'
   notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
   notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
-end
-
-template "/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-node" do
-  source 'service_node.sysconfig.erb'
-  notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
-end
-
-template '/etc/sysconfig/docker' do
-  source 'service_docker.sysconfig.erb'
-  notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node],service[docker]", :immediately
-  notifies :enable, 'service[docker]', :immediately
 end
 
 selinux_policy_boolean 'virt_use_nfs' do

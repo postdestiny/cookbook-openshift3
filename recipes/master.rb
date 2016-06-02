@@ -8,7 +8,7 @@ master_label = node['cookbook-openshift3']['openshift_cluster_name'].nil? ? node
 
 master_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['master_servers'] : search(:node, %(role:"#{master_label}")).sort!
 
-package node['cookbook-openshift3']['openshift_service_type']
+package node['cookbook-openshift3']['openshift_service_type'] unless node['cookbook-openshift3']['deploy_containerized']
 
 package 'httpd' do
   notifies :run, 'ruby_block[Change HTTPD port xfer]', :immediately
@@ -42,6 +42,7 @@ remote_directory node['cookbook-openshift3']['openshift_common_examples_base'] d
   group 'root'
   action :create
   recursive true
+  only_if { node['cookbook-openshift3']['deploy_example'] }
 end
 
 if node['cookbook-openshift3']['openshift_HA']

@@ -82,6 +82,16 @@ bash "Configure Docker to use the default FS type for #{node['fqdn']}" do
   not_if "grep $(df -T /var | egrep -o 'xfs|ext4') /usr/bin/docker-storage-setup"
 end
 
+template '/etc/sysconfig/docker-storage-setup' do
+  source 'docker-storage.erb'
+end
+
+template '/etc/sysconfig/docker' do
+  source 'service_docker.sysconfig.erb'
+  notifies :restart, 'service[docker]', :immediately
+  notifies :enable, 'service[docker]', :immediately
+end
+
 ruby_block 'Change HTTPD port xfer' do
   block do
     openshift_settings = Chef::Util::FileEdit.new('/etc/httpd/conf/httpd.conf')

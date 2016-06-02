@@ -6,9 +6,11 @@ assetConfig:
   logoutURL: ""
   masterPublicURL:  <%= node['cookbook-openshift3']['openshift_master_public_url'] %>/
   publicURL: <%= node['cookbook-openshift3']['openshift_master_console_url'] %>/
+<% if node['cookbook-openshift3']['openshift_master_metrics_public_url'] %>
+  metricsPublicURL: https://<%= node['cookbook-openshift3']['openshift_master_metrics_public_url'] %>/hawkular/metrics
+<%- end -%>
   servingInfo:
     bindAddress: <%= node['cookbook-openshift3']['openshift_master_bind_addr'] %>:<%= node['cookbook-openshift3']['openshift_master_console_port'] %>
-    bindNetwork: tcp4
     certFile: master.server.crt
     clientCA: ""
     keyFile: master.server.key
@@ -26,6 +28,7 @@ corsAllowedOrigins:
 <% if node['cookbook-openshift3']['openshift_master_embedded_dns'] == true %>
 dnsConfig:
   bindAddress: <%= node['cookbook-openshift3']['openshift_master_bind_addr'] %>:<%= node['cookbook-openshift3']['openshift_master_dns_port'] %>
+  bindNetwork: tcp4
 <% end %>
 
 etcdClientInfo:
@@ -47,7 +50,6 @@ etcdConfig:
   peerAddress: <%= node['cookbook-openshift3']['openshift_common_hostname'] %>:7001
   peerServingInfo:
     bindAddress: <%= node['cookbook-openshift3']['openshift_master_bind_addr'] %>:7001
-    bindNetwork: tcp4
     certFile: etcd.server.crt
     clientCA: ca.crt
     keyFile: etcd.server.key
@@ -117,7 +119,7 @@ projectConfig:
   projectRequestMessage: ""
   projectRequestTemplate: ""
   securityAllocator:
-    mcsAllocatorRange: s0:/2
+    mcsAllocatorRange: "s0:/2"
     mcsLabelsPerProject: 5
     uidAllocatorRange: 1000000000-1999999999/10000
 routingConfig:
@@ -151,3 +153,5 @@ servingInfo:
 <%- end -%>
 <%- end -%>
 <%- end -%>
+volumeConfig:
+  dynamicProvisioningEnabled: <%= node['cookbook-openshift3']['openshift_master_dynamic_provisioning_enabled'] %>

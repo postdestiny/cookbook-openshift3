@@ -25,6 +25,8 @@ Override Attributes
 * `node['cookbook-openshift3']['openshift_common_public_hostname']` = Set the master public hostname. Default to 'ohai fqdn'
 * `node['cookbook-openshift3']['openshift_HA']` - Set whether or not to deploy a highly-available services for OSE. Default to 'false'
 * `node['cookbook-openshift3']['docker_version']` - Set the version of Docker to be installed. Default to 'nil'
+* `node['cookbook-openshift3']['deploy_containerized']` - Set whether or not to deploy a containerized version of Openshift. Default to 'false'
+* `node['cookbook-openshift3']['deploy_example']` - Set whether or not to deploy the openshift example templates files. Default to 'true'
 * `node['cookbook-openshift3']['install_method']` - Set the installing method for packing. Default to 'yum'
 * `node['cookbook-openshift3']['yum_repositories']` = Set the yum repositories. [*yum_repos*](https://github.com/chef-cookbooks/yum/blob/master/README.md#parameters)
 * `node['cookbook-openshift3']['httpd_xfer_port']` = Set the port used for retrieving certificates. Default to '9999'

@@ -25,3 +25,7 @@ service 'httpd'
 service 'etcd'
 
 service 'docker'
+
+service 'NetworkManager'
+
+service 'openvswitch'

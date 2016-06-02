@@ -11,9 +11,14 @@ cat << EOF
 
 EOF
 IP_DETECT=$(ip route get 8.8.8.8 | awk 'NR==1 {print $NF}')
-
+DF=""
 read -p "Please enter the FQDN of the server: " FQDN
 read -p "Please enter the IP of the server (Auto Detect): $IP_DETECT" IP
+while [ -z $DF ];
+do
+  read -p "Please enter the IP of the server ([r]pm or [c]ontainer):" DF
+  echo
+done
 
 if [ -z $IP ] 
 then IP=$IP_DETECT
@@ -55,7 +60,42 @@ sed -i '/cookbook-openshift3/d' Cheffile
 echo "cookbook 'cookbook-openshift3', :git => 'https://github.com/IshentRas/cookbook-openshift3.git'" >> Cheffile 
 librarian-chef install
 ### Create the dedicated environment for Origin deployment
+if [[ $DF =~ ^c ]]
+then
 cat << EOF > environments/origin.json
+{
+  "name": "origin",
+  "description": "",
+  "cookbook_versions": {
+
+  },
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+    "cookbook-openshift3": {
+      "openshift_common_public_hostname": "console.${IP}.nip.io",
+      "openshift_deployment_type": "origin",
+      "deploy_containerized": true,
+      "master_servers": [
+        {
+          "fqdn": "${FQDN}",
+          "ipaddress": "$IP"
+        }
+      ],
+      "node_servers": [
+        {
+          "fqdn": "${FQDN}",
+          "ipaddress": "$IP"
+        }
+      ]
+    }
+  }
+}
+EOF
+else
 {
   "name": "origin",
   "description": "",
@@ -87,6 +127,7 @@ cat << EOF > environments/origin.json
   }
 }
 EOF
+fi
 ### Create the dedicated role for the Chef run_list
 cat << EOF > roles/origin.json 
 {

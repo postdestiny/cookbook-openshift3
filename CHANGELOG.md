@@ -1,6 +1,17 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.3
+### Bug
+- Fix issue for Openshift Node (Clashing ClusterNetwork)
+- Fix issue for generating certificates (NODES)
+
+### Improvement
+- Add capability for deploying 3.2.x
+- Add capability for deploying containerized version of Openshift
+- Add capability of using dnsmasq for interacting with skyDNS
+- Update Openshift template examples
+
 ## v1.10.2
 ### Bug
 - Fix issue for nodes certificate SAN
