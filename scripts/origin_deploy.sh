@@ -95,6 +95,7 @@ cat << EOF > environments/origin.json
   }
 }
 EOF
+cat << EOF > environments/origin.json
 else
 {
   "name": "origin",
