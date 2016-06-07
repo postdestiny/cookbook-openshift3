@@ -22,6 +22,8 @@ Override Attributes
 ### Common setting ###
 
 <table>
+<thead><tr><td>cookbook-openshift3 config item</td><td>Default</td><td>Description</td></tr></thead>
+<tbody>
 <tr><td>
 * `node['cookbook-openshift3']['openshift_deployment_type']` = Set the deployment type for OSE ('origin' or 'enterprise'). Default to 'enterprise'
 </tr></td>
@@ -220,11 +222,13 @@ Override Attributes
 <tr><td>
 * `node['cookbook-openshift3']['etcd_peer_port']` = Set default listening port for ETCD Peer. Default to '2380'
 </tr></td>
+</tbody>
 </table>
 
 ### Highly-available settings ###
 
 <table>
+<thead><tr><td>cookbook-openshift3 config item</td><td>Default</td><td>Description</td></tr></thead>
 <tr><td>
 * `node['cookbook-openshift3']['openshift_cluster_name']` = Set the cluster public hostname. Default to 'nil'
 </tr></td>
@@ -239,6 +243,7 @@ Override Attributes
 ### Identity Provider settings ###
 
 <table>
+<thead><tr><td>cookbook-openshift3 config item</td><td>Default</td><td>Description</td></tr></thead>
 <tr><td>
 * `node['cookbook-openshift3']['oauth_Identity']` = Set the default identity provider ('HTPasswdPasswordIdentityProvider', 'LDAPPasswordIdentityProvider', 'RequestHeaderIdentityProvider'). Default to 'HTPasswdPasswordIdentityProvider'
 </tr></td>
