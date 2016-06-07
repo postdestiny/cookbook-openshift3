@@ -22,231 +22,231 @@ Override Attributes
 ### Common setting ###
 
 <table>
-<thead><tr><td>cookbook-openshift3 config item</td><td>Description</td><td>Default</td></tr></thead>
+<thead><tr><td><b>cookbook-openshift3 config item</b></td><td><b>Description</b></td><td><b>Default</b></td></tr></thead>
 <tbody>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_deployment_type']`</td><td>Set the deployment type for OSE ('origin' or 'enterprise'). Default to 'enterprise'
-<td></td></tr>
+openshift\_deployment\_type</td><td>Set the deployment type for OSE ('origin' or 'enterprise'). Default to 'enterprise'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_public_hostname']`</td><td>Set the master public hostname. Default to 'ohai fqdn'
-<td></td></tr>
+openshift\_common\_public\_hostname</td><td>Set the master public hostname. Default to 'ohai fqdn'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_HA']`</td><td>Set whether or not to deploy a highly-available services for OSE. Default to 'false'
-<td></td></tr>
+openshift\_HA</td><td>Set whether or not to deploy a highly-available services for OSE. Default to 'false'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['docker_version']`</td><td>Set the version of Docker to be installed. Default to 'nil'
-<td></td></tr>
+docker\_version</td><td>Set the version of Docker to be installed. Default to 'nil'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['deploy_containerized']`</td><td>Set whether or not to deploy a containerized version of Openshift. Default to 'false'
-<td></td></tr>
+deploy\_containerized</td><td>Set whether or not to deploy a containerized version of Openshift. Default to 'false'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['deploy_example']`</td><td>Set whether or not to deploy the openshift example templates files. Default to 'true'
-<td></td></tr>
+deploy\_example</td><td>Set whether or not to deploy the openshift example templates files. Default to 'true'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['install_method']`</td><td>Set the installing method for packing. Default to 'yum'
-<td></td></tr>
+install\_method</td><td>Set the installing method for packing. Default to 'yum'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['yum_repositories']`</td><td>Set the yum repositories. [*yum_repos*](https://github.com/chef-cookbooks/yum/blob/master/README.md#parameters)
-<td></td></tr>
+yum\_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.com/chef-cookbooks/yum/blob/master/README.md#parameters)
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['httpd_xfer_port']`</td><td>Set the port used for retrieving certificates. Default to '9999'
-<td></td></tr>
+httpd\_xfer\_port</td><td>Set the port used for retrieving certificates. Default to '9999'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['set_nameserver']`</td><td>Set the nameserver(s) for the host. Default to 'false'
-<td></td></tr>
+set\_nameserver</td><td>Set the nameserver(s) for the host. Default to 'false'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['register_dns']`</td><td>Set the registration of the host against the SOA nameserver. Default to 'false'
-<td></td></tr>
+register\_dns</td><td>Set the registration of the host against the SOA nameserver. Default to 'false'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['core_packages']`</td><td>Set the list of the pre-requisite packages. Default to ['libselinux-python', 'wget', 'vim-enhanced', 'net-tools', 'bind-utils', 'git', 'bash-completion docker', 'bash-completion']
-<td></td></tr>
+core\_packages</td><td>Set the list of the pre-requisite packages. Default to ['libselinux-python', 'wget', 'vim-enhanced', 'net-tools', 'bind-utils', 'git', 'bash-completion docker', 'bash-completion']
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['osn_cluster_dns_domain']`</td><td>Set the SkyDNS domain name. Default to 'cluster.local'
-<td></td></tr>
+osn\_cluster\_dns\_domain</td><td>Set the SkyDNS domain name. Default to 'cluster.local'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['enabled_firewall_additional_rules_node']`</td><td>Set the list of additional FW rules to set for a node. Default to  '[]'
-<td></td></tr>
+enabled\_firewall\_additional\_rules\_node</td><td>Set the list of additional FW rules to set for a node. Default to  '[]'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_data_dir']`</td><td>Set the default directory for OSE data. Default to '/var/lib/origin'
-<td></td></tr>
+openshift\_data\_dir</td><td>Set the default directory for OSE data. Default to '/var/lib/origin'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_cluster_password']`</td><td>Set the default password for the pcs administration account. Default 'openshift_cluster'
-<td></td></tr>
+openshift\_master\_cluster\_password</td><td>Set the default password for the pcs administration account. Default 'openshift\_cluster'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_master_dir']`</td><td>Set the default root directory for master. Default '/etc/origin'
-<td></td></tr>
+openshift\_common\_master\_dir</td><td>Set the default root directory for master. Default '/etc/origin'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_node_dir']`</td><td>Set the default root directory for node. Default '/etc/origin'
-<td></td></tr>
+openshift\_common\_node\_dir</td><td>Set the default root directory for node. Default '/etc/origin'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_portal_net']`</td><td>Set the default user-defined networks for Kubernetes. Default to '172.17.0.0/16'
-<td></td></tr>
+openshift\_common\_portal\_net</td><td>Set the default user-defined networks for Kubernetes. Default to '172.17.0.0/16'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_docker_insecure_registry_arg']`</td><td>Set the list of insecure registries for Docker. Default to 'nil'
-<td></td></tr>
+openshift\_docker\_insecure\_registry\_arg</td><td>Set the list of insecure registries for Docker. Default to 'nil'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_docker_add_registry_arg']`</td><td>Set the list of registries to add to Docker. Default to 'nil'
-<td></td></tr>
+openshift\_docker\_add\_registry\_arg</td><td>Set the list of registries to add to Docker. Default to 'nil'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_docker_block_registry_arg']`</td><td>Set the list of registries to block in Docker. Default to 'nil'
-<td></td></tr>
+openshift\_docker\_block\_registry\_arg</td><td>Set the list of registries to block in Docker. Default to 'nil'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_default_nodeSelector']`</td><td>Set the default label for node selector. Default to 'region=user'
-<td></td></tr>
+openshift\_common\_default\_nodeSelector</td><td>Set the default label for node selector. Default to 'region=user'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_infra_label']`</td><td>Set the default label for Infra project (default, openshift-infra). Default to 'region=infra'
-<td></td></tr>
+openshift\_common\_infra\_label</td><td>Set the default label for Infra project (default, openshift-infra). Default to 'region=infra'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_examples_base']`</td><td>'/usr/share/openshift/examples'
-<td></td></tr>
+openshift\_common\_examples\_base</td><td>'/usr/share/openshift/examples'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_hostname']`</td><td>Set the master common name. Default to 'ohai fqdn'
-<td></td></tr>
+openshift\_common\_hostname</td><td>Set the master common name. Default to 'ohai fqdn'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_ip']`</td><td>Set the default IP for the node. Default to 'ohai ipaddress'
-<td></td></tr>
+openshift\_common\_ip</td><td>Set the default IP for the node. Default to 'ohai ipaddress'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_infra_project']`</td><td>Set the list of default Infra project. Default to ['default', 'openshift-infra']
-<td></td></tr>
+openshift\_common\_infra\_project</td><td>Set the list of default Infra project. Default to ['default', 'openshift-infra']
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_service_accounts_additional']`</td><td>Set the list of additional service accounts to create. Default to '[]'
-<td></td></tr>
+openshift\_common\_service\_accounts\_additional</td><td>Set the list of additional service accounts to create. Default to '[]'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_use_openshift_sdn']`</td><td>Set whether or not to use SDN network. Default to 'true'
-<td></td></tr>
+openshift\_common\_use\_openshift\_sdn</td><td>Set whether or not to use SDN network. Default to 'true'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_sdn_network_plugin_name']`</td><td>Set the default SDN plugin name. Default to 'redhat/openshift-ovs-subnet'
-<td></td></tr>
+openshift\_common\_sdn\_network\_plugin\_name</td><td>Set the default SDN plugin name. Default to 'redhat/openshift-ovs-subnet'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_common_registry_url']`</td><td>Set the default registry URL. Default to 'openshift3/ose-${component}:${version}'
-<td></td></tr>
+openshift\_common\_registry\_url</td><td>Set the default registry URL. Default to 'openshift3/ose-${component}:${version}'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_bind_addr']`</td><td>Set default bind address. Default to '0.0.0.0'
-<td></td></tr>
+openshift\_master\_bind\_addr</td><td>Set default bind address. Default to '0.0.0.0'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_api_port']`</td><td>Set default listening port for Master API. Default to '8443'
-<td></td></tr>
+openshift\_master\_api\_port</td><td>Set default listening port for Master API. Default to '8443'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_console_port']`</td><td>Set the default listening port for console. Default to '8443'
-<td></td></tr>
+openshift\_master\_console\_port</td><td>Set the default listening port for console. Default to '8443'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_controllers_port']`</td><td>Set the default listening port for controllers. Default '8444'
-<td></td></tr>
+openshift\_master\_controllers\_port</td><td>Set the default listening port for controllers. Default '8444'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_controller_lease_ttl']`</td><td>Set the default lease TTL for controllers. Default '30'
-<td></td></tr>
+openshift\_master\_controller\_lease\_ttl</td><td>Set the default lease TTL for controllers. Default '30'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_embedded_dns']`</td><td>Set whether or not to use the embedded DNS. Default to 'true'
-<td></td></tr>
+openshift\_master\_embedded\_dns</td><td>Set whether or not to use the embedded DNS. Default to 'true'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_embedded_kube']`</td><td>Set whether ot not the use the embedded kubernete server. Default to 'true'
-<td></td></tr>
+openshift\_master\_embedded\_kube</td><td>Set whether ot not the use the embedded kubernete server. Default to 'true'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_debug_level']`</td><td>Set the default level for master logging. Default to '2'
-<td></td></tr>
+openshift\_master\_debug\_level</td><td>Set the default level for master logging. Default to '2'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_dns_port']`</td><td>Set the default port for SkyDNS. Default to '53'
-<td></td></tr>
+openshift\_master\_dns\_port</td><td>Set the default port for SkyDNS. Default to '53'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_label']`</td><td>Set the default label for master selector. Default to 'region=infra'
-<td></td></tr>
+openshift\_master\_label</td><td>Set the default label for master selector. Default to 'region=infra'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_generated_configs_dir']`</td><td>Set the default directory for generating the node certificates. Default to '/var/www/html/generated-configs'
-<td></td></tr>
+openshift\_master\_generated\_configs\_dir</td><td>Set the default directory for generating the node certificates. Default to '/var/www/html/generated-configs'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_router_subdomain']`</td><td>Set the default domain for the HaProxy routeaProxy. Default to 'cloudapps.domain.local'
-<td></td></tr>
+openshift\_master\_router\_subdomain</td><td>Set the default domain for the HaProxy routeaProxy. Default to 'cloudapps.domain.local'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_sdn_cluster_network_cidr']`</td><td>Set the default SDN Network address. Default to '10.1.0.0/16'
-<td></td></tr>
+openshift\_master\_sdn\_cluster\_network\_cidr</td><td>Set the default SDN Network address. Default to '10.1.0.0/16'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_sdn_host_subnet_length']`</td><td>Set the default number of allocated bit for hosts. Default to '8'
-<td></td></tr>
+openshift\_master\_sdn\_host\_subnet\_length</td><td>Set the default number of allocated bit for hosts. Default to '8'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_session_max_seconds']`</td><td>Set maximum session time in second. Default to '3600'
-<td></td></tr>
+openshift\_master\_session\_max\_seconds</td><td>Set maximum session time in second. Default to '3600'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_access_token_max_seconds']`</td><td>Set maximum access token lifetime in second. Default to '86400'
-<td></td></tr>
+openshift\_master\_access\_token\_max\_seconds</td><td>Set maximum access token lifetime in second. Default to '86400'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_auth_token_max_seconds']`</td><td>Set maximum Oauth token lifetime in second. Default to '500'
-<td></td></tr>
+openshift\_master\_auth\_token\_max\_seconds</td><td>Set maximum Oauth token lifetime in second. Default to '500'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_debug_level']`</td><td>Set the default level for node logging. Default to '2'
-<td></td></tr>
+openshift\_node\_debug\_level</td><td>Set the default level for node logging. Default to '2'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_iptables_sync_period']`</td><td>Set the default kube-proxy iptables sync period. Default to '5s'
-<td></td></tr>
+openshift\_node\_iptables\_sync\_period</td><td>Set the default kube-proxy iptables sync period. Default to '5s'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_max_pod']`</td><td>Set the maximum number of running PODs on a node. Default to '40'
-<td></td></tr>
+openshift\_node\_max\_pod</td><td>Set the maximum number of running PODs on a node. Default to '40'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_sdn_mtu_sdn']`</td><td>Set the default MTU size for SDN. Default '1450'
-<td></td></tr>
+openshift\_node\_sdn\_mtu\_sdn</td><td>Set the default MTU size for SDN. Default '1450'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_sdn_mtu_sdn']`</td><td>Set the default MTU size for SDN. Default '1450'
-<td></td></tr>
+openshift\_node\_sdn\_mtu\_sdn</td><td>Set the default MTU size for SDN. Default '1450'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_minimum_container_ttl_duration']</td><td>The minimum age that a container is eligible for garbage collection. Default '10s'    
-<td></td></tr>
+openshift\_node\_minimum\_container\_ttl\_duration']</td><td>The minimum age that a container is eligible for garbage collection. Default '10s'    
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_maximum_dead_containers_per_container']</td><td>The number of instances to retain per pod container. Default '2'
-<td></td></tr>
+openshift\_node\_maximum\_dead\_containers\_per\_container']</td><td>The number of instances to retain per pod container. Default '2'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_maximum_dead_containers']</td><td>The maximum number of total dead containers in the node. Default '100'
-<td></td></tr>
+openshift\_node\_maximum\_dead\_containers']</td><td>The maximum number of total dead containers in the node. Default '100'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_image_gc_high_threshold']</td><td>The percent of disk usage which triggers image garbage collection. Default '90'
-<td></td></tr>
+openshift\_node\_image\_gc\_high\_threshold']</td><td>The percent of disk usage which triggers image garbage collection. Default '90'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_node_image_gc_low_threshold']</td><td>The percent of disk usage to which image garbage collection attempts to free. Default '80'
-<td></td></tr>
+openshift\_node\_image\_gc\_low\_threshold']</td><td>The percent of disk usage to which image garbage collection attempts to free. Default '80'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['master_generated_certs_dir']`</td><td>Set the default directory for generating the master certificates. Default to '/var/www/html/master/generated_certs'
-<td></td></tr>
+master\_generated\_certs\_dir</td><td>Set the default directory for generating the master certificates. Default to '/var/www/html/master/generated\_certs'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['etcd_generated_certs_dir']`</td><td>Set the default directory for generating the etcd certificates. Default to '/var/www/html/etcd/generated_certs'
-<td></td></tr>
+etcd\_generated\_certs\_dir</td><td>Set the default directory for generating the etcd certificates. Default to '/var/www/html/etcd/generated\_certs'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['etcd_conf_dir']`</td><td>Set the default root directory for etcd configs. Default to '/etc/etcd'
-<td></td></tr>
+etcd\_conf\_dir</td><td>Set the default root directory for etcd configs. Default to '/etc/etcd'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['etcd_initial_cluster_token']`</td><td>'etcd-cluster-1'
-<td></td></tr>
+etcd\_initial\_cluster\_token</td><td>'etcd-cluster-1'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['etcd_data_dir']`</td><td>Set the default root directory for etcd data. Default to '/var/lib/etcd/'
-<td></td></tr>
+etcd\_data\_dir</td><td>Set the default root directory for etcd data. Default to '/var/lib/etcd/'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['etcd_client_port']`</td><td>Set default listening port for ETCD Client. Default to '2379'
-<td></td></tr>
+etcd\_client\_port</td><td>Set default listening port for ETCD Client. Default to '2379'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['etcd_peer_port']`</td><td>Set default listening port for ETCD Peer. Default to '2380'
-<td></td></tr>
+etcd\_peer\_port</td><td>Set default listening port for ETCD Peer. Default to '2380'
+</td></tr>
 </tbody>
 </table>
 
 ### Highly-available settings ###
 
 <table>
-<thead><tr><td>cookbook-openshift3 config item</td><td>Description</td><td>Default</td></tr></thead>
+<thead><tr><td><b>cookbook-openshift3 config item</b></td><td><b>Description</b></td><td><b>Default</b></td></tr></thead>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_cluster_name']`</td><td>Set the cluster public hostname. Default to 'nil'
-<td></td></tr>
+openshift\_cluster\_name</td><td>Set the cluster public hostname. Default to 'nil'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_master_cluster_vip']`</td><td>Set the cluster public IP address (Mandatory when using Pacemaker deployment). Default to 'nil'
-<td></td></tr>
+openshift\_master\_cluster\_vip</td><td>Set the cluster public IP address (Mandatory when using Pacemaker deployment). Default to 'nil'
+</td></tr>
 <tr><td>
-* `node['cookbook-openshift3']['openshift_HA_method']`</td><td>Set the HA Master method ('native' or 'pacemaker'). Default to 'native'
-<td></td></tr>
+openshift\_HA\_method</td><td>Set the HA Master method ('native' or 'pacemaker'). Default to 'native'
+</td></tr>
 </table>
 
 ### Identity Provider settings ###
 
 <table>
-<thead><tr><td>cookbook-openshift3 config item</td><td>Description</td><td>Default</td></tr></thead>
+<thead><tr><td><b>cookbook-openshift3 config item</b></td><td><b>Description</b></td><td><b>Default</b></td></tr></thead>
 <tr><td>
-* `node['cookbook-openshift3']['oauth_Identity']`</td><td>Set the default identity provider ('HTPasswdPasswordIdentityProvider', 'LDAPPasswordIdentityProvider', 'RequestHeaderIdentityProvider'). Default to 'HTPasswdPasswordIdentityProvider'
-<td></td></tr>
+oauth\_Identity</td><td>Set the default identity provider ('HTPasswdPasswordIdentityProvider', 'LDAPPasswordIdentityProvider', 'RequestHeaderIdentityProvider'). Default to 'HTPasswdPasswordIdentityProvider'
+</td></tr>
 </table>
 
 #### Structure ####
