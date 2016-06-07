@@ -30,6 +30,8 @@ Override Attributes
 </tr></td>
 <tr><td>
 * `node['cookbook-openshift3']['openshift_HA']` - Set whether or not to deploy a highly-available services for OSE. Default to 'false'
+</tr></td>
+<tr><td>
 * `node['cookbook-openshift3']['docker_version']` - Set the version of Docker to be installed. Default to 'nil'
 </tr></td>
 <tr><td>
@@ -249,11 +251,11 @@ Override Attributes
 
 ```json
 {
- "name" : "htpasswd_auth", 
- "login" : true, 
- "challenge" : true, 
- "kind" : "HTPasswdPasswordIdentityProvider", 
- "filename" : "/etc/openshift/openshift-passwd"
+"name" : "htpasswd_auth", 
+"login" : true, 
+"challenge" : true, 
+"kind" : "HTPasswdPasswordIdentityProvider", 
+"filename" : "/etc/openshift/openshift-passwd"
 }
 ```
 
@@ -261,11 +263,11 @@ Override Attributes
 
 ```json
 {
- "name" : "ldap_identity", 
- "login" : true, 
- "challenge" : true, 
- "kind" : "LDAPPasswordIdentityProvider", 
- "ldap_server" : "ldap.domain.local",
+"name" : "ldap_identity", 
+"login" : true, 
+"challenge" : true, 
+"kind" : "LDAPPasswordIdentityProvider", 
+"ldap_server" : "ldap.domain.local",
  "ldap_bind_dn" : "", 
  "ldap_bind_password" : "",
  "ldap_insecure" : true, 
