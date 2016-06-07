@@ -162,16 +162,9 @@ if node['cookbook-openshift3']['oauth_Identity'] == 'HTPasswdPasswordIdentityPro
   end
 end
 
-openshift_create_master 'Create master configuration file' do
-  named_certificate node['cookbook-openshift3']['openshift_master_named_certificates']
-  origins node['cookbook-openshift3']['erb_corsAllowedOrigins'].uniq
-  master_file node['cookbook-openshift3']['openshift_master_config_file']
-  etcd_servers etcd_servers
-  masters_size master_servers.size
-end
-
 template "/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master" do
   source 'service_master.sysconfig.erb'
+  not_if { node['cookbook-openshift3']['openshift_HA_method'] == 'native' }
 end
 
 if node['cookbook-openshift3']['openshift_HA_method'] == 'native'
@@ -194,28 +187,45 @@ if node['cookbook-openshift3']['openshift_HA_method'] == 'native'
     source 'service_master-controllers.sysconfig.erb'
     notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
   end
+end
 
-  execute 'Activate services for Master API and Controllers' do
-    command 'echo nothing to do specific'
-    notifies :start, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-api]", :immediately
-    notifies :disable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master]", :immediately
-  end
+openshift_create_master 'Create master configuration file' do
+  named_certificate node['cookbook-openshift3']['openshift_master_named_certificates']
+  origins node['cookbook-openshift3']['erb_corsAllowedOrigins'].uniq
+  master_file node['cookbook-openshift3']['openshift_master_config_file']
+  etcd_servers etcd_servers
+  masters_size master_servers.size
+  openshift_service_type node['cookbook-openshift3']['openshift_service_type']
+  cluster true
+end
 
-  # Use ruby_block as systemd service provider does not support 'mask' action
-  # https://tickets.opscode.com/browse/CHEF-3369
-  ruby_block "Mask #{node['cookbook-openshift3']['openshift_service_type']}-master" do
-    block do
-      Mixlib::ShellOut.new("systemctl mask #{node['cookbook-openshift3']['openshift_service_type']}-master").run_command
-    end
-  end
+execute 'Activate services for Master API and Controllers' do
+  command 'echo nothing to do specific'
+  notifies :start, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-api]", :immediately
+  notifies :start, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
+  notifies :disable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master]", :immediately
+  notifies :run, "ruby_block[Mask #{node['cookbook-openshift3']['openshift_service_type']}-master]", :immediately
+  only_if { node['cookbook-openshift3']['openshift_HA_method'] == 'native' }
+end
 
-  execute 'Wait for API to become available' do
-    command "echo | openssl s_client -connect #{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}"
-    retries 24
-    retry_delay 5
-    notifies :start, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
+# Use ruby_block as systemd service provider does not support 'mask' action
+# https://tickets.opscode.com/browse/CHEF-3369
+ruby_block "Mask #{node['cookbook-openshift3']['openshift_service_type']}-master" do
+  block do
+    Mixlib::ShellOut.new("systemctl mask #{node['cookbook-openshift3']['openshift_service_type']}-master").run_command
   end
-else
+  action :nothing
+end
+
+execute 'Wait for API to become available' do
+  command "echo | openssl s_client -connect #{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}"
+  retries 24
+  retry_delay 5
+  notifies :start, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
+  only_if { node['cookbook-openshift3']['openshift_HA_method'] == 'native' }
+end
+
+unless node['cookbook-openshift3']['openshift_HA_method'] == 'native'
   package 'pcs'
 
   service 'pcsd' do

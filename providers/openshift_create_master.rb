@@ -36,14 +36,34 @@ action :create do
     end
   end
 
-  template new_resource.master_file do
-    source 'master.yaml.erb'
-    variables(
-      erb_corsAllowedOrigins: new_resource.origins,
-      single_instance: new_resource.single_instance,
-      erb_master_named_certificates: named_certificates,
-      etcd_servers: new_resource.etcd_servers,
-      masters_size: new_resource.masters_size
-    )
+  service "#{new_resource.openshift_service_type}-master"
+  service "#{new_resource.openshift_service_type}-master-api"
+  service "#{new_resource.openshift_service_type}-master-controllers"
+
+  if new_resource.cluster
+    template new_resource.master_file do
+      source 'master.yaml.erb'
+      variables(
+        erb_corsAllowedOrigins: new_resource.origins,
+        single_instance: new_resource.single_instance,
+        erb_master_named_certificates: named_certificates,
+        etcd_servers: new_resource.etcd_servers,
+        masters_size: new_resource.masters_size
+      )
+      notifies :restart, "service[#{new_resource.openshift_service_type}-master-api]", :delayed
+      notifies :restart, "service[#{new_resource.openshift_service_type}-master-controllers]", :delayed
+    end
+  else
+    template new_resource.master_file do
+      source 'master.yaml.erb'
+      variables(
+        erb_corsAllowedOrigins: new_resource.origins,
+        single_instance: new_resource.single_instance,
+        erb_master_named_certificates: named_certificates,
+        etcd_servers: new_resource.etcd_servers,
+        masters_size: new_resource.masters_size
+      )
+      notifies :restart, "service[#{new_resource.openshift_service_type}-master]", :delayed
+    end
   end
 end

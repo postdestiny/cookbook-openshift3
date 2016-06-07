@@ -82,6 +82,7 @@ openshift_create_master 'Create master configuration file' do
   single_instance single_instance
   master_file node['cookbook-openshift3']['openshift_master_config_file']
   notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master]", :immediately
+  openshift_service_type node['cookbook-openshift3']['openshift_service_type']
 end
 
 service "#{node['cookbook-openshift3']['openshift_service_type']}-master" do
