@@ -1,6 +1,16 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.4
+### Bug
+- Fix issue for restarting openshift-api or controllers
+- Fix issue for restarting node
+
+### Improvement
+- Update Openshift documentation
+- Use chef-solo attribute style as a default for setting attributes
+- Remove queries for any type of data that is indexed by the Chef server 
+
 ## v1.10.3
 ### Bug
 - Fix issue for Openshift Node (Clashing ClusterNetwork)
