@@ -81,6 +81,7 @@ cat << EOF > environments/origin.json
       "openshift_common_public_hostname": "console.${IP}.nip.io",
       "openshift_deployment_type": "origin",
       "deploy_containerized": true,
+      "openshift_common_default_nodeSelector": "",
       "master_servers": [
         {
           "fqdn": "${FQDN}",
@@ -114,6 +115,7 @@ cat << EOF > environments/origin.json
     "cookbook-openshift3": {
       "openshift_common_public_hostname": "console.${IP}.nip.io",
       "openshift_deployment_type": "origin",
+      "openshift_common_default_nodeSelector": "",
       "master_servers": [
         {
           "fqdn": "${FQDN}",
@@ -148,7 +150,6 @@ cat << EOF > roles/origin.json
     "recipe[cookbook-openshift3::common]",
     "recipe[cookbook-openshift3::master]",
     "recipe[cookbook-openshift3::node]",
-    "recipe[cookbook-openshift3::node_config_post]"
   ],
   "env_run_lists": {
 
