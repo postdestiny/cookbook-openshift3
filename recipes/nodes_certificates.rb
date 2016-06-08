@@ -4,7 +4,7 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-node_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['node_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-node_label']}")).sort!
+node_servers = node['cookbook-openshift3']['node_servers']
 
 directory node['cookbook-openshift3']['openshift_master_generated_configs_dir'] do
   owner 'root'

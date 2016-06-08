@@ -31,6 +31,8 @@ Override Attributes
 <tr><td>deploy_containerized</td><td>Set whether or not to deploy a containerized version of Openshift.</td><td>false</td></tr>
 <tr><td>
 deploy_example</td><td>Set whether or not to deploy the openshift example templates files.<td>true</td></tr>
+<tr><td>
+deploy_dnsmasq</td><td>Set whether or not to deploy the dnsmasq resolution against SkyDNS.<td>true</td></tr>
 <tr><td>install_method</td><td>Set the installing method for packing.</td><td>yum</td></tr>
 <tr><td>
 yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.com/chef-cookbooks/yum/blob/master/README.md#parameters)</td><td></td></tr>
@@ -44,7 +46,7 @@ yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.
 <tr><td>openshift_master_cluster_password</td><td>Set the default password for the pcs administration account.</td><td>'openshift_cluster'</td></tr>
 <tr><td>openshift_common_master_dir</td><td>Set the default root directory for master.</td><td>/etc/origin</td></tr>
 <tr><td>openshift_common_node_dir</td><td>Set the default root directory for node.</td><td>/etc/origin</td></tr>
-<tr><td>openshift_common_portal_net</td><td>Set the default user-defined networks for Kubernetes. Set to 172.30.0.0/16 to match the default Docker CIDR. Once set, do not update.</td><td>172.17.0.0/16</td></tr>
+<tr><td>openshift_common_portal_net</td><td>Set the default user-defined networks for Kubernetes. Set to 172.30.0.0/16 to match the default Docker CIDR. Once set, do not update.</td><td>172.30.0.0/16</td></tr>
 <tr><td>openshift_docker_insecure_registry_arg</td><td>Set the list of insecure registries for Docker.</td><td>nil</td></tr>
 <tr><td>openshift_docker_add_registry_arg</td><td>Set the list of registries to add to Docker.</td><td>nil</td></tr>
 <tr><td>openshift_docker_block_registry_arg</td><td>Set the list of registries to block in Docker.</td><td>nil</td></tr>
@@ -66,7 +68,7 @@ yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.
 <tr><td>openshift_master_embedded_dns</td><td>Set whether or not to use the embedded DNS.</td><td>true</td></tr>
 <tr><td>openshift_master_embedded_kube</td><td>Set whether ot not the use the embedded Kubernetes server.</td><td>true</td></tr>
 <tr><td>openshift_master_debug_level</td><td>Set the default level for master logging.</td><td>2 </td></tr>
-<tr><td>openshift_master_dns_port</td><td>Set the default port for SkyDNS.</td><td>53</td></tr>
+<tr><td>openshift_master_dns_port</td><td>Set the default port for SkyDNS.</td><td>8053 when set deploy_dnsmasq, 53 otherwise</td></tr>
 <tr><td>openshift_master_label</td><td>Set the default label for master selector.</td><td>region=infra</td></tr>
 <tr><td>openshift_master_generated_configs_dir</td><td>Set the default directory for generating the node certificates.</td><td>/var/www/html/generated-configs'</td></tr>
 <tr><td>openshift_master_router_subdomain</td><td>Set the default domain for the HaProxy routeaProxy.</td><td>cloudapps.domain.local'</td></tr>
@@ -272,7 +274,7 @@ In general, override attributes in the environment should be used when changing 
 
 ### Minimal example ###
 
-* CLUSTER-NATIVE
+* CLUSTER-NATIVE (Only available option since 3.2)
 
 ```json
 {
@@ -290,16 +292,73 @@ In general, override attributes in the environment should be used when changing 
     "cookbook-openshift3": {
       "openshift_HA": true,
       "openshift_cluster_name": "ose-cluster.domain.local",
-      "openshiftv3-master_label": "common-master",
-      "openshiftv3-master_cluster_label": "common-master",
-      "openshiftv3-etcd_cluster_label": "common-master",
-      "openshiftv3-node_label": "common-node"
+      "openshift_master_cluster_vip": "1.1.1.100",
+      "master_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1"
+        },
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3"
+        }
+      ],
+      "master_peers": [
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3"
+        }
+      ],
+      "etcd_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1"
+        },
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3"
+        }
+      ],
+      "node_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1"
+        },
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3"
+        },
+        {
+          "fqdn": "ose4-server.domain.local",
+          "ipaddress": "1.1.1.4"
+        },
+        {
+          "fqdn": "ose5-server.domain.local",
+          "ipaddress": "1.1.1.5"
+        },        
+      ],
     }
   }
 }
 ```
 
-* CLUSTER-PCS
+* CLUSTER-PCS (ONLY WHEN USING OpenShift < 3.2)
 
 ```json
 {
@@ -317,12 +376,68 @@ In general, override attributes in the environment should be used when changing 
     "cookbook-openshift3": {
       "openshift_HA": true,
       "openshift_HA_method": "pcs",
-      "openshift_master_cluster_vip": "192.168.124.99",
+      "openshift_master_cluster_vip": "1.1.1.100,
       "openshift_cluster_name": "ose-cluster.domain.local",
-      "openshiftv3-master_label": "common-master",
-      "openshiftv3-master_cluster_label": "common-master",
-      "openshiftv3-etcd_cluster_label": "common-master",
-      "openshiftv3-node_label": "common-node"
+      "master_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1"
+        },
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3"
+        }
+      ],
+      "master_peers": [
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3"
+        }
+      ],
+      "etcd_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1"
+        },
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3"
+        }
+      ],
+      "node_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1"
+        },
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3"
+        },
+        {
+          "fqdn": "ose4-server.domain.local",
+          "ipaddress": "1.1.1.4"
+        },
+        {
+          "fqdn": "ose5-server.domain.local",
+          "ipaddress": "1.1.1.5"
+        },        
+      ],
     }
   }
 }
@@ -344,8 +459,22 @@ In general, override attributes in the environment should be used when changing 
   },
   "override_attributes": {
     "cookbook-openshift3": {
-      "openshiftv3-master_label": "common-master",
-      "openshiftv3-node_label": "common-node"
+      "master_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1"
+        }
+      ],
+      "node_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1"
+        },
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+        }
+      ],
     }
   }
 }
@@ -441,3 +570,4 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+

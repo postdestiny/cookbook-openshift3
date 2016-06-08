@@ -4,9 +4,9 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-master_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['master_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-master_cluster_label']}")).sort!
-etcd_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['etcd_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-etcd_cluster_label']}")).sort!
-master_peers = Chef::Config[:solo] ? node['cookbook-openshift3']['master_peers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-master_cluster_label']}" NOT name:"#{master_servers.first['fqdn']}"))
+master_servers = node['cookbook-openshift3']['master_servers']
+etcd_servers = node['cookbook-openshift3']['etcd_servers']
+master_peers = node['cookbook-openshift3']['master_peers']
 
 node['cookbook-openshift3']['enabled_firewall_rules_master_cluster'].each do |rule|
   iptables_rule rule do

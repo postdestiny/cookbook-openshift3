@@ -4,7 +4,7 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-node_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['node_servers'] : search(:node, %(role:"#{node['cookbook-openshift3']['openshiftv3-node_label']}")).sort!
+node_servers = node['cookbook-openshift3']['node_servers']
 single_instance = node_servers.size.eql?(1) && node_servers.first['fqdn'].eql?(node['fqdn']) ? true : false
 
 if node['cookbook-openshift3']['deploy_containerized']
@@ -81,7 +81,6 @@ openshift_create_master 'Create master configuration file' do
   origins node['cookbook-openshift3']['erb_corsAllowedOrigins'].uniq
   single_instance single_instance
   master_file node['cookbook-openshift3']['openshift_master_config_file']
-  notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master]", :immediately
   openshift_service_type node['cookbook-openshift3']['openshift_service_type']
 end
 

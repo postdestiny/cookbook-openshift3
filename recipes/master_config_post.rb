@@ -26,10 +26,3 @@ service_accounts.each do |serviceaccount|
     retry_delay 5
   end
 end
-
-node['cookbook-openshift3']['openshift_common_infra_project'].each do |project|
-  execute "Enforce #{project} project node-selector" do
-    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} get namespace #{project} -o yaml | sed '/annotations:/a\\    openshift.io/node-selector: #{node['cookbook-openshift3']['openshift_common_infra_label']}' | #{node['cookbook-openshift3']['openshift_common_client_binary']} replace -n #{project} -f -"
-    not_if "#{node['cookbook-openshift3']['openshift_common_client_binary']} get namespace #{project} -o yaml | grep openshift.io/node-selector"
-  end
-end

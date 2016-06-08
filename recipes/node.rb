@@ -4,9 +4,7 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-master_label = node['cookbook-openshift3']['openshift_cluster_name'].nil? ? node['cookbook-openshift3']['openshiftv3-master_label'] : node['cookbook-openshift3']['openshiftv3-master_cluster_label']
-
-master_servers = Chef::Config[:solo] ? node['cookbook-openshift3']['master_servers'] : search(:node, %(role:"#{master_label}")).sort!
+master_servers = node['cookbook-openshift3']['master_servers']
 
 file '/usr/local/etc/.firewall_node_additional.txt' do
   content node['cookbook-openshift3']['enabled_firewall_additional_rules_node'].join('\n')
@@ -87,14 +85,16 @@ execute 'Extract certificate to Node folder' do
   action :nothing
 end
 
-template '/etc/dnsmasq.d/origin-dns.conf' do
-  source 'origin-dns.conf.erb'
-end
-
-template '/etc/NetworkManager/dispatcher.d/99-origin-dns.sh' do
-  source '99-origin-dns.sh.erb'
-  mode '0755'
-  notifies :restart, 'service[NetworkManager]', :immediately
+if node['cookbook-openshift3']['deploy_dnsmasq']
+  template '/etc/dnsmasq.d/origin-dns.conf' do
+    source 'origin-dns.conf.erb'
+  end
+  
+  template '/etc/NetworkManager/dispatcher.d/99-origin-dns.sh' do
+    source '99-origin-dns.sh.erb'
+    mode '0755'
+    notifies :restart, 'service[NetworkManager]', :immediately
+  end
 end
 
 template node['cookbook-openshift3']['openshift_node_config_file'] do
@@ -105,4 +105,8 @@ end
 
 selinux_policy_boolean 'virt_use_nfs' do
   value true
+end
+
+service "#{node['cookbook-openshift3']['openshift_service_type']}-node" do
+  action :start
 end
