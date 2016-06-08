@@ -19,7 +19,7 @@ Requirements
 Override Attributes
 ===================
 
-[Read more about overriding attributes here!](./attribute-doc.md)
+[Read more about overriding attributes here!](https://github.com/IshentRas/cookbook-openshift3/blob/master/attribute-doc.md)
 
 #### Structure ####
 -------------------
