@@ -19,6 +19,10 @@ Requirements
 Override Attributes
 ===================
 
+### Version specific Openshift 3.1.x ###
+
+If you are running a Openshift 3.1.x environment you'll need to set docker_version to "1.8.2.x" Docker 1.9 is currently not supported due to performance issues.
+
 ### Common setting ###
 
 <table>
@@ -39,7 +43,7 @@ yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.
 <tr><td>httpd_xfer_port</td><td>Set the port used for retrieving certificates.</td><td>9999</td></tr>
 <tr><td>set_nameserver</td><td>Set the nameserver(s) for the host.</td><td>false</td></tr>
 <tr><td>register_dns</td><td>Set the registration of the host against the SOA nameserver.</td><td>false</td></tr>
-<tr><td>core_packages</td><td>Set the list of the pre-requisite packages.</td><td>['libselinux-python', 'wget', 'vim-enhanced', 'net-tools', 'bind-utils', 'git', 'bash-completion docker', 'bash-completion']</td></tr>
+<tr><td>core_packages</td><td>Set the list of the pre-requisite packages.</td><td>['libselinux-python', 'wget', 'vim-enhanced', 'net-tools', 'bind-utils', 'git', 'bash-completion docker', 'bash-completion', 'dnsmasq']</td></tr>
 <tr><td>osn_cluster_dns_domain</td><td>Set the SkyDNS domain name.</td>cluster.local<td></td></tr>
 <tr><td>enabled_firewall_additional_rules_node</td><td>Set the list of additional FW rules to set for a node.</td><td>[]</td></tr>
 <tr><td>openshift_data_dir</td><td>Set the default directory for OSE data.</td><td>/var/lib/origin</td></tr>
@@ -68,7 +72,7 @@ yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.
 <tr><td>openshift_master_embedded_dns</td><td>Set whether or not to use the embedded DNS.</td><td>true</td></tr>
 <tr><td>openshift_master_embedded_kube</td><td>Set whether ot not the use the embedded Kubernetes server.</td><td>true</td></tr>
 <tr><td>openshift_master_debug_level</td><td>Set the default level for master logging.</td><td>2 </td></tr>
-<tr><td>openshift_master_dns_port</td><td>Set the default port for SkyDNS.</td><td>8053 when set deploy_dnsmasq, 53 otherwise</td></tr>
+<tr><td>openshift_master_dns_port</td><td>Set the default port for SkyDNS.</td><td>When deploy_dnsmasq is set to "true" : 8053. Otherwise : 53</td></tr>
 <tr><td>openshift_master_label</td><td>Set the default label for master selector.</td><td>region=infra</td></tr>
 <tr><td>openshift_master_generated_configs_dir</td><td>Set the default directory for generating the node certificates.</td><td>/var/www/html/generated-configs'</td></tr>
 <tr><td>openshift_master_router_subdomain</td><td>Set the default domain for the HaProxy routeaProxy.</td><td>cloudapps.domain.local'</td></tr>
@@ -269,6 +273,8 @@ ENVIRONMENT
 ===========
 
 Create at least 3 environments which would be assigned to nodes based on their profiles (single, cluster-native, cluster-pcs).
+Please not that clsuter-pcs which relies on Pacemaker is only supported by Openshift <= 3.1.x.
+
 Modify the attributes as required in your environments to change how various configurations are applied per the attributes section above. 
 In general, override attributes in the environment should be used when changing attributes.
 
@@ -358,7 +364,7 @@ In general, override attributes in the environment should be used when changing 
 }
 ```
 
-* CLUSTER-PCS (ONLY WHEN USING OpenShift < 3.2)
+* CLUSTER-PCS (only supported when using OpenShift < 3.2)
 
 ```json
 {
@@ -376,7 +382,7 @@ In general, override attributes in the environment should be used when changing 
     "cookbook-openshift3": {
       "openshift_HA": true,
       "openshift_HA_method": "pcs",
-      "openshift_master_cluster_vip": "1.1.1.100,
+      "openshift_master_cluster_vip": "1.1.1.100",
       "openshift_cluster_name": "ose-cluster.domain.local",
       "master_servers": [
         {
