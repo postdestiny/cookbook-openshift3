@@ -33,25 +33,28 @@ if [[ $2 =~ ^(up|dhcp4-change)$ ]]; then
   def_route=$(/sbin/ip route list match 0.0.0.0/0 | awk '{print $3 }')
   def_route_int=$(/sbin/ip route get to ${def_route} | awk '{print $3}')
   def_route_ip=$(/sbin/ip route get to ${def_route} | awk '{print $5}')
-  IP4_NAMESERVERS=$(cat /etc/resolv.conf  | grep -v '^#' | grep nameserver | awk '{print $2}')
   if [[ ${DEVICE_IFACE} == ${def_route_int} ]]; then
     if [ ! -f /etc/dnsmasq.d/origin-dns.conf ]; then
       cat << EOF > /etc/dnsmasq.d/origin-dns.conf
 strict-order
 no-resolv
 domain-needed
-server=/cluster.local/<%=node['cookbook-openshift3']['openshift_common_first_svc_ip'] %>
-server=/<%=node['cookbook-openshift3']['openshift_common_reverse_svc_ip'] %>.in-addr.arpa/<%=node['cookbook-openshift3']['openshift_common_first_svc_ip'] %>
+server=/cluster.local/172.30.0.1
+server=/30.172.in-addr.arpa/172.30.0.1
 EOF
     fi
     # zero out our upstream servers list and feed it into dnsmasq
     echo -n > /etc/dnsmasq.d/origin-upstream-dns.conf
     for ns in ${IP4_NAMESERVERS}; do
-       echo "server=${ns}" >> /etc/dnsmasq.d/origin-upstream-dns.conf
+      if [[ ! -z $ns ]]; then
+        echo "server=${ns}" >> /etc/dnsmasq.d/origin-upstream-dns.conf
+      fi
     done
-    echo "listen-address=${def_route_ip}" >> /etc/dnsmasq.d/origin-upstream-dns.conf
     systemctl restart dnsmasq
 
-    sed -i 's/^nameserver.*$/nameserver '"${def_route_ip}"' # updated by \/etc\/NetworkManager\/dispatcher.d\/99-origin-dns.sh/g' /etc/resolv.conf
+    sed -i '0,/^nameserver/ s/^nameserver.*$/nameserver '"${def_route_ip}"'/g' /etc/resolv.conf
+    if ! grep -q '99-origin-dns.sh' /etc/resolv.conf; then
+      echo "# nameserver updated by /etc/NetworkManager/dispatcher.d/99-origin-dns.sh" >> /etc/resolv.conf
+    fi
   fi
 fi

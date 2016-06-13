@@ -13,9 +13,9 @@ If you are running a Openshift 3.1.x environment you'll need to set docker_versi
 <tr><td>docker_version</td><td>Set the version of Docker to be installed.</td><td>nil</td></tr>
 <tr><td>deploy_containerized</td><td>Set whether or not to deploy a containerized version of Openshift.</td><td>false</td></tr>
 <tr><td>
-deploy_example</td><td>Set whether or not to deploy the openshift example templates files.<td>true</td></tr>
+deploy_example</td><td>Set whether or not to deploy the openshift example templates files.<td>false</td></tr>
 <tr><td>
-deploy_dnsmasq</td><td>Set whether or not to deploy the dnsmasq resolution against SkyDNS.<td>true</td></tr>
+deploy_dnsmasq</td><td>Set whether or not to deploy the dnsmasq resolution against SkyDNS. Need to have NetworkManager running<td>false</td></tr>
 <tr><td>install_method</td><td>Set the installing method for packing.</td><td>yum</td></tr>
 <tr><td>
 yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.com/chef-cookbooks/yum/blob/master/README.md#parameters)</td><td></td></tr>

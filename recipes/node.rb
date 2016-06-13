@@ -89,12 +89,16 @@ if node['cookbook-openshift3']['deploy_dnsmasq']
   template '/etc/dnsmasq.d/origin-dns.conf' do
     source 'origin-dns.conf.erb'
   end
-  
-  template '/etc/NetworkManager/dispatcher.d/99-origin-dns.sh' do
-    source '99-origin-dns.sh.erb'
+
+  cookbook_file '/etc/NetworkManager/dispatcher.d/99-origin-dns.sh'do
+    source '99-origin-dns.sh'
+    owner 'root'
+    group 'root'
     mode '0755'
+    action :create
     notifies :restart, 'service[NetworkManager]', :immediately
   end
+
 end
 
 template node['cookbook-openshift3']['openshift_node_config_file'] do
