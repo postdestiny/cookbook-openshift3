@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.8
+### Improvement
+- Simplify the creation of node/master servers
+
 ## v1.10.7
 ### Bug
 - Fix issue for dnsmasq

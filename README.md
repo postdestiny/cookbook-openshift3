@@ -120,52 +120,8 @@ Include the recipes in roles so as to ease the deployment.
   "chef_type": "role",
   "run_list": [
     "recipe[cookbook-openshift3]",
-    "recipe[cookbook-openshift3::common]"
-  ],
-  "env_run_lists": {
-
-  }
-}
-```
-
-* COMMON-MASTER
-
-```json
-{
-  "name": "common-master",
-  "description": "Common Master Role",
-  "json_class": "Chef::Role",
-  "default_attributes": {
-
-  },
-  "override_attributes": {
-  },
-  "chef_type": "role",
-  "run_list": [
-    "role[base]",
-    "recipe[cookbook-openshift3::master]"
-  ],
-  "env_run_lists": {
-
-  }
-}
-```
-
-* COMMON-NODE
-
-```json
-{
-  "name": "common-node",
-  "description": "Common Node Role",
-  "json_class": "Chef::Role",
-  "default_attributes": {
-
-  },
-  "override_attributes": {
-  },
-  "chef_type": "role",
-  "run_list": [
-    "role[base]",
+    "recipe[cookbook-openshift3::common]",
+    "recipe[cookbook-openshift3::master]",
     "recipe[cookbook-openshift3::node]"
   ],
   "env_run_lists": {
@@ -440,17 +396,8 @@ end
 Run list
 ==================
 
-* MASTER ONLY
 ```
-knife node run_list add NODE_NAME 'role[common-master], recipe[cookbook-openshift3::node_config_post]'
-```
-* NODE ONLY
-```
-knife node run_list add NODE_NAME 'role[common-node]'
-```
-* ALL IN THE BOX (MASTER + NODE)
-```
-knife node run_list add NODE_NAME 'role[common-master], role[common-node], recipe[cookbook-openshift3::node_config_post]'
+knife node run_list add NODE_NAME 'role[base]'
 ```
 
 Test (ORIGIN)

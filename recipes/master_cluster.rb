@@ -16,6 +16,16 @@ end
 
 if master_servers.first['fqdn'] == node['fqdn']
   master_servers.each do |master_server|
+    directory '/var/www/html/master' do
+      mode '0755'
+      owner 'apache'
+      group 'apache'
+    end
+    directory '/var/www/html/master/generated_certs' do
+      mode '0755'
+      owner 'apache'
+      group 'apache'
+    end
     directory "#{node['cookbook-openshift3']['master_generated_certs_dir']}/openshift-master-#{master_server['fqdn']}" do
       mode '0755'
       owner 'apache'

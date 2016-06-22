@@ -44,6 +44,16 @@ if etcd_servers.size.odd? && etcd_servers.size >= 3
     end
 
     etcd_servers.each do |etcd_master|
+      directory '/var/www/html/etcd' do
+        mode '0755'
+        owner 'apache'
+        group 'apache'
+      end
+      directory '/var/www/html/etcd/generated_certs' do
+        mode '0755'
+        owner 'apache'
+        group 'apache'
+      end
       directory "#{node['cookbook-openshift3']['etcd_generated_certs_dir']}/etcd-#{etcd_master['fqdn']}" do
         mode '0755'
         owner 'apache'
