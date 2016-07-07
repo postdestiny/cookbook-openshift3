@@ -4,7 +4,7 @@ apiVersion: v1
 assetConfig:
 <%= render "custom_assetConfig.erb" , :local => false -%>
   logoutURL: ""
-  masterPublicURL:  <%= node['cookbook-openshift3']['openshift_master_public_url'] %>/
+  masterPublicURL:  <%= node['cookbook-openshift3']['openshift_master_public_api_url'] %>
   publicURL: <%= node['cookbook-openshift3']['openshift_master_console_url'] %>/
 <% if node['cookbook-openshift3']['openshift_master_metrics_public_url'] %>
   metricsPublicURL: https://<%= node['cookbook-openshift3']['openshift_master_metrics_public_url'] %>/hawkular/metrics
@@ -98,7 +98,7 @@ kubernetesMasterConfig:
 masterClients:
   externalKubernetesKubeConfig: ""
   openshiftLoopbackKubeConfig: openshift-master.kubeconfig
-masterPublicURL: <%= node['cookbook-openshift3']['openshift_master_api_url'] %>
+masterPublicURL: <%= node['cookbook-openshift3']['openshift_master_public_api_url'] %>
 networkConfig:
   clusterNetworkCIDR: <%= node['cookbook-openshift3']['openshift_master_sdn_cluster_network_cidr'] %>
   serviceNetworkCIDR: <%= node['cookbook-openshift3']['openshift_common_portal_net'] %>

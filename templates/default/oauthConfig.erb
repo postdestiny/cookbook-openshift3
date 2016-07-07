@@ -84,8 +84,8 @@ oauthConfig:
       insecure: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][node['cookbook-openshift3']['oauth_Identity']]['ldap_insecure'] %>
       url: "ldap://<%= node['cookbook-openshift3']['openshift_master_identity_provider'][node['cookbook-openshift3']['oauth_Identity']]['ldap_server'] %>/<%= node['cookbook-openshift3']['openshift_master_identity_provider'][node['cookbook-openshift3']['oauth_Identity']]['ldap_base_ou'] %>?<%= node['cookbook-openshift3']['openshift_master_identity_provider'][node['cookbook-openshift3']['oauth_Identity']]['ldap_preferred_username'] %>?sub?(objectClass=*)"
 <% end -%>
-  masterPublicURL: <%= node['cookbook-openshift3']['openshift_master_public_url'] %>
-  masterURL: <%= node['cookbook-openshift3']['openshift_master_public_url'] %>
+  masterPublicURL: <%= node['cookbook-openshift3']['openshift_master_public_api_url'] %>
+  masterURL: <%= node['cookbook-openshift3']['openshift_master_api_url'] %>
   sessionConfig:
     sessionMaxAgeSeconds: <%= node['cookbook-openshift3']['openshift_master_session_max_seconds'] %>
     sessionName: <%= node['cookbook-openshift3']['openshift_master_session_name'] %>

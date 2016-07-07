@@ -1,6 +1,13 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.9
+### Bug
+- Fix URL for master API
+
+### Improvement
+- Clarify use of masterPublicURL, publicURL and masterURL
+
 ## v1.10.8
 ### Improvement
 - Simplify the creation of node/master servers

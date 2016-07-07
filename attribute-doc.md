@@ -8,7 +8,7 @@ If you are running a Openshift 3.1.x environment you'll need to set docker_versi
 <thead><tr><td><b>cookbook-openshift3 config item</b></td><td><b>Description</b></td><td><b>Default</b></td></tr></thead>
 <tbody>
 <tr><td>openshift_deployment_type</td><td>Set the deployment type for OSE ('origin' or 'enterprise').</td><td>enterprise</td></tr>
-<tr><td>openshift_common_public_hostname</td><td>Set the master public hostname.</td><td>Output of 'ohai fqdn'</td></tr>
+<tr><td>openshift_common_public_hostname</td><td>Set the master public hostname.</td><td>Output of 'ohai fqdn' if single master. Otherwise sets to openshift_cluster_name</td></tr>
 <tr><td>openshift_HA</td><td>Set whether or not to deploy a highly-available services for OSE.</td><td>false</td></tr>
 <tr><td>docker_version</td><td>Set the version of Docker to be installed.</td><td>nil</td></tr>
 <tr><td>deploy_containerized</td><td>Set whether or not to deploy a containerized version of Openshift.</td><td>false</td></tr>
@@ -45,6 +45,10 @@ yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.
 <tr><td>openshift_common_registry_url</td><td>Set the default registry URL.</td><td>'openshift3/ose-${component}:${version}'</td></tr>
 <tr><td>openshift_master_bind_addr</td><td>Set default bind address.</td><td>'0.0.0.0'</td></tr>
 <tr><td>openshift_master_api_port</td><td>Set default listening port for Master API.</td><td>8443</td></tr>
+<tr><td>openshift_master_console_port</td><td>Set the default listening port for console.</td><td>8443</td></tr>
+<tr><td>openshift_master_public_api_url</td><td>Set the default public URL for connecting to the API.</td><td>https://openshift_common_public_hostname:8443</td></tr>
+<tr><td>openshift_master_api_url</td><td>Set the default internal URL for connecting to the API. Reserved to master(s). Not recommended to change</td><td>https://openshift_common_public_hostname:8443</td></tr>
+<tr><td>openshift_master_console_url</td><td>Set the default public URL for connecting to the Web Console.</td><td>https://openshift_common_public_hostname:8443/console</td></tr>
 <tr><td>openshift_master_console_port</td><td>Set the default listening port for console.</td><td>8443</td></tr>
 <tr><td>openshift_master_controllers_port</td><td>Set the default listening port for controllers.</td><td>8444</td></tr>
 <tr><td>openshift_master_controller_lease_ttl</td><td>Set the default lease TTL for controllers.</td><td>30</td></tr>
