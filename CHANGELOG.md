@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.11
+### Bug
+- Remove too restrictive version for RHEL
+
 ## v1.10.10
 ### Bug
 - Fix typo for URL for Public master API

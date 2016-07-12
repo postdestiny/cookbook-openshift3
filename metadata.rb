@@ -6,11 +6,11 @@ source_url 'https://github.com/IshentRas/cookbook-openshift3'
 issues_url 'https://github.com/IshentRas/cookbook-openshift3/issues'
 description 'Installs/Configures Openshift 3'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '1.10.10'
-supports 'redhat', '>= 7.2'
-supports 'centos', '>= 7.2'
+version '1.10.11'
+supports 'redhat', '>= 7.1'
+supports 'centos', '>= 7.1'
 
-depends 'iptables', '>= 2.0.0'
+depends 'iptables', '>= 1.0.0'
 depends 'selinux_policy'
 depends 'yum'
 
