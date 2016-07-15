@@ -207,6 +207,7 @@ openshift_create_master 'Create master configuration file' do
   masters_size master_servers.size
   openshift_service_type node['cookbook-openshift3']['openshift_service_type']
   cluster true
+  single_instance false
 end
 
 execute 'Activate services for Master API and Controllers' do

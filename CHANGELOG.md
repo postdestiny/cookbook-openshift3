@@ -1,6 +1,13 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.12
+### Bug
+- Fix nodeSelector issue when using cluster architecture
+
+### Improvement
+- Add capacity to manage container logs (Docker options)
+
 ## v1.10.11
 ### Bug
 - Remove too restrictive version for RHEL

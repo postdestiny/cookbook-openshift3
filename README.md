@@ -87,6 +87,15 @@ Override Attributes
 }
 ```
 
+* `node['cookbook-openshift3']['docker_log_options']`
+
+```json
+{
+ "max-size": "50M",
+ "max-file": "3"
+}
+```
+
 * `node['cookbook-openshift3']['openshift_master_named_certificates']`
 
 * CN or SAN names are automatically detected from the certificate file.

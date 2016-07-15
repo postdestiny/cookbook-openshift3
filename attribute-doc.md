@@ -11,6 +11,7 @@ If you are running a Openshift 3.1.x environment you'll need to set docker_versi
 <tr><td>openshift_common_public_hostname</td><td>Set the master public hostname.</td><td>Output of 'ohai fqdn' if single master. Otherwise sets to openshift_cluster_name</td></tr>
 <tr><td>openshift_HA</td><td>Set whether or not to deploy a highly-available services for OSE.</td><td>false</td></tr>
 <tr><td>docker_version</td><td>Set the version of Docker to be installed.</td><td>nil</td></tr>
+<tr><td>docker_log_options</td><td>Set the capability for managing Docker container logs.</td><td>nil</td></tr>
 <tr><td>deploy_containerized</td><td>Set whether or not to deploy a containerized version of Openshift.</td><td>false</td></tr>
 <tr><td>
 deploy_example</td><td>Set whether or not to deploy the openshift example templates files.<td>false</td></tr>

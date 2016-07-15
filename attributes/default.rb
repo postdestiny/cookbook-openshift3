@@ -29,6 +29,7 @@ default['cookbook-openshift3']['deploy_containerized'] = false
 default['cookbook-openshift3']['deploy_example'] = false
 default['cookbook-openshift3']['deploy_dnsmasq'] = false
 default['cookbook-openshift3']['docker_version'] = nil
+default['cookbook-openshift3']['docker_log_options'] = nil
 default['cookbook-openshift3']['install_method'] = 'yum'
 default['cookbook-openshift3']['httpd_xfer_port'] = '9999'
 default['cookbook-openshift3']['set_nameserver'] = false
