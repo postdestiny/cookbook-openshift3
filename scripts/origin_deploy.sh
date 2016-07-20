@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 #
+set -e
 clear
 cat << EOF
 
