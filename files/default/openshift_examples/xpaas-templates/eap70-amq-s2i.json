@@ -3,16 +3,16 @@
     "apiVersion": "v1",
     "metadata": {
         "annotations": {
+            "description": "Application template for EAP 7 A-MQ applications built using S2I.",
             "iconClass": "icon-jboss",
-            "description": "Application template for EAP 7 applications built using S2I.",
-            "tags": "eap,javaee,java,jboss,xpaas",
-            "version": "1.3.0"
+            "tags": "eap,amq,javaee,java,messaging,jboss,xpaas",
+            "version": "1.3.2"
         },
-        "name": "eap70-https-s2i"
+        "name": "eap70-amq-s2i"
     },
     "labels": {
-        "template": "eap70-https-s2i",
-        "xpaas": "1.3.0"
+        "template": "eap70-amq-s2i",
+        "xpaas": "1.3.2"
     },
     "parameters": [
         {
@@ -36,32 +36,56 @@
         {
             "description": "Git source URI for application",
             "name": "SOURCE_REPOSITORY_URL",
-            "value": "https://github.com/jboss-developer/jboss-eap-quickstarts",
+            "value": "https://github.com/jboss-openshift/openshift-quickstarts.git",
             "required": true
         },
         {
             "description": "Git branch/tag reference",
             "name": "SOURCE_REPOSITORY_REF",
-            "value": "7.0.x-develop",
+            "value": "1.3",
             "required": false
         },
         {
             "description": "Path within Git project to build; empty for root project directory.",
             "name": "CONTEXT_DIR",
-            "value": "kitchensink",
+            "value": "helloworld-mdb",
             "required": false
         },
         {
-            "description": "Queue names",
+            "description": "JNDI name for connection factory used by applications to connect to the broker, e.g. java:/ConnectionFactory",
+            "name": "MQ_JNDI",
+            "value": "java:/ConnectionFactory",
+            "required": false
+        },
+        {
+            "description": "Broker protocols to configure, separated by commas. Allowed values are: `openwire`, `amqp`, `stomp` and `mqtt`. Only `openwire` is supported by EAP.",
+            "name": "MQ_PROTOCOL",
+            "value": "openwire",
+            "required": false
+        },
+        {
+            "description": "Queue names, separated by commas. These queues will be automatically created when the broker starts. Also, they will be made accessible as JNDI resources in EAP.",
             "name": "MQ_QUEUES",
+            "value": "HELLOWORLDMDBQueue",
+            "required": false
+        },
+        {
+            "description": "Topic names, separated by commas. These topics will be automatically created when the broker starts. Also, they will be made accessible as JNDI resources in EAP.",
+            "name": "MQ_TOPICS",
+            "value": "HELLOWORLDMDBTopic",
+            "required": false
+        },
+        {
+            "description": "List of packages that are allowed to be serialized for use in ObjectMessage, separated by commas. If your app doesn't use ObjectMessages, leave this blank. This is a security enforcement. For the rationale, see http://activemq.apache.org/objectmessage.html",
+            "name": "MQ_SERIALIZABLE_PACKAGES",
             "value": "",
             "required": false
         },
         {
-            "description": "Topic names",
-            "name": "MQ_TOPICS",
-            "value": "",
-            "required": false
+            "description": "The name of the service account to use for the deployment.  The service account should be configured to allow useage of the secret(s) specified by HTTPS_SECRET and JGROUPS_ENCRYPT_SECRET.",
+            "name": "SERVICE_ACCOUNT_NAME",
+            "value": "eap7-service-account",
+            "required": true
         },
         {
             "description": "The name of the secret containing the keystore file",
@@ -73,6 +97,12 @@
             "description": "The name of the keystore file within the secret",
             "name": "HTTPS_KEYSTORE",
             "value": "keystore.jks",
+            "required": false
+        },
+        {
+            "description": "The type of the keystore file (JKS or JCEKS)",
+            "name": "HTTPS_KEYSTORE_TYPE",
+            "value": "",
             "required": false
         },
         {
@@ -88,11 +118,30 @@
             "required": false
         },
         {
-            "description": "ActiveMQ cluster admin password",
-            "name": "MQ_CLUSTER_PASSWORD",
+            "description": "User name for standard broker user. It is required for connecting to the broker. If left empty, it will be generated.",
+            "name": "MQ_USERNAME",
+            "from": "user[a-zA-Z0-9]{3}",
+            "generate": "expression",
+            "required": false
+        },
+        {
+            "description": "Password for standard broker user. It is required for connecting to the broker. If left empty, it will be generated.",
+            "name": "MQ_PASSWORD",
             "from": "[a-zA-Z0-9]{8}",
             "generate": "expression",
-            "required": true
+            "required": false
+        },
+        {
+            "description": "The discovery agent type to use for discovering mesh endpoints.  'dns' will use OpenShift's DNS service to resolve endpoints.  'kube' will use Kubernetes REST API to resolve service endpoints.  If using 'kube' the service account for the pod must have the 'view' role, which can be added via 'oc policy add-role-to-user view system:serviceaccount:<namespace>:default' where <namespace> is the project namespace.",
+            "name": "AMQ_MESH_DISCOVERY_TYPE",
+            "value": "kube",
+            "required": false
+        },
+        {
+            "description": "The A-MQ storage usage limit",
+            "name": "AMQ_STORAGE_USAGE_LIMIT",
+            "value": "100 gb",
+            "required": false
         },
         {
             "description": "GitHub trigger secret",
@@ -144,6 +193,12 @@
             "from": "[a-zA-Z0-9]{8}",
             "generate": "expression",
             "required": true
+        },
+        {
+            "description": "Controls whether exploded deployment content should be automatically deployed",
+            "name": "AUTO_DEPLOY_EXPLODED",
+            "value": "false",
+            "required": false
         }
     ],
     "objects": [
@@ -167,7 +222,7 @@
                     "application": "${APPLICATION_NAME}"
                 },
                 "annotations": {
-                    "description": "The web server's http port."
+                    "description": "The web server's HTTP port."
                 }
             }
         },
@@ -191,7 +246,31 @@
                     "application": "${APPLICATION_NAME}"
                 },
                 "annotations": {
-                    "description": "The web server's https port."
+                    "description": "The web server's HTTPS port."
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "spec": {
+                "ports": [
+                    {
+                        "port": 61616,
+                        "targetPort": 61616
+                    }
+                ],
+                "selector": {
+                    "deploymentConfig": "${APPLICATION_NAME}-amq"
+                }
+            },
+            "metadata": {
+                "name": "${APPLICATION_NAME}-amq-tcp",
+                "labels": {
+                    "application": "${APPLICATION_NAME}"
+                },
+                "annotations": {
+                    "description": "The broker's OpenWire port."
                 }
             }
         },
@@ -205,7 +284,7 @@
                     "application": "${APPLICATION_NAME}"
                 },
                 "annotations": {
-                    "description": "Route for application's http service."
+                    "description": "Route for application's HTTP service."
                 }
             },
             "spec": {
@@ -225,7 +304,7 @@
                     "application": "${APPLICATION_NAME}"
                 },
                 "annotations": {
-                    "description": "Route for application's https service."
+                    "description": "Route for application's HTTPS service."
                 }
             },
             "spec": {
@@ -273,7 +352,7 @@
                         "from": {
                             "kind": "ImageStreamTag",
                             "namespace": "${IMAGE_STREAM_NAMESPACE}",
-                            "name": "jboss-eap70-openshift:1.3-Beta"
+                            "name": "jboss-eap70-openshift:1.4"
                         }
                     }
                 },
@@ -328,8 +407,8 @@
                                 "${APPLICATION_NAME}"
                             ],
                             "from": {
-                                "kind": "ImageStream",
-                                "name": "${APPLICATION_NAME}"
+                                "kind": "ImageStreamTag",
+                                "name": "${APPLICATION_NAME}:latest"
                             }
                         }
                     },
@@ -350,7 +429,7 @@
                         }
                     },
                     "spec": {
-                        "serviceAccountName": "eap7-service-account",
+                        "serviceAccountName": "${SERVICE_ACCOUNT_NAME}",
                         "terminationGracePeriodSeconds": 60,
                         "containers": [
                             {
@@ -411,6 +490,38 @@
                                 ],
                                 "env": [
                                     {
+                                        "name": "MQ_SERVICE_PREFIX_MAPPING",
+                                        "value": "${APPLICATION_NAME}-amq=MQ"
+                                    },
+                                    {
+                                        "name": "MQ_JNDI",
+                                        "value": "${MQ_JNDI}"
+                                    },
+                                    {
+                                        "name": "MQ_USERNAME",
+                                        "value": "${MQ_USERNAME}"
+                                    },
+                                    {
+                                        "name": "MQ_PASSWORD",
+                                        "value": "${MQ_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "MQ_PROTOCOL",
+                                        "value": "tcp"
+                                    },
+                                    {
+                                        "name": "MQ_QUEUES",
+                                        "value": "${MQ_QUEUES}"
+                                    },
+                                    {
+                                        "name": "MQ_TOPICS",
+                                        "value": "${MQ_TOPICS}"
+                                    },
+                                    {
+                                        "name": "MQ_SERIALIZABLE_PACKAGES",
+                                        "value": "${MQ_SERIALIZABLE_PACKAGES}"
+                                    },
+                                    {
                                         "name": "OPENSHIFT_KUBE_PING_LABELS",
                                         "value": "application=${APPLICATION_NAME}"
                                     },
@@ -431,24 +542,16 @@
                                         "value": "${HTTPS_KEYSTORE}"
                                     },
                                     {
+                                        "name": "HTTPS_KEYSTORE_TYPE",
+                                        "value": "${HTTPS_KEYSTORE_TYPE}"
+                                    },
+                                    {
                                         "name": "HTTPS_NAME",
                                         "value": "${HTTPS_NAME}"
                                     },
                                     {
                                         "name": "HTTPS_PASSWORD",
                                         "value": "${HTTPS_PASSWORD}"
-                                    },
-                                    {
-                                        "name": "MQ_CLUSTER_PASSWORD",
-                                        "value": "${MQ_CLUSTER_PASSWORD}"
-                                    },
-                                    {
-                                        "name": "MQ_QUEUES",
-                                        "value": "${MQ_QUEUES}"
-                                    },
-                                    {
-                                        "name": "MQ_TOPICS",
-                                        "value": "${MQ_TOPICS}"
                                     },
                                     {
                                         "name": "JGROUPS_ENCRYPT_SECRET",
@@ -473,6 +576,10 @@
                                     {
                                         "name": "JGROUPS_CLUSTER_PASSWORD",
                                         "value": "${JGROUPS_CLUSTER_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "AUTO_DEPLOY_EXPLODED",
+                                        "value": "${AUTO_DEPLOY_EXPLODED}"
                                     }
                                 ]
                             }
@@ -489,6 +596,160 @@
                                 "secret": {
                                     "secretName": "${JGROUPS_ENCRYPT_SECRET}"
                                 }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}-amq",
+                "labels": {
+                    "application": "${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "triggers": [
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "${APPLICATION_NAME}-amq"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "namespace": "${IMAGE_STREAM_NAMESPACE}",
+                                "name": "jboss-amq-62:1.3"
+                            }
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "deploymentConfig": "${APPLICATION_NAME}-amq"
+                },
+                "template": {
+                    "metadata": {
+                        "name": "${APPLICATION_NAME}-amq",
+                        "labels": {
+                            "deploymentConfig": "${APPLICATION_NAME}-amq",
+                            "application": "${APPLICATION_NAME}"
+                        }
+                    },
+                    "spec": {
+                        "terminationGracePeriodSeconds": 60,
+                        "containers": [
+                            {
+                                "name": "${APPLICATION_NAME}-amq",
+                                "image": "jboss-amq-62",
+                                "imagePullPolicy": "Always",
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "/bin/bash",
+                                            "-c",
+                                            "/opt/amq/bin/readinessProbe.sh"
+                                        ]
+                                    }
+                                },
+                                "ports": [
+                                    {
+                                        "name": "jolokia",
+                                        "containerPort": 8778,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "amqp",
+                                        "containerPort": 5672,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "amqp-ssl",
+                                        "containerPort": 5671,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "mqtt",
+                                        "containerPort": 1883,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "stomp",
+                                        "containerPort": 61613,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "stomp-ssl",
+                                        "containerPort": 61612,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "tcp",
+                                        "containerPort": 61616,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "tcp-ssl",
+                                        "containerPort": 61617,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "AMQ_USER",
+                                        "value": "${MQ_USERNAME}"
+                                    },
+                                    {
+                                        "name": "AMQ_PASSWORD",
+                                        "value": "${MQ_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "AMQ_TRANSPORTS",
+                                        "value": "${MQ_PROTOCOL}"
+                                    },
+                                    {
+                                        "name": "AMQ_QUEUES",
+                                        "value": "${MQ_QUEUES}"
+                                    },
+                                    {
+                                        "name": "AMQ_TOPICS",
+                                        "value": "${MQ_TOPICS}"
+                                    },
+                                    {
+                                        "name": "MQ_SERIALIZABLE_PACKAGES",
+                                        "value": "${MQ_SERIALIZABLE_PACKAGES}"
+                                    },
+                                    {
+                                        "name": "AMQ_MESH_DISCOVERY_TYPE",
+                                        "value": "${AMQ_MESH_DISCOVERY_TYPE}"
+                                    },
+                                    {
+                                        "name": "AMQ_MESH_SERVICE_NAME",
+                                        "value": "${APPLICATION_NAME}-amq-tcp"
+                                    },
+                                    {
+                                        "name": "AMQ_MESH_SERVICE_NAMESPACE",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "fieldPath": "metadata.namespace"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "AMQ_STORAGE_USAGE_LIMIT",
+                                        "value": "${AMQ_STORAGE_USAGE_LIMIT}"
+                                    }
+                                ]
                             }
                         ]
                     }

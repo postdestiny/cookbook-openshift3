@@ -4,6 +4,9 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
+default['cookbook-openshift3']['use_params_roles'] = false
+default['cookbook-openshift3']['use_wildcard_nodes'] = false
+default['cookbook-openshift3']['wildcard_domain'] = ''
 default['cookbook-openshift3']['openshift_cluster_name'] = nil
 default['cookbook-openshift3']['openshift_master_cluster_vip'] = nil
 default['cookbook-openshift3']['openshift_HA'] = false

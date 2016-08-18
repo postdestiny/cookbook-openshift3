@@ -4,7 +4,8 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-node_servers = node['cookbook-openshift3']['node_servers']
+node_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['node_servers']}")).sort! : node['cookbook-openshift3']['node_servers']
+
 single_instance = node_servers.size.eql?(1) && node_servers.first['fqdn'].eql?(node['fqdn']) ? true : false
 
 if node['cookbook-openshift3']['deploy_containerized']

@@ -1,6 +1,15 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.13
+### Bug
+- Add SNI capability when testing master API
+
+### Improvement
+- Give the choice to user to select CHEF search or solo capability
+- Add the concept of wildcard nodes --> wildcard kubeconfig (AWS cloud deployment)
+- Update Openshift templates
+
 ## v1.10.12
 ### Bug
 - Fix nodeSelector issue when using cluster architecture

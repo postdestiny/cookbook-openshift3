@@ -29,3 +29,5 @@ service 'docker'
 service 'NetworkManager'
 
 service 'openvswitch'
+
+include_recipe 'cookbook-openshift3::common'

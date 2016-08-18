@@ -4,8 +4,9 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-master_servers = node['cookbook-openshift3']['master_servers']
-node_servers = node['cookbook-openshift3']['node_servers']
+master_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['master_servers']}")).sort! : node['cookbook-openshift3']['master_servers']
+node_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['node_servers']}")).sort! : node['cookbook-openshift3']['node_servers']
+path_certificate = node['cookbook-openshift3']['use_wildcard_nodes'] ? 'wildcard_nodes.tgz' : "#{node['fqdn']}.tgz"
 
 if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
   file '/usr/local/etc/.firewall_node_additional.txt' do
@@ -74,7 +75,7 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
 
   remote_file "Retrieve certificate from Master[#{master_servers.first['fqdn']}]" do
     path "#{node['cookbook-openshift3']['openshift_node_config_dir']}/#{node['fqdn']}.tgz"
-    source "http://#{master_servers.first['ipaddress']}:#{node['cookbook-openshift3']['httpd_xfer_port']}/generated-configs/#{node['fqdn']}.tgz"
+    source "http://#{master_servers.first['ipaddress']}:#{node['cookbook-openshift3']['httpd_xfer_port']}/generated-configs/#{path_certificate}"
     action :create_if_missing
     notifies :run, 'execute[Extract certificate to Node folder]', :immediately
     retries 12

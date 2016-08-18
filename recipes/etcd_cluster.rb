@@ -4,9 +4,9 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-etcd_servers = node['cookbook-openshift3']['etcd_servers']
+etcd_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{etcd_servers}")).sort! : node['cookbook-openshift3']['etcd_servers']
 
-if etcd_servers.size.odd? && etcd_servers.size >= 3
+if etcd_servers.size.odd? && etcd_servers.size >= 1
   if etcd_servers.first['fqdn'] == node['fqdn']
     package 'httpd' do
       notifies :run, 'ruby_block[Change HTTPD port xfer]', :immediately

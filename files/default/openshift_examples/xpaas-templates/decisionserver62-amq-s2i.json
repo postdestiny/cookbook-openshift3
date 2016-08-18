@@ -391,8 +391,8 @@
                                 "${APPLICATION_NAME}"
                             ],
                             "from": {
-                                "kind": "ImageStream",
-                                "name": "${APPLICATION_NAME}"
+                                "kind": "ImageStreamTag",
+                                "name": "${APPLICATION_NAME}:latest"
                             }
                         }
                     },
@@ -571,7 +571,7 @@
                             "from": {
                                 "kind": "ImageStreamTag",
                                 "namespace": "${IMAGE_STREAM_NAMESPACE}",
-                                "name": "jboss-amq-62:1.2"
+                                "name": "jboss-amq-62:1.3"
                             }
                         }
                     },

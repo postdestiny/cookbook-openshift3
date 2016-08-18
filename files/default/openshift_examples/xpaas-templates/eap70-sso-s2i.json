@@ -3,16 +3,16 @@
     "apiVersion": "v1",
     "metadata": {
         "annotations": {
-            "description": "Application template for EAP 6 PostgreSQL applications with persistent storage built using S2I.",
-            "iconClass": "icon-jboss",
-            "tags": "eap,postgresql,javaee,java,database,jboss,xpaas",
-            "version": "1.2.0"
+            "iconClass" : "icon-jboss",
+            "description": "Application template for EAP 6 applications built using S2I, enabled for SSO.",
+            "tags": "eap,javaee,java,jboss,xpaas,sso,keycloak",
+            "version": "1.3.2"
         },
-        "name": "eap64-postgresql-persistent-s2i"
+        "name": "eap70-sso-s2i"
     },
     "labels": {
-        "template": "eap64-postgresql-persistent-s2i",
-        "xpaas": "1.2.0"
+        "template": "eap70-sso-s2i",
+        "xpaas": "1.3.2"
     },
     "parameters": [
         {
@@ -22,52 +22,34 @@
             "required": true
         },
         {
-            "description": "Custom hostname for http service route.  Leave blank for default hostname, e.g.: <application-name>-<project>.<default-domain-suffix>",
+            "description": "Hostname for http service route (e.g. eap-app-myproject.example.com).  Required for SSO-enabled applications.  This is added to the white list of redirects in the SSO server.",
             "name": "HOSTNAME_HTTP",
             "value": "",
-            "required": false
+            "required": true
         },
         {
-            "description": "Custom hostname for https service route.  Leave blank for default hostname, e.g.: secure-<application-name>-<project>.<default-domain-suffix>",
+            "description": "Hostname for https service route (e.g. secure-eap-app-myproject.example.com).  Required for SSO-enabled applications.  This is added to the white list of redirects in the SSO server.",
             "name": "HOSTNAME_HTTPS",
             "value": "",
-            "required": false
+            "required": true
         },
         {
             "description": "Git source URI for application",
             "name": "SOURCE_REPOSITORY_URL",
-            "value": "https://github.com/jboss-openshift/openshift-quickstarts",
+            "value": "https://github.com/redhat-developer/redhat-sso-quickstarts",
             "required": true
         },
         {
             "description": "Git branch/tag reference",
             "name": "SOURCE_REPOSITORY_REF",
-            "value": "1.2",
+            "value": "7.0.x-ose",
             "required": false
         },
         {
             "description": "Path within Git project to build; empty for root project directory.",
             "name": "CONTEXT_DIR",
-            "value": "todolist/todolist-jdbc",
+            "value": "",
             "required": false
-        },
-        {
-            "description": "Database JNDI name used by application to resolve the datasource, e.g. java:/jboss/datasources/postgresql",
-            "name": "DB_JNDI",
-            "value": "java:jboss/datasources/TodoListDS",
-            "required": false
-        },
-        {
-            "description": "Database name",
-            "name": "DB_DATABASE",
-            "value": "root",
-            "required": true
-        },
-        {
-            "description": "Size of persistent storage for database volume.",
-            "name": "VOLUME_CAPACITY",
-            "value": "512Mi",
-            "required": true
         },
         {
             "description": "Queue names",
@@ -82,10 +64,16 @@
             "required": false
         },
         {
+            "description": "The name of the service account to use for the deployment.  The service account should be configured to allow useage of the secret(s) specified by HTTPS_SECRET and JGROUPS_ENCRYPT_SECRET.",
+            "name": "SERVICE_ACCOUNT_NAME",
+            "value": "eap7-service-account",
+            "required": true
+        },
+        {
             "description": "The name of the secret containing the keystore file",
             "name": "HTTPS_SECRET",
-            "value": "eap-app-secret",
-            "required": false
+            "value": "eap7-app-secret",
+            "required": true
         },
         {
             "description": "The name of the keystore file within the secret",
@@ -94,59 +82,26 @@
             "required": false
         },
         {
-            "description": "The name associated with the server certificate",
+            "description": "The type of the keystore file (JKS or JCEKS)",
+            "name": "HTTPS_KEYSTORE_TYPE",
+            "value": "",
+            "required": false
+        },
+        {
+            "description": "The name associated with the server certificate (e.g. jboss)",
             "name": "HTTPS_NAME",
             "value": "",
             "required": false
         },
         {
-            "description": "The password for the keystore and certificate",
+            "description": "The password for the keystore and certificate (e.g. mykeystorepass)",
             "name": "HTTPS_PASSWORD",
             "value": "",
             "required": false
         },
         {
-            "description": "Sets xa-pool/min-pool-size for the configured datasource.",
-            "name": "DB_MIN_POOL_SIZE",
-            "required": false
-        },
-        {
-            "description": "Sets xa-pool/max-pool-size for the configured datasource.",
-            "name": "DB_MAX_POOL_SIZE",
-            "required": false
-        },
-        {
-            "description": "Sets transaction-isolation for the configured datasource.",
-            "name": "DB_TX_ISOLATION",
-            "required": false
-        },
-        {
-            "description": "The maximum number of client connections allowed. This also sets the maximum number of prepared transactions.",
-            "name": "POSTGRESQL_MAX_CONNECTIONS",
-            "required": false
-        },
-        {
-            "description": "Configures how much memory is dedicated to PostgreSQL for caching data.",
-            "name": "POSTGRESQL_SHARED_BUFFERS",
-            "required": false
-        },
-        {
             "description": "HornetQ cluster admin password",
             "name": "HORNETQ_CLUSTER_PASSWORD",
-            "from": "[a-zA-Z0-9]{8}",
-            "generate": "expression",
-            "required": true
-        },
-        {
-            "description": "Database user name",
-            "name": "DB_USERNAME",
-            "from": "user[a-zA-Z0-9]{3}",
-            "generate": "expression",
-            "required": true
-        },
-        {
-            "description": "Database user password",
-            "name": "DB_PASSWORD",
             "from": "[a-zA-Z0-9]{8}",
             "generate": "expression",
             "required": true
@@ -174,7 +129,7 @@
         {
             "description": "The name of the secret containing the keystore file",
             "name": "JGROUPS_ENCRYPT_SECRET",
-            "value": "eap-app-secret",
+            "value": "eap7-app-secret",
             "required": false
         },
         {
@@ -184,13 +139,13 @@
             "required": false
         },
         {
-            "description": "The name associated with the server certificate",
+            "description": "The name associated with the server certificate (e.g. secret-key)",
             "name": "JGROUPS_ENCRYPT_NAME",
             "value": "",
             "required": false
         },
         {
-            "description": "The password for the keystore and certificate",
+            "description": "The password for the keystore and certificate (e.g. password)",
             "name": "JGROUPS_ENCRYPT_PASSWORD",
             "value": "",
             "required": false
@@ -201,8 +156,129 @@
             "from": "[a-zA-Z0-9]{8}",
             "generate": "expression",
             "required": true
+        },
+        {
+            "description": "Controls whether exploded deployment content should be automatically deployed",
+            "name": "AUTO_DEPLOY_EXPLODED",
+            "value": "false",
+            "required": false
+        },
+        {
+            "description": "The URL for the SSO server (e.g. https://secure-sso-myproject.example.com/auth).  This is the URL through which the user will be redirected when a login or token is required by the application.",
+            "name": "SSO_URL",
+            "value": "",
+            "required": true
+        },
+        {
+            "description": "The URL for the interal SSO service, where secure-sso (the default) is the kubernetes service exposed by the SSO server.  This is used to create the application client(s) (see SSO_USERNAME).  This can also be the same as SSO_URL.",
+            "name": "SSO_SERVICE_URL",
+            "value": "https://secure-sso:8443/auth",
+            "required": false
+        },
+        {
+            "description": "The SSO realm to which the application client(s) should be associated (e.g. demo).",
+            "name": "SSO_REALM",
+            "value": "",
+            "required": true
+        },
+        {
+            "description": "The username used to access the SSO service.  This is used to create the appliction client(s) within the specified SSO realm. This should match the SSO_SERVICE_USERNAME specified through one of the sso70-* templates.",
+            "name": "SSO_USERNAME",
+            "value": "",
+            "required": false
+        },
+        {
+            "description": "The password for the SSO service user.",
+            "name": "SSO_PASSWORD",
+            "value": "",
+            "required": false
+        },
+        {
+            "description": "SSO Public Key. Public key is recommended to be passed into the template to avoid man-in-the-middle security vulnerability",
+            "name": "SSO_PUBLIC_KEY",
+            "value": "",
+            "required": false
+        },
+        {
+            "description": "SSO Client Access Type",
+            "name": "SSO_BEARER_ONLY",
+            "value": "",
+            "required": false
+        },
+        {
+            "description": "List of directories from which archives will be copied into the deployment folder.  If unspecified, all archives in /target will be copied.",
+            "name": "ARTIFACT_DIR",
+            "value": "app-jee-jsp/target,service-jee-jaxrs/target,app-profile-jee-jsp/target,app-profile-saml-jee-jsp/target",
+            "required": false
+        },
+        {
+            "description": "The name of the secret containing the keystore file",
+            "name": "SSO_SAML_KEYSTORE_SECRET",
+            "value": "eap7-app-secret",
+            "required": false
+        },
+        {
+            "description": "The name of the keystore file within the secret",
+            "name": "SSO_SAML_KEYSTORE",
+            "value": "keystore.jks",
+            "required": false
+        },
+        {
+            "description": "The name associated with the server certificate",
+            "name": "SSO_SAML_CERTIFICATE_NAME",
+            "value": "jboss",
+            "required": false
+        },
+        {
+            "description": "The password for the keystore and certificate",
+            "name": "SSO_SAML_KEYSTORE_PASSWORD",
+            "value": "mykeystorepass",
+            "required": false
+        },
+        {
+            "description": "The SSO Client Secret for Confidential Access",
+            "name": "SSO_SECRET",
+            "from": "[a-zA-Z0-9]{8}",
+            "generate": "expression",
+            "required": true
+        },
+        {
+            "description": "Enable CORS for SSO applications",
+            "name": "SSO_ENABLE_CORS",
+            "value": "false",
+            "required": false
+        },
+        {
+            "description": "SSO logout page for SAML applications",
+            "name": "SSO_SAML_LOGOUT_PAGE",
+            "value": "/",
+            "required": false
+        },
+        {
+            "description": "If true SSL communication between EAP and the SSO Server will be insecure (i.e. certificate validation is disabled with curl)",
+            "name": "SSO_DISABLE_SSL_CERTIFICATE_VALIDATION",
+            "value": "true",
+            "required": false
+        },
+        {
+            "description": "The name of the truststore file within the secret (e.g. truststore.jks)",
+            "name": "SSO_TRUSTSTORE",
+            "value": "",
+            "required": false
+        },
+        {
+            "description": "The password for the truststore and certificate (e.g. mykeystorepass)",
+            "name": "SSO_TRUSTSTORE_PASSWORD",
+            "value": "",
+            "required": false
+        },
+        {
+            "description": "The name of the secret containing the truststore file (e.g. truststore-secret). Used for volume secretName",
+            "name": "SSO_TRUSTSTORE_SECRET",
+            "value": "eap7-app-secret",
+            "required": false
         }
-    ],
+   ],
     "objects": [
         {
             "kind": "Service",
@@ -249,30 +325,6 @@
                 },
                 "annotations": {
                     "description": "The web server's https port."
-                }
-            }
-        },
-        {
-            "kind": "Service",
-            "apiVersion": "v1",
-            "spec": {
-                "ports": [
-                    {
-                        "port": 5432,
-                        "targetPort": 5432
-                    }
-                ],
-                "selector": {
-                    "deploymentConfig": "${APPLICATION_NAME}-postgresql"
-                }
-            },
-            "metadata": {
-                "name": "${APPLICATION_NAME}-postgresql",
-                "labels": {
-                    "application": "${APPLICATION_NAME}"
-                },
-                "annotations": {
-                    "description": "The database server's port."
                 }
             }
         },
@@ -354,8 +406,18 @@
                         "from": {
                             "kind": "ImageStreamTag",
                             "namespace": "${IMAGE_STREAM_NAMESPACE}",
-                            "name": "jboss-eap64-openshift:1.2"
-                        }
+                            "name": "jboss-eap70-openshift:1.4"
+                        },
+                        "env": [
+                            {
+                                "name": "ARTIFACT_DIR",
+                                "value": "${ARTIFACT_DIR}"
+                            },
+                            {
+                                "name": "MAVEN_ARGS_APPEND",
+                                "value": ""
+                            }
+                        ]
                     }
                 },
                 "output": {
@@ -409,8 +471,8 @@
                                 "${APPLICATION_NAME}"
                             ],
                             "from": {
-                                "kind": "ImageStream",
-                                "name": "${APPLICATION_NAME}"
+                                "kind": "ImageStreamTag",
+                                "name": "${APPLICATION_NAME}:latest"
                             }
                         }
                     },
@@ -431,14 +493,19 @@
                         }
                     },
                     "spec": {
-                        "serviceAccountName": "eap-service-account",
-                        "terminationGracePeriodSeconds": 60,
+                        "serviceAccountName": "${SERVICE_ACCOUNT_NAME}",
+                        "terminationGracePeriodSeconds": 75,
                         "containers": [
                             {
                                 "name": "${APPLICATION_NAME}",
                                 "image": "${APPLICATION_NAME}",
                                 "imagePullPolicy": "Always",
                                 "volumeMounts": [
+                                    {
+                                        "name": "sso-saml-keystore-volume",
+                                        "mountPath": "/etc/sso-saml-secret-volume",
+                                        "readOnly": true
+                                    },
                                     {
                                         "name": "eap-keystore-volume",
                                         "mountPath": "/etc/eap-secret-volume",
@@ -448,8 +515,24 @@
                                         "name": "eap-jgroups-keystore-volume",
                                         "mountPath": "/etc/jgroups-encrypt-secret-volume",
                                         "readOnly": true
+                                    },
+                                    {
+                                        "name": "sso-truststore-volume",
+                                        "mountPath": "/etc/sso-secret-volume",
+                                        "readOnly": true
                                     }
                                 ],
+                                "lifecycle": {
+                                    "preStop": {
+                                        "exec": {
+                                            "command": [
+                                                "/opt/eap/bin/jboss-cli.sh",
+                                                "-c",
+                                                ":shutdown(timeout=60)"
+                                            ]
+                                        }
+                                    }
+                                },
                                 "livenessProbe": {
                                     "exec": {
                                         "command": [
@@ -492,42 +575,6 @@
                                 ],
                                 "env": [
                                     {
-                                        "name": "DB_SERVICE_PREFIX_MAPPING",
-                                        "value": "${APPLICATION_NAME}-postgresql=DB"
-                                    },
-                                    {
-                                        "name": "DB_JNDI",
-                                        "value": "${DB_JNDI}"
-                                    },
-                                    {
-                                        "name": "DB_USERNAME",
-                                        "value": "${DB_USERNAME}"
-                                    },
-                                    {
-                                        "name": "DB_PASSWORD",
-                                        "value": "${DB_PASSWORD}"
-                                    },
-                                    {
-                                        "name": "DB_DATABASE",
-                                        "value": "${DB_DATABASE}"
-                                    },
-                                    {
-                                        "name": "TX_DATABASE_PREFIX_MAPPING",
-                                        "value": "${APPLICATION_NAME}-postgresql=DB"
-                                    },
-                                    {
-                                        "name": "DB_MIN_POOL_SIZE",
-                                        "value": "${DB_MIN_POOL_SIZE}"
-                                    },
-                                    {
-                                        "name": "DB_MAX_POOL_SIZE",
-                                        "value": "${DB_MAX_POOL_SIZE}"
-                                    },
-                                    {
-                                        "name": "DB_TX_ISOLATION",
-                                        "value": "${DB_TX_ISOLATION}"
-                                    },
-                                    {
                                         "name": "OPENSHIFT_KUBE_PING_LABELS",
                                         "value": "application=${APPLICATION_NAME}"
                                     },
@@ -540,12 +587,24 @@
                                         }
                                     },
                                     {
+                                        "name": "HOSTNAME_HTTP",
+                                        "value": "${HOSTNAME_HTTP}"
+                                    },
+                                    {
+                                        "name": "HOSTNAME_HTTPS",
+                                        "value": "${HOSTNAME_HTTPS}"
+                                    }, 
+                                    {
                                         "name": "HTTPS_KEYSTORE_DIR",
                                         "value": "/etc/eap-secret-volume"
                                     },
                                     {
                                         "name": "HTTPS_KEYSTORE",
                                         "value": "${HTTPS_KEYSTORE}"
+                                    },
+                                    {
+                                        "name": "HTTPS_KEYSTORE_TYPE",
+                                        "value": "${HTTPS_KEYSTORE_TYPE}"
                                     },
                                     {
                                         "name": "HTTPS_NAME",
@@ -567,7 +626,7 @@
                                         "name": "HORNETQ_TOPICS",
                                         "value": "${HORNETQ_TOPICS}"
                                     },
-                                    {
+				                    {
                                         "name": "JGROUPS_ENCRYPT_SECRET",
                                         "value": "${JGROUPS_ENCRYPT_SECRET}"
                                     },
@@ -590,11 +649,97 @@
                                     {
                                         "name": "JGROUPS_CLUSTER_PASSWORD",
                                         "value": "${JGROUPS_CLUSTER_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "AUTO_DEPLOY_EXPLODED",
+                                        "value": "${AUTO_DEPLOY_EXPLODED}"
+                                    },
+                                    {
+                                        "name": "SSO_URL",
+                                        "value": "${SSO_URL}"
+                                    },
+                                    {
+                                        "name": "SSO_SERVICE_URL",
+                                        "value": "${SSO_SERVICE_URL}"
+                                    },
+                                    {
+                                        "name": "SSO_REALM",
+                                        "value": "${SSO_REALM}"
+                                    },
+                                    {
+                                        "name": "SSO_USERNAME",
+                                        "value": "${SSO_USERNAME}"
+                                    },
+                                    {
+                                        "name": "SSO_PASSWORD",
+                                        "value": "${SSO_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "SSO_PUBLIC_KEY",
+                                        "value": "${SSO_PUBLIC_KEY}"
+                                    },
+                                    {
+                                        "name": "SSO_BEARER_ONLY",
+                                        "value": "${SSO_BEARER_ONLY}"
+                                    },
+                                    {
+                                        "name": "SSO_SAML_KEYSTORE_SECRET",
+                                        "value": "${SSO_SAML_KEYSTORE_SECRET}"
+                                    },
+                                    {
+                                        "name": "SSO_SAML_KEYSTORE",
+                                        "value": "${SSO_SAML_KEYSTORE}"
+                                    },
+                                    {
+                                        "name": "SSO_SAML_KEYSTORE_DIR",
+                                        "value": "/etc/sso-saml-secret-volume"
+                                    },
+                                    {
+                                        "name": "SSO_SAML_CERTIFICATE_NAME",
+                                        "value": "${SSO_SAML_CERTIFICATE_NAME}"
+                                    },
+                                    {
+                                        "name": "SSO_SAML_KEYSTORE_PASSWORD",
+                                        "value": "${SSO_SAML_KEYSTORE_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "SSO_SECRET",
+                                        "value": "${SSO_SECRET}"
+                                    },
+                                    {
+                                        "name": "SSO_ENABLE_CORS",
+                                        "value": "${SSO_ENABLE_CORS}"
+                                    },
+                                    {
+                                        "name": "SSO_SAML_LOGOUT_PAGE",
+                                        "value": "${SSO_SAML_LOGOUT_PAGE}"
+                                    },
+                                    {
+                                        "name": "SSO_DISABLE_SSL_CERTIFICATE_VALIDATION",
+                                        "value": "${SSO_DISABLE_SSL_CERTIFICATE_VALIDATION}"
+                                    },
+                                    {
+                                        "name": "SSO_TRUSTSTORE",
+                                        "value": "${SSO_TRUSTSTORE}"
+                                    },
+                                    {
+                                        "name": "SSO_TRUSTSTORE_DIR",
+                                        "value": "/etc/sso-secret-volume"
+                                    },
+                                    {
+                                        "name": "SSO_TRUSTSTORE_PASSWORD",
+                                        "value": "${SSO_TRUSTSTORE_PASSWORD}"
                                     }
                                 ]
                             }
                         ],
                         "volumes": [
+                            {
+                                "name": "sso-saml-keystore-volume",
+                                "secret": {
+                                    "secretName": "${SSO_SAML_KEYSTORE_SECRET}"
+                                }
+                            },
                             {
                                 "name": "eap-keystore-volume",
                                 "secret": {
@@ -606,127 +751,14 @@
                                 "secret": {
                                     "secretName": "${JGROUPS_ENCRYPT_SECRET}"
                                 }
-                            }
-                        ]
-                    }
-                }
-            }
-        },
-        {
-            "kind": "DeploymentConfig",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "${APPLICATION_NAME}-postgresql",
-                "labels": {
-                    "application": "${APPLICATION_NAME}"
-                }
-            },
-            "spec": {
-                "strategy": {
-                    "type": "Recreate"
-                },
-                "triggers": [
-                    {
-                        "type": "ImageChange",
-                        "imageChangeParams": {
-                            "automatic": true,
-                            "containerNames": [
-                                "${APPLICATION_NAME}-postgresql"
-                            ],
-                            "from": {
-                                "kind": "ImageStreamTag",
-                                "namespace": "${IMAGE_STREAM_NAMESPACE}",
-                                "name": "postgresql:latest"
-                            }
-                        }
-                    },
-                    {
-                        "type": "ConfigChange"
-                    }
-                ],
-                "replicas": 1,
-                "selector": {
-                    "deploymentConfig": "${APPLICATION_NAME}-postgresql"
-                },
-                "template": {
-                    "metadata": {
-                        "name": "${APPLICATION_NAME}-postgresql",
-                        "labels": {
-                            "deploymentConfig": "${APPLICATION_NAME}-postgresql",
-                            "application": "${APPLICATION_NAME}"
-                        }
-                    },
-                    "spec": {
-                        "terminationGracePeriodSeconds": 60,
-                        "containers": [
+                            },
                             {
-                                "name": "${APPLICATION_NAME}-postgresql",
-                                "image": "postgresql",
-                                "imagePullPolicy": "Always",
-                                "ports": [
-                                    {
-                                        "containerPort": 5432,
-                                        "protocol": "TCP"
-                                    }
-                                ],
-                                "volumeMounts": [
-                                    {
-                                        "mountPath": "/var/lib/pgsql/data",
-                                        "name": "${APPLICATION_NAME}-postgresql-pvol"
-                                    }
-                                ],
-                                "env": [
-                                    {
-                                        "name": "POSTGRESQL_USER",
-                                        "value": "${DB_USERNAME}"
-                                    },
-                                    {
-                                        "name": "POSTGRESQL_PASSWORD",
-                                        "value": "${DB_PASSWORD}"
-                                    },
-                                    {
-                                        "name": "POSTGRESQL_DATABASE",
-                                        "value": "${DB_DATABASE}"
-                                    },
-                                    {
-                                        "name": "POSTGRESQL_MAX_CONNECTIONS",
-                                        "value": "${POSTGRESQL_MAX_CONNECTIONS}"
-                                    },
-                                    {
-                                        "name": "POSTGRESQL_SHARED_BUFFERS",
-                                        "value": "${POSTGRESQL_SHARED_BUFFERS}"
-                                    }
-                                ]
-                            }
-                        ],
-                        "volumes": [
-                            {
-                                "name": "${APPLICATION_NAME}-postgresql-pvol",
-                                "persistentVolumeClaim": {
-                                    "claimName": "${APPLICATION_NAME}-postgresql-claim"
+                                "name": "sso-truststore-volume",
+                                "secret": {
+                                    "secretName": "${SSO_TRUSTSTORE_SECRET}"
                                 }
                             }
                         ]
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "v1",
-            "kind": "PersistentVolumeClaim",
-            "metadata": {
-                "name": "${APPLICATION_NAME}-postgresql-claim",
-                "labels": {
-                    "application": "${APPLICATION_NAME}"
-                }
-            },
-            "spec": {
-                "accessModes": [
-                    "ReadWriteOnce"
-                ],
-                "resources": {
-                    "requests": {
-                        "storage": "${VOLUME_CAPACITY}"
                     }
                 }
             }
