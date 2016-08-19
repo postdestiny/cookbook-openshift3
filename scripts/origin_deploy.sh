@@ -16,7 +16,7 @@ read -p "Please enter the FQDN of the server: " FQDN
 read -p "Please enter the IP of the server (Auto Detect): $IP_DETECT" IP
 while [ -z $DF ];
 do
-  read -p "Please enter the IP of the server ([r]pm or [c]ontainer):" DF
+  read -p "Please enter the deployment type ([r]pm or [c]ontainer):" DF
   echo
 done
 
@@ -34,33 +34,17 @@ systemctl restart systemd-hostnamed.service
 echo "Updating system, please wait..."
 yum -y update -q -e 0
 ### Create the chef-local mode infrastructure
-mkdir -p chef-solo-example/{backup,cache}
-cd chef-solo-example
-cat << EOF > Gemfile
-source "https://rubygems.org"
-gem 'knife-solo'
-gem 'librarian-chef'
-EOF
+mkdir -p ~/chef-solo-example/{backup,cache,roles,cookbooks,environments}
+cd ~/chef-solo-example/cookbooks
 ### Installing dependencies
 echo "Installing prerequisite packages, please wait..."
-yum -y install -q ruby-devel gcc make git
-### Installing gems 
-if [ ! -f ~/.gemrc ]
-then 
-  echo "gem: --no-document" > ~/.gemrc
-fi
-gem install bundle
-bundle
-### Create a kitchen by knife
-knife solo init .
-### Modify the librarian Cheffile for manage the cookbooks
-if [ ! -f Cheffile ]
-then
-  librarian-chef init
-fi
-sed -i '/cookbook-openshift3/d' Cheffile
-echo "cookbook 'cookbook-openshift3', :git => 'https://github.com/IshentRas/cookbook-openshift3.git'" >> Cheffile 
-librarian-chef install
+yum -y install -q https://packages.chef.io/stable/el/7/chef-12.13.37-1.el7.x86_64.rpm git
+### Installing cookbooks
+git clone -q https://github.com/IshentRas/cookbook-openshift3.git
+git clone -q https://github.com/chef-cookbooks/iptables.git
+git clone -q https://github.com/chef-cookbooks/yum.git
+git clone -q https://github.com/BackSlasher/chef-selinuxpolicy.git selinux_policy
+cd ~/chef-solo-example
 ### Create the dedicated environment for Origin deployment
 if [[ $DF =~ ^c ]]
 then
@@ -81,7 +65,6 @@ cat << EOF > environments/origin.json
       "openshift_common_public_hostname": "console.${IP}.nip.io",
       "openshift_deployment_type": "origin",
       "deploy_containerized": true,
-      "openshift_common_default_nodeSelector": "",
       "master_servers": [
         {
           "fqdn": "${FQDN}",
@@ -115,7 +98,6 @@ cat << EOF > environments/origin.json
     "cookbook-openshift3": {
       "openshift_common_public_hostname": "console.${IP}.nip.io",
       "openshift_deployment_type": "origin",
-      "openshift_common_default_nodeSelector": "",
       "master_servers": [
         {
           "fqdn": "${FQDN}",
@@ -133,31 +115,8 @@ cat << EOF > environments/origin.json
 }
 EOF
 fi
-### Create the dedicated role for the Chef run_list
-cat << EOF > roles/origin.json 
-{
-  "name": "origin",
-  "description": "",
-  "default_attributes": {
-
-  },
-  "override_attributes": {
-
-  },
-  "chef_type": "role",
-  "run_list": [
-    "recipe[cookbook-openshift3]",
-    "recipe[cookbook-openshift3::common]",
-    "recipe[cookbook-openshift3::master]",
-    "recipe[cookbook-openshift3::node]",
-  ],
-  "env_run_lists": {
-
-  }
-}
-EOF
 ### Specify the configuration details for chef-solo
-cat << EOF > solo.rb
+cat << EOF > ~/chef-solo-example/solo.rb
 cookbook_path [
                '/root/chef-solo-example/cookbooks',
                '/root/chef-solo-example/site-cookbooks'
@@ -169,7 +128,7 @@ log_location STDOUT
 solo true
 EOF
 ### Deploy OSE !!!!
-chef-client -z --environment origin -j roles/origin.json -c ~/chef-solo-example/solo.rb
+chef-solo --environment origin -o recipe[cookbook-openshift3],recipe[cookbook-openshift3::master],recipe[cookbook-openshift3::node] -c ~/chef-solo-example/solo.rb
 if ! $(oc get project test --config=/etc/origin/master/admin.kubeconfig &> /dev/null)
 then 
   # Create a demo project
