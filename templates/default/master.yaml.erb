@@ -9,6 +9,9 @@ assetConfig:
 <% if node['cookbook-openshift3']['openshift_master_metrics_public_url'] %>
   metricsPublicURL: https://<%= node['cookbook-openshift3']['openshift_master_metrics_public_url'] %>/hawkular/metrics
 <%- end -%>
+<% if node['cookbook-openshift3']['openshift_master_logging_public_url'] %>
+  loggingPublicURL: https://<%= node['cookbook-openshift3']['openshift_master_logging_public_url'] %>
+<%- end -%>
   servingInfo:
     bindAddress: <%= node['cookbook-openshift3']['openshift_master_bind_addr'] %>:<%= node['cookbook-openshift3']['openshift_master_console_port'] %>
     certFile: master.server.crt

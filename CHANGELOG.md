@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.14
+### Bug
+- Add logging EFK
+
 ## v1.10.13
 ### Bug
 - Add SNI capability when testing master API

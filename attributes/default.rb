@@ -92,6 +92,7 @@ default['cookbook-openshift3']['openshift_master_debug_level'] = '2'
 default['cookbook-openshift3']['openshift_master_dns_port'] = node['cookbook-openshift3']['deploy_dnsmasq'] == true ? '8053' : '53'
 default['cookbook-openshift3']['openshift_master_label'] = 'region=infra'
 default['cookbook-openshift3']['openshift_master_metrics_public_url'] = nil
+default['cookbook-openshift3']['openshift_master_logging_public_url'] = nil
 default['cookbook-openshift3']['openshift_master_generated_configs_dir'] = '/var/www/html/generated-configs'
 default['cookbook-openshift3']['openshift_master_router_subdomain'] = 'cloudapps.domain.local'
 default['cookbook-openshift3']['openshift_master_sdn_cluster_network_cidr'] = '10.1.0.0/16'
