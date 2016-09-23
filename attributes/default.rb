@@ -28,6 +28,7 @@ else
   default['cookbook-openshift3']['master_etcd_cert_prefix'] = ''
 end
 
+default['cookbook-openshift3']['ose_version'] = nil
 default['cookbook-openshift3']['deploy_containerized'] = false
 default['cookbook-openshift3']['deploy_example'] = false
 default['cookbook-openshift3']['deploy_dnsmasq'] = false
