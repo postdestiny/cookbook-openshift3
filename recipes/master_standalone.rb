@@ -43,7 +43,7 @@ end
 
 package "#{node['cookbook-openshift3']['openshift_service_type']}-master" do
   action :install
-  vesion node['cookbook-openshift3']['ose_version'] unless node['cookbook-openshift3']['ose_version'].nil?
+  version node['cookbook-openshift3']['ose_version'] unless node['cookbook-openshift3']['ose_version'].nil?
   notifies :reload, 'service[daemon-reload]', :immediately
   not_if { node['cookbook-openshift3']['deploy_containerized'] }
 end
