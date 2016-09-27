@@ -70,6 +70,7 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
 
   package "#{node['cookbook-openshift3']['openshift_service_type']}-sdn-ovs" do
     action :install
+    version node['cookbook-openshift3']['ose_version'] unless node['cookbook-openshift3']['ose_version'].nil?
     only_if { node['cookbook-openshift3']['openshift_common_use_openshift_sdn'] == true }
     not_if { node['cookbook-openshift3']['deploy_containerized'] }
   end
