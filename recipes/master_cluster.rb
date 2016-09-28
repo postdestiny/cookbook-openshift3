@@ -152,6 +152,7 @@ end
 
 package "#{node['cookbook-openshift3']['openshift_service_type']}-master" do
   action :install
+  version node['cookbook-openshift3']['ose_version'] unless node['cookbook-openshift3']['ose_version'].nil?
   notifies :reload, 'service[daemon-reload]', :immediately
 end
 
