@@ -25,7 +25,6 @@ if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }
     not_if { node['cookbook-openshift3']['deploy_containerized'] }
   end
 
-
   package 'httpd' do
     notifies :run, 'ruby_block[Change HTTPD port xfer]', :immediately
     notifies :enable, 'service[httpd]', :immediately

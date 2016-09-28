@@ -1,6 +1,12 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.15
+### Improvement
+- Add the possibility to specifying an exact rpm version to install or configure.
+- Update Openshift configuration for 1.3 or 3.3
+- Add the possibilty to specifying a major version (3.1, 3.2 or 3.3)
+
 ## v1.10.14
 ### Bug
 - Add logging EFK

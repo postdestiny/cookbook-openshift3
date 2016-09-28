@@ -15,6 +15,7 @@ Requirements
 
 * Support OSE version from 3.1.0.4+
 * Support Origin version from 1.1.1+
+* Default the installation to 1.3 or 3.3
 
 Override Attributes
 ===================

@@ -29,6 +29,7 @@ else
 end
 
 default['cookbook-openshift3']['ose_version'] = nil
+default['cookbook-openshift3']['ose_major_version'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? '3.3' : '1.3'
 default['cookbook-openshift3']['deploy_containerized'] = false
 default['cookbook-openshift3']['deploy_example'] = false
 default['cookbook-openshift3']['deploy_dnsmasq'] = false

@@ -23,6 +23,13 @@ assetConfig:
 controllerLeaseTTL: <%= node['cookbook-openshift3']['openshift_master_controller_lease_ttl'] %>
 <% end -%>
 controllers: '*'
+<% if [1.3 , 3.3].include? node['cookbook-openshift3']['ose_major_version'].to_f %>
+controllerConfig:
+  serviceServingCert:
+    signer:
+      certFile: service-signer.crt
+      keyFile: service-signer.key
+<%- end -%>
 corsAllowedOrigins:
 <%- @erb_corsAllowedOrigins.each do |origin| -%>
   - <%= origin %>
@@ -99,7 +106,21 @@ kubernetesMasterConfig:
   staticNodeNames: []
 <%- end -%>
 masterClients:
+<% if [1.3 , 3.3].include? node['cookbook-openshift3']['ose_major_version'].to_f %>
+  externalKubernetesClientConnectionOverrides:
+    acceptContentTypes: application/vnd.kubernetes.protobuf,application/json
+    contentType: application/vnd.kubernetes.protobuf
+    burst: 400
+    qps: 200
+<%- end -%>
   externalKubernetesKubeConfig: ""
+<% if [1.3 , 3.3].include? node['cookbook-openshift3']['ose_major_version'].to_f %>
+  openshiftLoopbackClientConnectionOverrides:
+    acceptContentTypes: application/vnd.kubernetes.protobuf,application/json
+    contentType: application/vnd.kubernetes.protobuf
+    burst: 600
+    qps: 300
+<%- end -%>
   openshiftLoopbackKubeConfig: openshift-master.kubeconfig
 masterPublicURL: <%= node['cookbook-openshift3']['openshift_master_public_api_url'] %>
 networkConfig:
@@ -158,3 +179,4 @@ servingInfo:
 <%- end -%>
 volumeConfig:
   dynamicProvisioningEnabled: <%= node['cookbook-openshift3']['openshift_master_dynamic_provisioning_enabled'] %>
+

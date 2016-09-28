@@ -18,6 +18,8 @@ deploy_example</td><td>Set whether or not to deploy the openshift example templa
 <tr><td>
 deploy_dnsmasq</td><td>Set whether or not to deploy the dnsmasq resolution against SkyDNS. Need to have NetworkManager running<td>false</td></tr>
 <tr><td>install_method</td><td>Set the installing method for packing.</td><td>yum</td></tr>
+<tr><td>ose_version</td><td>Set the version number for installing RPM.</td><td>nil</td></tr>
+<tr><td>ose_major_version</td><td>Set the major version number for OSE.</td><td>3.3</td></tr>
 <tr><td>
 yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.com/chef-cookbooks/yum/blob/master/README.md#parameters)</td><td></td></tr>
 <tr><td>httpd_xfer_port</td><td>Set the port used for retrieving certificates.</td><td>9999</td></tr>
