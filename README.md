@@ -418,7 +418,7 @@ You will need a CentOS 7.1+  with "Minimal" installation option and at least 10G
 
 * Deploy ORIGIN ALL IN THE BOX Flavour (MASTER + NODE)
 ```
-bash <(curl -s https://raw.githubusercontent.com/IshentRas/cookbook-openshift3/master/origin_deploy.sh)
+bash <(curl -s https://raw.githubusercontent.com/IshentRas/cookbook-openshift3/master/scripts/origin_deploy.sh)
 ```
 
 Development
