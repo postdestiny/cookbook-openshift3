@@ -1,6 +1,13 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.16
+### Improvement
+- Add the possibility to only deploy ETCD role
+
+### Bug
+- Remove hard-coded values for deployment type (Affecting Origin deploymemts)
+
 ## v1.10.15
 ### Improvement
 - Add the possibility to specifying an exact rpm version to install or configure.

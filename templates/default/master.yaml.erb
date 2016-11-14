@@ -32,9 +32,10 @@ controllerConfig:
 <%- end -%>
 corsAllowedOrigins:
 <%- @erb_corsAllowedOrigins.each do |origin| -%>
+<% if ! origin.to_s.empty? %>
   - <%= origin %>
 <%- end -%>
-
+<% end -%>
 <% if node['cookbook-openshift3']['openshift_master_embedded_dns'] == true %>
 dnsConfig:
   bindAddress: <%= node['cookbook-openshift3']['openshift_master_bind_addr'] %>:<%= node['cookbook-openshift3']['openshift_master_dns_port'] %>

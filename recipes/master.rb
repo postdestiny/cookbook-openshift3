@@ -19,6 +19,8 @@ if node['cookbook-openshift3']['openshift_HA']
   end
 end
 
+include_recipe 'cookbook-openshift3::etcd_cluster'
+
 if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }
   package node['cookbook-openshift3']['openshift_service_type'] do
     version node['cookbook-openshift3'] ['ose_version'] unless node['cookbook-openshift3']['ose_version'].nil?
@@ -61,7 +63,6 @@ if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }
   end
 
   if node['cookbook-openshift3']['openshift_HA']
-    include_recipe 'cookbook-openshift3::etcd_cluster'
     include_recipe 'cookbook-openshift3::master_cluster'
   else
     include_recipe 'cookbook-openshift3::master_standalone'

@@ -14,6 +14,51 @@ node['cookbook-openshift3']['enabled_firewall_rules_master_cluster'].each do |ru
   end
 end
 
+if etcd_servers.first['fqdn'] != master_servers.first['fqdn']
+  directory node['cookbook-openshift3']['etcd_ca_dir'] do
+    owner 'root'
+    group 'root'
+    mode '0700'
+    action :create
+    recursive true
+  end
+
+  template node['cookbook-openshift3']['etcd_openssl_conf'] do
+    source 'openssl.cnf.erb'
+  end
+
+  %w(certs crl fragments).each do |etcd_ca_sub_dir|
+    directory "#{node['cookbook-openshift3']['etcd_ca_dir']}/#{etcd_ca_sub_dir}" do
+      owner 'root'
+      group 'root'
+      mode '0700'
+      action :create
+      recursive true
+    end
+  end
+
+  execute "ETCD Generate index.txt #{node['fqdn']}" do
+    command 'touch index.txt'
+    cwd node['cookbook-openshift3']['etcd_ca_dir']
+    creates "#{node['cookbook-openshift3']['etcd_ca_dir']}/index.txt"
+  end
+
+  file "#{node['cookbook-openshift3']['etcd_ca_dir']}/serial" do
+    content '01'
+    action :create_if_missing
+  end
+
+  %w(ca.crt ca.key).each do |etcd_crt|
+    remote_file "Retrieve CA certificates #{etcd_crt} from ETCD Master[#{etcd_servers.first['fqdn']}]" do
+      path "#{node['cookbook-openshift3']['etcd_ca_dir']}/#{etcd_crt}"
+      source "http://#{etcd_servers.first['ipaddress']}:#{node['cookbook-openshift3']['httpd_xfer_port']}/etcd/generated_certs/etcd/#{etcd_crt}"
+      action :create_if_missing
+      retries 10
+      retry_delay 5
+    end
+  end
+end
+
 if master_servers.first['fqdn'] == node['fqdn']
   master_servers.each do |master_server|
     directory '/var/www/html/master' do
