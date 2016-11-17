@@ -6,7 +6,7 @@ source_url 'https://github.com/IshentRas/cookbook-openshift3'
 issues_url 'https://github.com/IshentRas/cookbook-openshift3/issues'
 description 'Installs/Configures Openshift 3.x (>= 3.1)'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '1.10.16'
+version '1.10.17'
 supports 'redhat', '>= 7.1'
 supports 'centos', '>= 7.1'
 
