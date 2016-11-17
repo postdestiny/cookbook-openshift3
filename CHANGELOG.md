@@ -5,6 +5,9 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 ### Improvement
 - Add the possibility to have any number of ETCD servers
 
+### Bug
+- Fix HTTPD service enabling for ETCD
+
 ## v1.10.16
 ### Improvement
 - Add the possibility to only deploy ETCD role

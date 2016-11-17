@@ -10,6 +10,7 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
   if etcd_servers.first['fqdn'] == node['fqdn']
     package 'httpd' do
       notifies :run, 'ruby_block[Change HTTPD port xfer]', :immediately
+      notifies :enable, 'service[httpd]', :immediately
     end
     %w(certs crl fragments).each do |etcd_ca_sub_dir|
       directory "#{node['cookbook-openshift3']['etcd_ca_dir']}/#{etcd_ca_sub_dir}" do
