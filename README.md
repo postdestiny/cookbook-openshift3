@@ -140,6 +140,28 @@ Include the recipes in roles so as to ease the deployment.
 }
 ```
 
+* UNINSTALL (ADHOC)
+
+```json
+{
+  "name": "uninstall",
+  "description": "Common Base Role",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[cookbook-openshift3::adhoc_uninstall]"
+  ],
+  "env_run_lists": {
+
+  }
+}
+```
+
 ENVIRONMENT
 ===========
 

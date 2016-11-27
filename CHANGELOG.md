@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.18
+### Improvement
+- Add the possibility to run adhoc command for uninstalling Openshift on dedicated server(s)
+
 ## v1.10.17
 ### Improvement
 - Add the possibility to have any number of ETCD servers
