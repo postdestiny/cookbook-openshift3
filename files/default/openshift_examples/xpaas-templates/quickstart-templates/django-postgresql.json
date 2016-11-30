@@ -2,15 +2,15 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "django-example",
+    "name": "django-psql-example",
     "annotations": {
-      "description": "An example Django application with no database",
-      "tags": "quickstart,python,django",
+      "description": "An example Django application with a PostgreSQL database",
+      "tags": "quickstart,python,django,postgresql",
       "iconClass": "icon-python"
     }
   },
   "labels": {
-    "template": "django-example"
+    "template": "django-psql-example"
   },
   "objects": [
     {
@@ -83,7 +83,7 @@
             "from": {
               "kind": "ImageStreamTag",
               "namespace": "${NAMESPACE}",
-              "name": "python:3.4"
+              "name": "python:3.5"
             },
             "env": [
               {
@@ -114,7 +114,7 @@
           }
         ],
         "postCommit": {
-          "script": "./manage.py test"
+           "script": "./manage.py test"
         }
       }
     },
@@ -137,7 +137,7 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "django-example"
+                "django-psql-example"
               ],
               "from": {
                 "kind": "ImageStreamTag",
@@ -163,7 +163,7 @@
           "spec": {
             "containers": [
               {
-                "name": "django-example",
+                "name": "django-psql-example",
                 "image": " ",
                 "ports": [
                   {
@@ -174,7 +174,7 @@
                   "timeoutSeconds": 3,
                   "initialDelaySeconds": 3,
                   "httpGet": {
-                    "path": "/",
+                    "path": "/health",
                     "port": 8080
                   }
                 },
@@ -182,7 +182,7 @@
                   "timeoutSeconds": 3,
                   "initialDelaySeconds": 30,
                   "httpGet": {
-                    "path": "/",
+                    "path": "/health",
                     "port": 8080
                   }
                 },
@@ -217,9 +217,135 @@
                   }
                 ],
                 "resources": {
-		      "limits": {
-			  "memory": "${MEMORY_LIMIT}"
-		      }
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DATABASE_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the database server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "postgresql",
+            "port": 5432,
+            "targetPort": 5432
+          }
+        ],
+        "selector": {
+          "name": "${DATABASE_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DATABASE_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy the database"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "postgresql"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "${NAMESPACE}",
+                "name": "postgresql:9.5"
+              }
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${DATABASE_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "name": "${DATABASE_SERVICE_NAME}",
+            "labels": {
+              "name": "${DATABASE_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "data",
+                "emptyDir": {}
+              }
+            ],
+            "containers": [
+              {
+                "name": "postgresql",
+                "image": " ",
+                "ports": [
+                  {
+                    "containerPort": 5432
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "POSTGRESQL_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "POSTGRESQL_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                    "name": "POSTGRESQL_DATABASE",
+                    "value": "${DATABASE_NAME}"
+                  }
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "data",
+                    "mountPath": "/var/lib/pgsql/data"
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "exec": {
+                    "command": [ "/bin/sh", "-i", "-c", "psql -h 127.0.0.1 -U ${POSTGRESQL_USER} -q -d ${POSTGRESQL_DATABASE} -c 'SELECT 1'"]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 30,
+                  "tcpSocket": {
+                    "port": 5432
+                  }
+                },
+                "resources": {
+                  "limits": {
+                    "memory": "${MEMORY_POSTGRESQL_LIMIT}"
+                  }
                 }
               }
             ]
@@ -234,7 +360,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the frontend objects defined in this template.",
       "required": true,
-      "value": "django-example"
+      "value": "django-psql-example"
     },
     {
       "name": "NAMESPACE",
@@ -247,7 +373,14 @@
       "name": "MEMORY_LIMIT",
       "displayName": "Memory Limit",
       "required": true,
-      "description": "Maximum amount of memory the container can use.",
+      "description": "Maximum amount of memory the Django container can use.",
+      "value": "512Mi"
+    },
+    {
+      "name": "MEMORY_POSTGRESQL_LIMIT",
+      "displayName": "Memory Limit (PostgreSQL)",
+      "required": true,
+      "description": "Maximum amount of memory the PostgreSQL container can use.",
       "value": "512Mi"
     },
     {
@@ -282,24 +415,34 @@
     },
     {
       "name": "DATABASE_SERVICE_NAME",
-      "displayName": "Database Service Name"
+      "displayName": "Database Service Name",
+      "required": true,
+      "value": "postgresql"
     },
     {
       "name": "DATABASE_ENGINE",
       "displayName": "Database Engine",
-      "description": "Database engine: postgresql, mysql or sqlite (default)."
+      "required": true,
+      "description": "Database engine: postgresql, mysql or sqlite (default).",
+      "value": "postgresql"
     },
     {
       "name": "DATABASE_NAME",
-      "displayName": "Database Name"
+      "displayName": "Database Name",
+      "required": true,
+      "value": "default"
     },
     {
       "name": "DATABASE_USER",
-      "displayName": "Database Username"
+      "displayName": "Database Username",
+      "required": true,
+      "value": "django"
     },
     {
       "name": "DATABASE_PASSWORD",
-      "displayName": "Database User Password"
+      "displayName": "Database User Password",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{16}"
     },
     {
       "name": "APP_CONFIG",

@@ -37,7 +37,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "openshift/ruby-20-centos7:latest"
+              "name": "registry.access.redhat.com/openshift3/ruby-20-rhel7:latest"
             }
           },
           {
@@ -52,7 +52,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/ruby-22-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/ruby-22-rhel7:latest"
             }
           },
           {
@@ -67,7 +67,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/ruby-23-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/ruby-23-rhel7:latest"
             }
           }
         ]
@@ -107,13 +107,13 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "openshift/nodejs-010-centos7:latest"
+              "name": "registry.access.redhat.com/openshift3/nodejs-010-rhel7:latest"
             }
           },
           {
             "name": "4",
             "annotations": {
-              "description": "Build and run NodeJS 4 applications",
+              "description": "Build and run NodeJS 4.x applications",
               "iconClass": "icon-nodejs",
               "tags": "builder,nodejs",
               "supports":"nodejs:4,nodejs",
@@ -122,7 +122,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/nodejs-4-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/nodejs-4-rhel7:latest"
             }
           }
         ]
@@ -162,7 +162,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "openshift/perl-516-centos7:latest"
+              "name": "registry.access.redhat.com/openshift3/perl-516-rhel7:latest"
             }
           },
           {
@@ -177,7 +177,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/perl-520-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/perl-520-rhel7:latest"
             }
 
           }
@@ -214,11 +214,11 @@
               "tags": "builder,php",
               "supports":"php:5.5,php",
               "version": "5.5",
-              "sampleRepo": "https://github.com/openshift/cakephp-ex.git"
+              "sampleRepo": "https://github.com/openshift/cakephp-ex.git"              
             },
             "from": {
               "kind": "DockerImage",
-              "name": "openshift/php-55-centos7:latest"
+              "name": "registry.access.redhat.com/openshift3/php-55-rhel7:latest"
             }
           },
           {
@@ -233,7 +233,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/php-56-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/php-56-rhel7:latest"
             }
           }
         ]
@@ -273,7 +273,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "openshift/python-33-centos7:latest"
+              "name": "registry.access.redhat.com/openshift3/python-33-rhel7:latest"
             }
           },
           {
@@ -288,7 +288,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/python-27-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/python-27-rhel7:latest"
             }
           },
           {
@@ -303,7 +303,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/python-34-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/python-34-rhel7:latest"
             }
           },
           {
@@ -318,92 +318,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/python-35-centos7:latest"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "kind": "ImageStream",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "wildfly"
-      },
-      "spec": {
-        "tags": [
-          {
-            "name": "latest",
-            "annotations": {
-              "description": "Build and run Java applications on Wildfly",
-              "iconClass": "icon-wildfly",
-              "tags": "builder,wildfly,java",
-              "supports":"jee,java",
-              "sampleRepo": "https://github.com/bparees/openshift-jee-sample.git"
-            },
-            "from": {
-              "kind": "ImageStreamTag",
-              "name": "10.1"
-            }
-          },
-          {
-            "name": "8.1",
-            "annotations": {
-              "description": "Build and run Java applications on Wildfly 8.1",
-              "iconClass": "icon-wildfly",
-              "tags": "builder,wildfly,java",
-              "supports":"wildfly:8.1,jee,java",
-              "version": "8.1",
-              "sampleRepo": "https://github.com/bparees/openshift-jee-sample.git"
-            },
-            "from": {
-              "kind": "DockerImage",
-              "name": "openshift/wildfly-81-centos7:latest"
-            }
-          },
-          {
-            "name": "9.0",
-            "annotations": {
-              "description": "Build and run Java applications on Wildfly 9.0",
-              "iconClass": "icon-wildfly",
-              "tags": "builder,wildfly,java",
-              "supports":"wildfly:9.0,jee,java",
-              "version": "9.0",
-              "sampleRepo": "https://github.com/bparees/openshift-jee-sample.git"
-            },
-            "from": {
-              "kind": "DockerImage",
-              "name": "openshift/wildfly-90-centos7:latest"
-            }
-          },
-          {
-            "name": "10.0",
-            "annotations": {
-              "description": "Build and run Java applications on Wildfly 10.0",
-              "iconClass": "icon-wildfly",
-              "tags": "builder,wildfly,java",
-              "supports":"wildfly:10.0,jee,java",
-              "version": "10.0",
-              "sampleRepo": "https://github.com/bparees/openshift-jee-sample.git"
-            },
-            "from": {
-              "kind": "DockerImage",
-              "name": "openshift/wildfly-100-centos7:latest"
-            }
-          },
-          {
-            "name": "10.1",
-            "annotations": {
-              "description": "Build and run Java applications on Wildfly 10.1",
-              "iconClass": "icon-wildfly",
-              "tags": "builder,wildfly,java",
-              "supports":"wildfly:10.1,jee,java",
-              "version": "10.1",
-              "sampleRepo": "https://github.com/bparees/openshift-jee-sample.git"
-            },
-            "from": {
-              "kind": "DockerImage",
-              "name": "openshift/wildfly-101-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/python-35-rhel7:latest"
             }
           }
         ]
@@ -439,7 +354,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "openshift/mysql-55-centos7:latest"
+              "name": "registry.access.redhat.com/openshift3/mysql-55-rhel7:latest"
             }
           },
           {
@@ -452,7 +367,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/mysql-56-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/mysql-56-rhel7:latest"
             }
           }
         ]
@@ -488,7 +403,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/mariadb-101-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/mariadb-101-rhel7:latest"
             }
           }
         ]
@@ -524,7 +439,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "openshift/postgresql-92-centos7:latest"
+              "name": "registry.access.redhat.com/openshift3/postgresql-92-rhel7:latest"
             }
           },
           {
@@ -537,7 +452,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/postgresql-94-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/postgresql-94-rhel7:latest"
             }
           },
           {
@@ -550,7 +465,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/postgresql-95-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/postgresql-95-rhel7:latest"
             }
           }
         ]
@@ -586,7 +501,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "openshift/mongodb-24-centos7:latest"
+              "name": "registry.access.redhat.com/openshift3/mongodb-24-rhel7:latest"
             }
           },
           {
@@ -599,7 +514,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/mongodb-26-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/mongodb-26-rhel7:latest"
             }
           },
           {
@@ -612,7 +527,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "centos/mongodb-32-centos7:latest"
+              "name": "registry.access.redhat.com/rhscl/mongodb-32-rhel7:latest"
             }
           }
         ]
@@ -648,7 +563,7 @@
             },
             "from": {
               "kind": "DockerImage",
-              "name": "openshift/jenkins-1-centos7:latest"
+              "name": "registry.access.redhat.com/openshift3/jenkins-1-rhel7:latest"
             }
           }
         ]

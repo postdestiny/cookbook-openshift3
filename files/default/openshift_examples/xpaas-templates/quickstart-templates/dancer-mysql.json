@@ -2,15 +2,15 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "dancer-example",
+    "name": "dancer-mysql-example",
     "annotations": {
-      "description": "An example Dancer application with no database",
-      "tags": "quickstart,perl,dancer",
+      "description": "An example Dancer application with a MySQL database",
+      "tags": "quickstart,perl,dancer,mysql",
       "iconClass": "icon-perl"
     }
   },
   "labels": {
-    "template": "dancer-example"
+    "template": "dancer-mysql-example"
   },
   "objects": [
     {
@@ -125,16 +125,13 @@
         }
       },
       "spec": {
-        "strategy": {
-          "type": "Rolling"
-        },
         "triggers": [
           {
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "dancer-example"
+                "dancer-mysql-example"
               ],
               "from": {
                 "kind": "ImageStreamTag",
@@ -160,7 +157,7 @@
           "spec": {
             "containers": [
               {
-                "name": "dancer-example",
+                "name": "dancer-mysql-example",
                 "image": " ",
                 "ports": [
                   {
@@ -171,7 +168,7 @@
                   "timeoutSeconds": 3,
                   "initialDelaySeconds": 3,
                   "httpGet": {
-                    "path": "/",
+                    "path": "/health",
                     "port": 8080
                   }
                 },
@@ -185,14 +182,160 @@
                 },
                 "env": [
                   {
+                    "name": "DATABASE_SERVICE_NAME",
+                    "value": "${DATABASE_SERVICE_NAME}"
+                  },
+                  {
+                    "name": "MYSQL_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "MYSQL_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                    "name": "MYSQL_DATABASE",
+                    "value": "${DATABASE_NAME}"
+                  },
+                  {
+                    "name": "SECRET_KEY_BASE",
+                    "value": "${SECRET_KEY_BASE}"
+                  },
+                  {
                     "name": "PERL_APACHE2_RELOAD",
                     "value": "${PERL_APACHE2_RELOAD}"
                   }
                 ],
                 "resources": {
-		      "limits": {
-			  "memory": "${MEMORY_LIMIT}"
-		      }
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DATABASE_SERVICE_NAME}",
+        "annotations": {
+          "description": "Exposes the database server"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "mysql",
+            "port": 3306,
+            "targetPort": 3306
+          }
+        ],
+        "selector": {
+          "name": "${DATABASE_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DATABASE_SERVICE_NAME}",
+        "annotations": {
+          "description": "Defines how to deploy the database"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "mysql"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "${NAMESPACE}",
+                "name": "mysql:5.6"
+              }
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${DATABASE_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "name": "${DATABASE_SERVICE_NAME}",
+            "labels": {
+              "name": "${DATABASE_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "data",
+                "emptyDir": {}
+              }
+            ],
+            "containers": [
+              {
+                "name": "mysql",
+                "image": " ",
+                "ports": [
+                  {
+                    "containerPort": 3306
+                  }
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "data",
+                    "mountPath": "/var/lib/mysql/data"
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 5,
+                  "exec": {
+                    "command": [ "/bin/sh", "-i", "-c", "MYSQL_PWD='${DATABASE_PASSWORD}' mysql -h 127.0.0.1 -u ${DATABASE_USER} -D ${DATABASE_NAME} -e 'SELECT 1'" ]
+                  }
+                },
+                "livenessProbe": {
+                    "timeoutSeconds": 1,
+                    "initialDelaySeconds": 30,
+                    "tcpSocket": {
+                        "port": 3306
+                    }
+                },
+                "env": [
+                  {
+                    "name": "MYSQL_USER",
+                    "value": "${DATABASE_USER}"
+                  },
+                  {
+                    "name": "MYSQL_PASSWORD",
+                    "value": "${DATABASE_PASSWORD}"
+                  },
+                  {
+                      "name": "MYSQL_DATABASE",
+                      "value": "${DATABASE_NAME}"
+                  }
+                ],
+                "resources": {
+                    "limits": {
+                        "memory": "${MEMORY_MYSQL_LIMIT}"
+                    }
                 }
               }
             ]
@@ -207,7 +350,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the frontend objects defined in this template.",
       "required": true,
-      "value": "dancer-example"
+      "value": "dancer-mysql-example"
     },
     {
       "name": "NAMESPACE",
@@ -219,7 +362,14 @@
     {
       "name": "MEMORY_LIMIT",
       "displayName": "Memory Limit",
-      "description": "Maximum amount of memory the container can use.",
+      "description": "Maximum amount of memory the Perl Dancer container can use.",
+      "required": true,
+      "value": "512Mi"
+    },
+    {
+      "name": "MEMORY_MYSQL_LIMIT",
+      "displayName": "Memory Limit (MySQL)",
+      "description": "Maximum amount of memory the MySQL container can use.",
       "required": true,
       "value": "512Mi"
     },
@@ -254,17 +404,53 @@
       "from": "[a-zA-Z0-9]{40}"
     },
     {
-      "name": "SECRET_KEY_BASE",
-      "displayName": "Secret Key",
-      "description": "Your secret key for verifying the integrity of signed cookies.",
+      "name": "ADMIN_USERNAME",
+      "displayName": "Administrator Username",
       "generate": "expression",
-      "from": "[a-z0-9]{127}"
+      "from": "admin[A-Z0-9]{3}"
+    },
+    {
+      "name": "ADMIN_PASSWORD",
+      "displayName": "Administrator Password",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{8}"
+    },
+    {
+      "name": "DATABASE_SERVICE_NAME",
+      "displayName": "Database Service Name",
+      "required": true,
+      "value": "database"
+    },
+    {
+      "name": "DATABASE_USER",
+      "displayName": "Database Username",
+      "generate": "expression",
+      "from": "user[A-Z0-9]{3}"
+    },
+    {
+      "name": "DATABASE_PASSWORD",
+      "displayName": "Database Password",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{8}"
+    },
+    {
+      "name": "DATABASE_NAME",
+      "displayName": "Database Name",
+      "required": true,
+      "value": "sampledb"
     },
     {
       "name": "PERL_APACHE2_RELOAD",
       "displayName": "Perl Module Reload",
       "description": "Set this to \"true\" to enable automatic reloading of modified Perl modules.",
       "value": ""
+    },
+    {
+      "name": "SECRET_KEY_BASE",
+      "displayName": "Secret Key",
+      "description": "Your secret key for verifying the integrity of signed cookies.",
+      "generate": "expression",
+      "from": "[a-z0-9]{127}"
     },
     {
       "name": "CPAN_MIRROR",
