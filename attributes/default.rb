@@ -35,6 +35,12 @@ default['cookbook-openshift3']['deploy_containerized'] = false
 default['cookbook-openshift3']['deploy_example'] = false
 default['cookbook-openshift3']['deploy_dnsmasq'] = false
 default['cookbook-openshift3']['deploy_standalone_registry'] = false
+default['cookbook-openshift3']['deploy_example_db_templates'] = true
+default['cookbook-openshift3']['deploy_example_image-streams'] = true
+default['cookbook-openshift3']['deploy_example_quickstart-templates'] = false
+default['cookbook-openshift3']['deploy_example_xpaas-streams'] = false
+default['cookbook-openshift3']['deploy_example_xpaas-templates'] = false
+
 default['cookbook-openshift3']['docker_version'] = nil
 default['cookbook-openshift3']['docker_log_options'] = nil
 default['cookbook-openshift3']['install_method'] = 'yum'
@@ -61,6 +67,9 @@ default['cookbook-openshift3']['openshift_common_reverse_svc_ip'] = node['cookbo
 default['cookbook-openshift3']['openshift_common_default_nodeSelector'] = 'region=user'
 default['cookbook-openshift3']['openshift_common_infra_label'] = 'region=infra'
 default['cookbook-openshift3']['openshift_common_examples_base'] = '/usr/share/openshift/examples'
+default['cookbook-openshift3']['openshift_common_hosted_base'] = '/usr/share/openshift/hosted'
+default['cookbook-openshift3']['openshift_hosted_type'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'enterprise' : 'origin'
+default['cookbook-openshift3']['openshift_base_images'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'image-streams-rhel7.json' : 'image-streams-centos7.json'
 default['cookbook-openshift3']['openshift_common_hostname'] = node['fqdn']
 default['cookbook-openshift3']['openshift_common_ip'] = node['ipaddress']
 default['cookbook-openshift3']['openshift_common_infra_project'] = %w(default openshift-infra)
@@ -97,9 +106,9 @@ default['cookbook-openshift3']['openshift_master_debug_level'] = '2'
 default['cookbook-openshift3']['openshift_master_dns_port'] = node['cookbook-openshift3']['deploy_dnsmasq'] == true ? '8053' : '53'
 default['cookbook-openshift3']['openshift_master_label'] = 'region=infra'
 default['cookbook-openshift3']['openshift_master_metrics_public_url'] = nil
-default['cookbook-openshift3']['openshift_master_pod_eviction_timeout'] = ""
-default['cookbook-openshift3']['openshift_master_project_request_message'] = ""
-default['cookbook-openshift3']['openshift_master_project_request_template'] = ""
+default['cookbook-openshift3']['openshift_master_pod_eviction_timeout'] = ''
+default['cookbook-openshift3']['openshift_master_project_request_message'] = ''
+default['cookbook-openshift3']['openshift_master_project_request_template'] = ''
 default['cookbook-openshift3']['openshift_master_logging_public_url'] = nil
 default['cookbook-openshift3']['openshift_master_generated_configs_dir'] = '/var/www/html/generated-configs'
 default['cookbook-openshift3']['openshift_master_router_subdomain'] = 'cloudapps.domain.local'

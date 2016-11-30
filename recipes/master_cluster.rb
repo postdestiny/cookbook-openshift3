@@ -210,8 +210,9 @@ end
 
 if node['cookbook-openshift3']['oauth_Identity'] == 'HTPasswdPasswordIdentityProvider'
   package 'httpd-tools'
-  file node['cookbook-openshift3']['openshift_master_identity_provider'][node['cookbook-openshift3']['oauth_Identity']]['filename'] do
-    action :create_if_missing
+
+  template node['cookbook-openshift3']['openshift_master_identity_provider'][node['cookbook-openshift3']['oauth_Identity']]['filename'] do
+    source 'htpasswd.erb'
     mode '600'
   end
 end

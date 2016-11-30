@@ -45,5 +45,6 @@ action :delete do
     action :request_reboot
     reason 'Need to reboot when the run completes successfully.'
     delay_mins 1
+    only_if node['cookbook-openshift3']['openshift_adhoc_reboot_node'] == true
   end
 end

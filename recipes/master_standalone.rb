@@ -4,8 +4,6 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-node_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['node_servers']}")).sort! : node['cookbook-openshift3']['node_servers']
-
 if node['cookbook-openshift3']['deploy_containerized']
   execute 'Pull CLI docker image' do
     command "docker pull #{node['cookbook-openshift3']['openshift_docker_cli_image']}:#{node['cookbook-openshift3']['openshift_docker_image_version']}"
@@ -70,8 +68,8 @@ end
 if node['cookbook-openshift3']['oauth_Identity'] == 'HTPasswdPasswordIdentityProvider'
   package 'httpd-tools'
 
-  file node['cookbook-openshift3']['openshift_master_identity_provider'][node['cookbook-openshift3']['oauth_Identity']]['filename'] do
-    action :create_if_missing
+  template node['cookbook-openshift3']['openshift_master_identity_provider'][node['cookbook-openshift3']['oauth_Identity']]['filename'] do
+    source 'htpasswd.erb'
     mode '600'
   end
 end

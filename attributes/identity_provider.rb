@@ -7,3 +7,5 @@ default['cookbook-openshift3']['openshift_master_identity_provider']['LDAPPasswo
 default['cookbook-openshift3']['openshift_master_identity_provider']['RequestHeaderIdentityProvider'] = { 'name' => 'header_provider_identify', 'login' => false, 'challenge' => false, 'kind' => 'RequestHeaderIdentityProvider', 'headers' => %w(X-Remote-User SSO-User), 'clientCA' => "#{default['cookbook-openshift3']['openshift_common_master_dir']}/master/ca.crt" }
 
 default['cookbook-openshift3']['openshift_master_htpasswd'] = "#{default['cookbook-openshift3']['openshift_common_master_dir']}/openshift-passwd"
+
+default['cookbook-openshift3']['openshift_master_htpasswd_users'] = []

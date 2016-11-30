@@ -54,12 +54,20 @@ if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }
   end
 
   remote_directory node['cookbook-openshift3']['openshift_common_examples_base'] do
-    source 'openshift_examples/examples'
+    source 'openshift_examples'
     owner 'root'
     group 'root'
     action :create
     recursive true
     only_if { node['cookbook-openshift3']['deploy_example'] }
+  end
+
+  remote_directory node['cookbook-openshift3']['openshift_common_hosted_base'] do
+    source "openshift_hosted_templates/#{node['cookbook-openshift3']['openshift_hosted_type']}"
+    owner 'root'
+    group 'root'
+    action :create
+    recursive true
   end
 
   if node['cookbook-openshift3']['openshift_HA']
