@@ -82,6 +82,5 @@ if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }
 
   if master_servers.first['fqdn'] == node['fqdn']
     include_recipe 'cookbook-openshift3::nodes_certificates'
-    include_recipe 'cookbook-openshift3::master_config_post'
   end
 end

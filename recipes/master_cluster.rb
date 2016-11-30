@@ -128,8 +128,6 @@ end
 end
 
 if master_servers.first['fqdn'] == node['fqdn']
-  package node['cookbook-openshift3']['openshift_service_type']
-
   execute 'Create the master certificates' do
     command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} ca create-master-certs \
             --hostnames=#{node['cookbook-openshift3']['erb_corsAllowedOrigins'].uniq.join(',')} \
@@ -254,7 +252,6 @@ openshift_create_master 'Create master configuration file' do
   openshift_service_type node['cookbook-openshift3']['openshift_service_type']
   standalone_registry node['cookbook-openshift3']['deploy_standalone_registry']
   cluster true
-  single_instance false
 end
 
 execute 'Activate services for Master API and Controllers' do

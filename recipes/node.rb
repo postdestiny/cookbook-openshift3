@@ -117,6 +117,8 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
   end
 
   service "#{node['cookbook-openshift3']['openshift_service_type']}-node" do
+    retries 5
+    retry_delay 2
     action :start
   end
 end
