@@ -38,12 +38,14 @@ corsAllowedOrigins:
   - <%= origin %>
 <%- end -%>
 <% end -%>
+<% if @standalone_registry%>
+disabledFeatures: <%= node['cookbook-openshift3']['openshift_master_disabled_features'] %>
+<% end -%>
 <% if node['cookbook-openshift3']['openshift_master_embedded_dns'] == true %>
 dnsConfig:
   bindAddress: <%= node['cookbook-openshift3']['openshift_master_bind_addr'] %>:<%= node['cookbook-openshift3']['openshift_master_dns_port'] %>
   bindNetwork: tcp4
 <% end %>
-
 etcdClientInfo:
   ca: <%= node['cookbook-openshift3']['openshift_master_embedded_etcd'] == true ? "ca.crt" : "master.etcd-ca.crt" %>
   certFile: master.etcd-client.crt
@@ -99,7 +101,7 @@ kubernetesMasterConfig:
   masterCount: 1
 <%- end -%>
   masterIP: <%= node['cookbook-openshift3']['openshift_common_ip'] %>
-  podEvictionTimeout: ""
+  podEvictionTimeout: <%= node['cookbook-openshift3']['openshift_master_pod_eviction_timeout'] %>
   proxyClientInfo:
     certFile: master.proxy-client.crt
     keyFile: master.proxy-client.key
@@ -132,19 +134,15 @@ networkConfig:
   hostSubnetLength: <%= node['cookbook-openshift3']['openshift_master_sdn_host_subnet_length'] %>
   networkPluginName: <%= node['cookbook-openshift3']['openshift_common_sdn_network_plugin_name'] %>
 <%= render "oauthConfig.erb" , :local => false-%>
+pauseControllers: false
 policyConfig:
   bootstrapPolicyFile: <%= node['cookbook-openshift3']['openshift_master_policy'] %>
   openshiftInfrastructureNamespace: openshift-infra
   openshiftSharedResourcesNamespace: openshift
 projectConfig:
-<% if @single_instance %>
-# Default NodeSelector set to <%= node['cookbook-openshift3']['openshift_master_label'] %> as there is only one uniq master/node
-  defaultNodeSelector: "<%= node['cookbook-openshift3']['openshift_master_label'] %>"
-<%- else -%>
   defaultNodeSelector: "<%= node['cookbook-openshift3']['openshift_common_default_nodeSelector'] %>"
-<%- end -%>
-  projectRequestMessage: ""
-  projectRequestTemplate: ""
+  projectRequestMessage: <%= node['cookbook-openshift3']['openshift_master_project_request_message'] %>
+  projectRequestTemplate: <%= node['cookbook-openshift3']['openshift_master_project_request_template'] %>
   securityAllocator:
     mcsAllocatorRange: "s0:/2"
     mcsLabelsPerProject: 5
@@ -182,4 +180,3 @@ servingInfo:
 <%- end -%>
 volumeConfig:
   dynamicProvisioningEnabled: <%= node['cookbook-openshift3']['openshift_master_dynamic_provisioning_enabled'] %>
-

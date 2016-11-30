@@ -34,6 +34,7 @@ default['cookbook-openshift3']['ose_major_version'] = node['cookbook-openshift3'
 default['cookbook-openshift3']['deploy_containerized'] = false
 default['cookbook-openshift3']['deploy_example'] = false
 default['cookbook-openshift3']['deploy_dnsmasq'] = false
+default['cookbook-openshift3']['deploy_standalone_registry'] = false
 default['cookbook-openshift3']['docker_version'] = nil
 default['cookbook-openshift3']['docker_log_options'] = nil
 default['cookbook-openshift3']['install_method'] = 'yum'
@@ -89,12 +90,16 @@ default['cookbook-openshift3']['openshift_master_console_port'] = '8443'
 default['cookbook-openshift3']['openshift_master_controllers_port'] = '8444'
 default['cookbook-openshift3']['openshift_master_controller_lease_ttl'] = '30'
 default['cookbook-openshift3']['openshift_master_dynamic_provisioning_enabled'] = true
+default['cookbook-openshift3']['openshift_master_disabled_features'] = "['Builder', 'S2IBuilder', 'WebConsole']"
 default['cookbook-openshift3']['openshift_master_embedded_dns'] = true
 default['cookbook-openshift3']['openshift_master_embedded_kube'] = true
 default['cookbook-openshift3']['openshift_master_debug_level'] = '2'
 default['cookbook-openshift3']['openshift_master_dns_port'] = node['cookbook-openshift3']['deploy_dnsmasq'] == true ? '8053' : '53'
 default['cookbook-openshift3']['openshift_master_label'] = 'region=infra'
 default['cookbook-openshift3']['openshift_master_metrics_public_url'] = nil
+default['cookbook-openshift3']['openshift_master_pod_eviction_timeout'] = ""
+default['cookbook-openshift3']['openshift_master_project_request_message'] = ""
+default['cookbook-openshift3']['openshift_master_project_request_template'] = ""
 default['cookbook-openshift3']['openshift_master_logging_public_url'] = nil
 default['cookbook-openshift3']['openshift_master_generated_configs_dir'] = '/var/www/html/generated-configs'
 default['cookbook-openshift3']['openshift_master_router_subdomain'] = 'cloudapps.domain.local'

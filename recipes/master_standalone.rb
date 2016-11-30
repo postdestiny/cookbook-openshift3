@@ -6,8 +6,6 @@
 
 node_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['node_servers']}")).sort! : node['cookbook-openshift3']['node_servers']
 
-single_instance = node_servers.size.eql?(1) && node_servers.first['fqdn'].eql?(node['fqdn']) ? true : false
-
 if node['cookbook-openshift3']['deploy_containerized']
   execute 'Pull CLI docker image' do
     command "docker pull #{node['cookbook-openshift3']['openshift_docker_cli_image']}:#{node['cookbook-openshift3']['openshift_docker_image_version']}"
@@ -81,7 +79,7 @@ end
 openshift_create_master 'Create master configuration file' do
   named_certificate node['cookbook-openshift3']['openshift_master_named_certificates']
   origins node['cookbook-openshift3']['erb_corsAllowedOrigins'].uniq
-  single_instance single_instance
+  standalone_registry node['cookbook-openshift3']['deploy_standalone_registry']
   master_file node['cookbook-openshift3']['openshift_master_config_file']
   openshift_service_type node['cookbook-openshift3']['openshift_service_type']
 end

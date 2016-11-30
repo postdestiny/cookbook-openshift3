@@ -13,7 +13,7 @@ default_action :create
 
 attribute :named_certificate, kind_of: Array, regex: /.*/, required: true, default: []
 attribute :origins, kind_of: Array, regex: /.*/, required: true, default: []
-attribute :single_instance, kind_of: [TrueClass, FalseClass], required: false, default: true
+attribute :standalone_registry, kind_of: [TrueClass, FalseClass], required: true, default: false
 attribute :master_file, kind_of: String, regex: /.*/, required: true, default: nil
 attribute :etcd_servers, kind_of: Array, regex: /.*/, required: false, default: []
 attribute :masters_size, kind_of: [String, Integer], regex: /.*/, required: false, default: nil

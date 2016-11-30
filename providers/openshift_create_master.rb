@@ -45,7 +45,7 @@ action :create do
       source 'master.yaml.erb'
       variables(
         erb_corsAllowedOrigins: new_resource.origins,
-        single_instance: new_resource.single_instance,
+        standalone_registry: new_resource.standalone_registry,
         erb_master_named_certificates: named_certificates,
         etcd_servers: new_resource.etcd_servers,
         masters_size: new_resource.masters_size
@@ -58,7 +58,7 @@ action :create do
       source 'master.yaml.erb'
       variables(
         erb_corsAllowedOrigins: new_resource.origins,
-        single_instance: new_resource.single_instance,
+        standalone_registry: new_resource.standalone_registry,
         erb_master_named_certificates: named_certificates,
         etcd_servers: new_resource.etcd_servers,
         masters_size: new_resource.masters_size

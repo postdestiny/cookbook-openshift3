@@ -252,6 +252,7 @@ openshift_create_master 'Create master configuration file' do
   etcd_servers etcd_servers
   masters_size master_servers.size
   openshift_service_type node['cookbook-openshift3']['openshift_service_type']
+  standalone_registry node['cookbook-openshift3']['deploy_standalone_registry']
   cluster true
   single_instance false
 end
