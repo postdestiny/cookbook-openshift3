@@ -83,6 +83,8 @@ etcdStorageConfig:
 imageConfig:
   format: <%= node['cookbook-openshift3']['openshift_common_registry_url'] %>
   latest: false
+imagePolicyConfig:
+  maxImagesBulkImportedPerRepository: <%= node['cookbook-openshift3']['openshift_master_image_bulk_imported'] %>
 kind: MasterConfig
 kubeletClientInfo:
   ca: ca.crt

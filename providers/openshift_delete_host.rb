@@ -37,7 +37,7 @@ action :delete do
   end
   new_resource.updated_by_last_action(true)
 
-  %W(/etc/dnsmasq.d/origin-dns.conf /etc/dnsmasq.d/origin-upstream-dns.conf /etc/NetworkManager/dispatcher.d/99-origin-dns.sh /etc/#{node['cookbook-openshift3']['openshift_service_type']}  /etc/sysconfig/openvswitch /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-node /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-node-dep /etc/systemd/system/openvswitch.service /etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node-dep.service /etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node.service /etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node.service.wants /run/openshift-sdn /var/lib/origin/* /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master-api /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers /etc/sysconfig/openvswitch /root/.kube /usr/share/openshift/examples /usr/local/bin/openshift /usr/local/bin/oadm /usr/local/bin/oc /usr/local/bin/kubectl /etc/etcd/* /etc/httpd/* /var/lib/etcd/* /var/www/html/*).each do |file_to_remove|
+  %W(/etc/dnsmasq.d/origin-dns.conf /etc/dnsmasq.d/origin-upstream-dns.conf /etc/NetworkManager/dispatcher.d/99-origin-dns.sh /etc/#{node['cookbook-openshift3']['openshift_service_type']}  /etc/sysconfig/openvswitch /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-node /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-node-dep /etc/systemd/system/openvswitch.service /etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node-dep.service /etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node.service /etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node.service.wants /run/openshift-sdn /var/lib/origin/* /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master-api /etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers /etc/sysconfig/openvswitch /root/.kube /usr/share/openshift/examples /usr/share/openshift/hosted /usr/local/bin/openshift /usr/local/bin/oadm /usr/local/bin/oc /usr/local/bin/kubectl /etc/etcd/* /etc/httpd/* /var/lib/etcd/* /var/www/html/*).each do |file_to_remove|
     Mixlib::ShellOut.new("rm -rf #{file_to_remove}").run_command
   end
 
@@ -45,6 +45,6 @@ action :delete do
     action :request_reboot
     reason 'Need to reboot when the run completes successfully.'
     delay_mins 1
-    only_if node['cookbook-openshift3']['openshift_adhoc_reboot_node'] == true
+    only_if { node['cookbook-openshift3']['openshift_adhoc_reboot_node'] == true }
   end
 end

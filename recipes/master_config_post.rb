@@ -79,12 +79,34 @@ execute 'Import Openshift Examples xpaas-templates' do
 end
 
 node_servers.each do |nodes|
-  execute "Set schedulability for node : #{nodes['fqdn']}" do
-    command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} manage-node #{nodes['fqdn']} --schedulable=${schedulability} --config=admin.kubeconfig"
+  execute "Set schedulability for Master node : #{nodes['fqdn']}" do
+    command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} get node #{nodes['fqdn']} && (#{node['cookbook-openshift3']['openshift_common_admin_binary']} manage-node #{nodes['fqdn']} --schedulable=${schedulability} --config=admin.kubeconfig) || true"
     environment(
-      'schedulability' => nodes.select { |k, _v| k == 'schedulable' }.empty? ? master_servers.find { |server_node| server_node['fqdn'] == nodes['fqdn'] } ? 'False' : 'True' : nodes['schedulable'].to_s
+      'schedulability' => !nodes.key?(:schedulable) && master_servers.find { |server_node| server_node['fqdn'] == nodes['fqdn'] } ? 'False' : nodes['schedulable'].to_s
     )
     cwd Chef::Config[:file_cache_path]
-    only_if "#{node['cookbook-openshift3']['openshift_common_client_binary']} get node | grep #{nodes['fqdn']}"
+    only_if do
+      master_servers.find { |server_node| server_node['fqdn'] == nodes['fqdn'] }
+    end
+  end
+
+  execute "Set schedulability for node : #{nodes['fqdn']}" do
+    command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} get node #{nodes['fqdn']} && (#{node['cookbook-openshift3']['openshift_common_admin_binary']} manage-node #{nodes['fqdn']} --schedulable=${schedulability} --config=admin.kubeconfig) || true"
+    environment(
+      'schedulability' => !nodes.key?(:schedulable) && node_servers.find { |server_node| server_node['fqdn'] == nodes['fqdn'] } ? 'True' : nodes['schedulable'].to_s
+    )
+    cwd Chef::Config[:file_cache_path]
+    not_if do
+      master_servers.find { |server_node| server_node['fqdn'] == nodes['fqdn'] }
+    end
+  end
+
+  execute "Set Labels for node : #{nodes['fqdn']}" do
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} label node #{nodes['fqdn']} ${labels} --overwrite --config=admin.kubeconfig"
+    environment(
+      'labels' => nodes.key?(:labels) ? 'empty' : nodes['labels'].to_s
+    )
+    cwd Chef::Config[:file_cache_path]
+    only_if "#{node['cookbook-openshift3']['openshift_common_client_binary']} get node | grep #{nodes['fqdn']} && [ $labels != 'empty' ]"
   end
 end

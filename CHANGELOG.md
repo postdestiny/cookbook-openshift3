@@ -4,6 +4,12 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 ## v1.10.19
 ### Improvement
 - Add the possibility to enable the Audit logging 
+- Add the possibility to label nodes
+- Add the possibility to set scheduling against nodes
+- Add the plossibilty to deploy the Stand-alone Registry
+
+### Bug
+- Remove automatic rebooting when playing adhoc uninstallation
 
 ## v1.10.18
 ### Improvement
