@@ -10,6 +10,7 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
  
 ### Removal
 - Remove the node['cookbook-openshift3']['use_params_roles'] which used the CHEF search capability
+- Remove the node['cookbook-openshift3']['set_nameserver'] and node['cookbook-openshift3']['register_dns']
 
 ## v1.10.19
 ### Improvement

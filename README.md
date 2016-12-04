@@ -1,374 +1,231 @@
-Description
-===========
-
-* Installs OSEv3 and related packages.
-
-Requirements
-============
-
-## Platform ##
-
-* Tested on Red Hat RHEL 7.2
-* Tested on Centos 7.2
-
-## Openshift Version ##
-
-* Support OSE version from 3.1.0.4+
-* Support Origin version from 1.1.1+
-* Default the installation to 1.3 or 3.3
-
-Override Attributes
-===================
-
-[Read more about overriding attributes here!](https://github.com/IshentRas/cookbook-openshift3/blob/master/attribute-doc.md)
-
-#### Structure ####
--------------------
-
-* `node['cookbook-openshift3']['openshift_master_identity_provider']['HTPasswdPasswordIdentityProvider']`
-
-```json
-{
-"name" : "htpasswd_auth", 
-"login" : true, 
-"challenge" : true, 
-"kind" : "HTPasswdPasswordIdentityProvider", 
-"filename" : "/etc/openshift/openshift-passwd"
-}
-```
-
-* `node['cookbook-openshift3']['openshift_master_identity_provider']['LDAPPasswordIdentityProvider']`
-
-```json
-{
-"name" : "ldap_identity", 
-"login" : true, 
-"challenge" : true, 
-"kind" : "LDAPPasswordIdentityProvider", 
-"ldap_server" : "ldap.domain.local",
- "ldap_bind_dn" : "", 
- "ldap_bind_password" : "",
- "ldap_insecure" : true, 
- "ldap_base_ou" : "OU=people,DC=domain,DC=local", 
- "ldap_preferred_username" : "uid"
-}
-```
-
-* `node['cookbook-openshift3']['openshift_master_asset_config']`
-
-```json
-{
- "extensionStylesheets":["/path/to/css"],
- "extensionScripts":["/path/to/script"],
- "extensions":"/path/to/my_images",
- "templates":"/path/to/template"
-}
-```
-
-* `node['cookbook-openshift3']['nameserver']` 
-
-```json
-{
- "search": "domain.local",
- "domain": "domain.local",
- "nameservers": ["8.8.8.8","8.8.4.4"],
- "key_algorithm": "hmac-md5",
- "key_name": "domain.local.key",
- "key_secret": "DTngw5O8I5Axx631GjQ9pA=="
-}
-```
-
-* `node['cookbook-openshift3']['openshift_node_docker-storage']`
-
-```json
-{
- "DEVS": ["/dev/sdb","/dev/sdc"],
- "VG": "docker-vg",
- "DATA_SIZE": "80%FREE"
-}
-```
-
-* `node['cookbook-openshift3']['docker_log_options']`
-
-```json
-{
- "max-size": "50M",
- "max-file": "3"
-}
-```
-
-* `node['cookbook-openshift3']['openshift_master_named_certificates']`
-
-* CN or SAN names are automatically detected from the certificate file.
-
-```json
-[
-  {
-   "certfile": "/etc/where_is/my_certfile",
-   "keyfile": "/etc/where_is/my_keyfile"
-  }
-]
-```
-=====
-
-Include the recipes in roles so as to ease the deployment. 
-
-## Roles (Examples) 
-
-* BASE
-
-```json
-{
-  "name": "base",
-  "description": "Common Base Role",
-  "json_class": "Chef::Role",
-  "default_attributes": {
-
-  },
-  "override_attributes": {
-  },
-  "chef_type": "role",
-  "run_list": [
-    "recipe[cookbook-openshift3]",
-    "recipe[cookbook-openshift3::common]",
-    "recipe[cookbook-openshift3::master]",
-    "recipe[cookbook-openshift3::node]"
-  ],
-  "env_run_lists": {
-
-  }
-}
-```
-
-* UNINSTALL (ADHOC)
-
-```json
-{
-  "name": "uninstall",
-  "description": "Common Base Role",
-  "json_class": "Chef::Role",
-  "default_attributes": {
-
-  },
-  "override_attributes": {
-  },
-  "chef_type": "role",
-  "run_list": [
-    "recipe[cookbook-openshift3::adhoc_uninstall]"
-  ],
-  "env_run_lists": {
-
-  }
-}
-```
-
-ENVIRONMENT
-===========
-
-Modify the attributes as required in your environments to change how various configurations are applied per the attributes section above. 
-In general, override attributes in the environment should be used when changing attributes.
-
-### Minimal example ###
-
-* CLUSTER-NATIVE (Only available option since 3.2)
-
-```json
-{
-  "name": "cluster_native",
-  "description": "",
-  "cookbook_versions": {
-
-  },
-  "json_class": "Chef::Environment",
-  "chef_type": "environment",
-  "default_attributes": {
-
-  },
-  "override_attributes": {
-    "cookbook-openshift3": {
-      "openshift_HA": true,
-      "openshift_cluster_name": "ose-cluster.domain.local",
-      "openshift_master_cluster_vip": "1.1.1.100",
-      "master_servers": [
-        {
-          "fqdn": "ose1-server.domain.local",
-          "ipaddress": "1.1.1.1"
-        },
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        },
-        {
-          "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
-        }
-      ],
-      "master_peers": [
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        },
-        {
-          "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
-        }
-      ],
-      "etcd_servers": [
-        {
-          "fqdn": "ose1-server.domain.local",
-          "ipaddress": "1.1.1.1"
-        },
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        },
-        {
-          "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
-        }
-      ],
-      "node_servers": [
-        {
-          "fqdn": "ose1-server.domain.local",
-          "ipaddress": "1.1.1.1"
-        },
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        },
-        {
-          "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
-        },
-        {
-          "fqdn": "ose4-server.domain.local",
-          "ipaddress": "1.1.1.4"
-        },
-        {
-          "fqdn": "ose5-server.domain.local",
-          "ipaddress": "1.1.1.5"
-        },        
-      ],
-    }
-  }
-}
-```
-* SINGLE
-
-```json
-{
-  "name": "single",
-  "description": "",
-  "cookbook_versions": {
-
-  },
-  "json_class": "Chef::Environment",
-  "chef_type": "environment",
-  "default_attributes": {
-
-  },
-  "override_attributes": {
-    "cookbook-openshift3": {
-      "master_servers": [
-        {
-          "fqdn": "ose1-server.domain.local",
-          "ipaddress": "1.1.1.1"
-        }
-      ],
-      "node_servers": [
-        {
-          "fqdn": "ose1-server.domain.local",
-          "ipaddress": "1.1.1.1"
-        },
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        }
-      ],
-    }
-  }
-}
-```
-
-###Once it is done you should assign the node to the relevant environment.###
-```
-knife node environment set NODE_NAME ENVIRONMENT_NAME
-```
-
-LWRP
-==================
-
-*Create a DNS record using LWRP - ose_reghost*
-
-```ruby
-ose_reghost node["fqdn"] do
-  type :a
-  keyalgo "HMAC-MD5"
-  keyname "example.com"
-  keysecret "ddwDEdeedEEEdddd=ee=de=="
-  action :create
-end
-```
-
-*Delete a DNS record using LWRP - ose_reghost*
-
-```ruby
-ose_reghost node["fqdn"] do
-  type :a
-  keyalgo "HMAC-MD5"
-  keyname "example.com"
-  keysecret "ddwDEdeedEEEdddd=ee=de=="
-  action :delete
-end
-```
-
-```ruby
-ose_setup_cluster 'Setup Pacemaker' do
-  master_hosts ['1.1.1.1', '2.2.2.2', '3.3.3.3'] 
-  cluster_password 'password_for_pacemaker'
-  action :setup
-end
-```
-
-```ruby
-ose_setup_cluster 'Wait until the VIP is up and running on the master server' do 
-  action :init
-end
-```
-
-Run list
-==================
-
-```
-knife node run_list add NODE_NAME 'role[base]'
-```
-
-Test (ORIGIN)
-==================
-
-There is a way to quickly test this cookbook. 
-You will need a CentOS 7.1+  with "Minimal" installation option and at least 10GB left on the Volume group. (Later used by Docker)
-
-* Deploy ORIGIN ALL IN THE BOX Flavour (MASTER + NODE)
-```
-bash <(curl -s https://raw.githubusercontent.com/IshentRas/cookbook-openshift3/master/scripts/origin_deploy.sh)
-```
-
-Development
-==================
-
-License and Author
-==================
-
-Author: William Burton (<wburton@redhat.com>)
-
-The MIT License (MIT)
-
-Copyright (C) 2014 OpenBet Limited
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+# Description
+
+Installs/Configures Openshift 3.x (>= 3.2)
+
+# Requirements
+
+## Platform:
+
+* redhat (>= 7.1)
+* centos (>= 7.1)
+
+## Cookbooks:
+
+* iptables (>= 1.0.0)
+* selinux_policy
+
+# Attributes
+
+* `node['cookbook-openshift3']['openshift_adhoc_reboot_node']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['openshift_master_asset_config']` -  Defaults to `nil`.
+* `node['cookbook-openshift3']['use_params_roles']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['use_wildcard_nodes']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['wildcard_domain']` -  Defaults to ``.
+* `node['cookbook-openshift3']['openshift_cluster_name']` -  Defaults to `nil`.
+* `node['cookbook-openshift3']['openshift_HA']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['master_servers']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['etcd_servers']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['node_servers']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['openshift_common_public_hostname']` -  Defaults to `node['fqdn']`.
+* `node['cookbook-openshift3']['openshift_master_embedded_etcd']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['openshift_master_etcd_port']` -  Defaults to `4001`.
+* `node['cookbook-openshift3']['master_etcd_cert_prefix']` -  Defaults to ``.
+* `node['cookbook-openshift3']['ose_version']` -  Defaults to `nil`.
+* `node['cookbook-openshift3']['openshift_deployment_type']` -  Defaults to `enterprise`.
+* `node['cookbook-openshift3']['ose_major_version']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? '3.3' : '1.3`.
+* `node['cookbook-openshift3']['deploy_containerized']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['deploy_example']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['deploy_dnsmasq']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['deploy_standalone_registry']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['deploy_example_db_templates']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['deploy_example_image-streams']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['deploy_example_quickstart-templates']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['deploy_example_xpaas-streams']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['deploy_example_xpaas-templates']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['docker_version']` -  Defaults to `nil`.
+* `node['cookbook-openshift3']['docker_log_options']` -  Defaults to `nil`.
+* `node['cookbook-openshift3']['install_method']` -  Defaults to `yum`.
+* `node['cookbook-openshift3']['httpd_xfer_port']` -  Defaults to `9999`.
+* `node['cookbook-openshift3']['core_packages']` -  Defaults to `%w(libselinux-python wget vim-enhanced net-tools bind-utils git bash-completion bash-completion dnsmasq)`.
+* `node['cookbook-openshift3']['osn_cluster_dns_domain']` -  Defaults to `cluster.local`.
+* `node['cookbook-openshift3']['enabled_firewall_rules_master']` -  Defaults to `%w(firewall_master)`.
+* `node['cookbook-openshift3']['enabled_firewall_rules_master_cluster']` -  Defaults to `%w(firewall_master_cluster)`.
+* `node['cookbook-openshift3']['enabled_firewall_rules_node']` -  Defaults to `%w(firewall_node)`.
+* `node['cookbook-openshift3']['enabled_firewall_additional_rules_node']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['enabled_firewall_rules_etcd']` -  Defaults to `%w(firewall_etcd)`.
+* `node['cookbook-openshift3']['openshift_service_type']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'atomic-openshift' : 'origin`.
+* `node['cookbook-openshift3']['yum_repositories']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? %w() : [{ 'name' => 'centos-openshift-origin', 'baseurl' => 'http://mirror.centos.org/centos/7/paas/x86_64/openshift-origin/', 'gpgcheck' => false }]`.
+* `node['cookbook-openshift3']['openshift_data_dir']` -  Defaults to `/var/lib/origin`.
+* `node['cookbook-openshift3']['openshift_master_cluster_password']` -  Defaults to `openshift_cluster`.
+* `node['cookbook-openshift3']['openshift_common_base_dir']` -  Defaults to `/etc/origin`.
+* `node['cookbook-openshift3']['openshift_common_master_dir']` -  Defaults to `/etc/origin`.
+* `node['cookbook-openshift3']['openshift_common_node_dir']` -  Defaults to `/etc/origin`.
+* `node['cookbook-openshift3']['openshift_common_portal_net']` -  Defaults to `172.30.0.0/16`.
+* `node['cookbook-openshift3']['openshift_common_first_svc_ip']` -  Defaults to `node['cookbook-openshift3']['openshift_common_portal_net'].split('/')[0].gsub(/\.0$/, '.1')`.
+* `node['cookbook-openshift3']['openshift_common_reverse_svc_ip']` -  Defaults to `node['cookbook-openshift3']['openshift_common_portal_net'].split('/')[0].split('.')[0..1].reverse!.join('.')`.
+* `node['cookbook-openshift3']['openshift_common_default_nodeSelector']` -  Defaults to `region=user`.
+* `node['cookbook-openshift3']['openshift_common_infra_label']` -  Defaults to `region=infra`.
+* `node['cookbook-openshift3']['openshift_common_examples_base']` -  Defaults to `/usr/share/openshift/examples`.
+* `node['cookbook-openshift3']['openshift_common_hosted_base']` -  Defaults to `/usr/share/openshift/hosted`.
+* `node['cookbook-openshift3']['openshift_hosted_type']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'enterprise' : 'origin`.
+* `node['cookbook-openshift3']['openshift_base_images']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'image-streams-rhel7.json' : 'image-streams-centos7.json`.
+* `node['cookbook-openshift3']['openshift_common_hostname']` -  Defaults to `node['fqdn']`.
+* `node['cookbook-openshift3']['openshift_common_ip']` -  Defaults to `node['ipaddress']`.
+* `node['cookbook-openshift3']['openshift_common_infra_project']` -  Defaults to `%w(default openshift-infra)`.
+* `node['cookbook-openshift3']['openshift_common_public_ip']` -  Defaults to `node['ipaddress']`.
+* `node['cookbook-openshift3']['openshift_common_admin_binary']` -  Defaults to `node['cookbook-openshift3']['deploy_containerized'] == true ? '/usr/local/bin/oadm' : '/usr/bin/oadm`.
+* `node['cookbook-openshift3']['openshift_common_client_binary']` -  Defaults to `node['cookbook-openshift3']['deploy_containerized'] == true ? '/usr/local/bin/oc' : '/usr/bin/oc`.
+* `node['cookbook-openshift3']['openshift_common_service_accounts']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['openshift_common_use_openshift_sdn']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['openshift_common_sdn_network_plugin_name']` -  Defaults to `redhat/openshift-ovs-subnet`.
+* `node['cookbook-openshift3']['openshift_common_svc_names']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['openshift_common_registry_url']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'openshift3/ose-${component}:${version}' : 'openshift/origin-${component}:${version}`.
+* `node['cookbook-openshift3']['openshift_docker_insecure_registry_arg']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['openshift_docker_add_registry_arg']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['openshift_docker_block_registry_arg']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['openshift_docker_insecure_registries']` -  Defaults to `node['cookbook-openshift3']['openshift_docker_add_registry_arg'].empty? ? [node['cookbook-openshift3']['openshift_common_portal_net']] : [node['cookbook-openshift3']['openshift_common_portal_net']] + node['cookbook-openshift3']['openshift_docker_insecure_registry_arg']`.
+* `node['cookbook-openshift3']['openshift_docker_image_version']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'v3.2.0.44' : 'v1.2.0`.
+* `node['cookbook-openshift3']['openshift_docker_cli_image']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'openshift3/ose' : 'openshift/origin`.
+* `node['cookbook-openshift3']['openshift_docker_master_image']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'openshift3/ose' : 'openshift/origin`.
+* `node['cookbook-openshift3']['openshift_docker_node_image']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'openshift3/node' : 'openshift/node`.
+* `node['cookbook-openshift3']['openshift_docker_ovs_image']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'openshift3/openvswitch' : 'openshift/openvswitch`.
+* `node['cookbook-openshift3']['openshift_master_config_dir']` -  Defaults to `#{node['cookbook-openshift3']['openshift_common_master_dir']}/master`.
+* `node['cookbook-openshift3']['openshift_master_bind_addr']` -  Defaults to `0.0.0.0`.
+* `node['cookbook-openshift3']['openshift_master_auditconfig']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['openshift_master_api_port']` -  Defaults to `8443`.
+* `node['cookbook-openshift3']['openshift_master_console_port']` -  Defaults to `8443`.
+* `node['cookbook-openshift3']['openshift_master_controllers_port']` -  Defaults to `8444`.
+* `node['cookbook-openshift3']['openshift_master_controller_lease_ttl']` -  Defaults to `30`.
+* `node['cookbook-openshift3']['openshift_master_dynamic_provisioning_enabled']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['openshift_master_disabled_features']` -  Defaults to `['Builder', 'S2IBuilder', 'WebConsole']`.
+* `node['cookbook-openshift3']['openshift_master_embedded_dns']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['openshift_master_embedded_kube']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['openshift_master_debug_level']` -  Defaults to `2`.
+* `node['cookbook-openshift3']['openshift_master_dns_port']` -  Defaults to `node['cookbook-openshift3']['deploy_dnsmasq'] == true ? '8053' : '53`.
+* `node['cookbook-openshift3']['openshift_master_label']` -  Defaults to `region=infra`.
+* `node['cookbook-openshift3']['openshift_master_metrics_public_url']` -  Defaults to `nil`.
+* `node['cookbook-openshift3']['openshift_master_image_bulk_imported']` -  Defaults to `5`.
+* `node['cookbook-openshift3']['openshift_master_pod_eviction_timeout']` -  Defaults to ``.
+* `node['cookbook-openshift3']['openshift_master_project_request_message']` -  Defaults to ``.
+* `node['cookbook-openshift3']['openshift_master_project_request_template']` -  Defaults to ``.
+* `node['cookbook-openshift3']['openshift_master_logging_public_url']` -  Defaults to `nil`.
+* `node['cookbook-openshift3']['openshift_master_router_subdomain']` -  Defaults to `cloudapps.domain.local`.
+* `node['cookbook-openshift3']['openshift_master_sdn_cluster_network_cidr']` -  Defaults to `10.1.0.0/16`.
+* `node['cookbook-openshift3']['openshift_master_sdn_host_subnet_length']` -  Defaults to `8`.
+* `node['cookbook-openshift3']['openshift_master_oauth_grant_method']` -  Defaults to `auto`.
+* `node['cookbook-openshift3']['openshift_master_session_max_seconds']` -  Defaults to `3600`.
+* `node['cookbook-openshift3']['openshift_master_session_name']` -  Defaults to `ssn`.
+* `node['cookbook-openshift3']['openshift_master_session_secrets_file']` -  Defaults to `#{node['cookbook-openshift3']['openshift_master_config_dir']}/session-secrets.yaml`.
+* `node['cookbook-openshift3']['openshift_master_access_token_max_seconds']` -  Defaults to `86400`.
+* `node['cookbook-openshift3']['openshift_master_auth_token_max_seconds']` -  Defaults to `500`.
+* `node['cookbook-openshift3']['openshift_master_public_api_url']` -  Defaults to `https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}`.
+* `node['cookbook-openshift3']['openshift_master_api_url']` -  Defaults to `https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}`.
+* `node['cookbook-openshift3']['openshift_master_loopback_api_url']` -  Defaults to `https://#{node['fqdn']}:#{node['cookbook-openshift3']['openshift_master_api_port']}`.
+* `node['cookbook-openshift3']['openshift_master_console_url']` -  Defaults to `https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_console_port']}/console`.
+* `node['cookbook-openshift3']['openshift_master_etcd_url']` -  Defaults to `https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_etcd_port']}`.
+* `node['cookbook-openshift3']['openshift_master_policy']` -  Defaults to `#{node['cookbook-openshift3']['openshift_master_config_dir']}/policy.json`.
+* `node['cookbook-openshift3']['openshift_master_config_file']` -  Defaults to `#{node['cookbook-openshift3']['openshift_master_config_dir']}/master-config.yaml`.
+* `node['cookbook-openshift3']['openshift_master_api_sysconfig']` -  Defaults to `/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master-api`.
+* `node['cookbook-openshift3']['openshift_master_api_systemd']` -  Defaults to `/usr/lib/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-master-api.service`.
+* `node['cookbook-openshift3']['openshift_master_controllers_sysconfig']` -  Defaults to `/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers`.
+* `node['cookbook-openshift3']['openshift_master_controllers_systemd']` -  Defaults to `/usr/lib/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers.service`.
+* `node['cookbook-openshift3']['openshift_master_named_certificates']` -  Defaults to `%w()`.
+* `node['cookbook-openshift3']['openshift_master_scheduler_conf']` -  Defaults to `#{node['cookbook-openshift3']['openshift_master_config_dir']}/scheduler.json`.
+* `node['cookbook-openshift3']['openshift_master_certs_no_etcd']` -  Defaults to `%w(admin.crt master.kubelet-client.crt master.server.crt openshift-master.crt openshift-registry.crt openshift-router.crt etcd.server.crt)`.
+* `node['cookbook-openshift3']['openshift_node_config_dir']` -  Defaults to `#{node['cookbook-openshift3']['openshift_common_node_dir']}/node`.
+* `node['cookbook-openshift3']['openshift_node_config_file']` -  Defaults to `#{node['cookbook-openshift3']['openshift_node_config_dir']}/node-config.yaml`.
+* `node['cookbook-openshift3']['openshift_node_debug_level']` -  Defaults to `2`.
+* `node['cookbook-openshift3']['openshift_node_docker-storage']` -  Defaults to `{ ... }`.
+* `node['cookbook-openshift3']['openshift_node_generated_configs_dir']` -  Defaults to `/var/www/html/node/generated-configs`.
+* `node['cookbook-openshift3']['openshift_node_label']` -  Defaults to `node['cookbook-openshift3']['openshift_common_default_nodeSelector']`.
+* `node['cookbook-openshift3']['openshift_node_iptables_sync_period']` -  Defaults to `5s`.
+* `node['cookbook-openshift3']['openshift_node_max_pod']` -  Defaults to `40`.
+* `node['cookbook-openshift3']['openshift_node_sdn_mtu_sdn']` -  Defaults to `1450`.
+* `node['cookbook-openshift3']['openshift_node_minimum_container_ttl_duration']` -  Defaults to `10s`.
+* `node['cookbook-openshift3']['openshift_node_maximum_dead_containers_per_container']` -  Defaults to `2`.
+* `node['cookbook-openshift3']['openshift_node_maximum_dead_containers']` -  Defaults to `100`.
+* `node['cookbook-openshift3']['openshift_node_image_gc_high_threshold']` -  Defaults to `90`.
+* `node['cookbook-openshift3']['openshift_node_image_gc_low_threshold']` -  Defaults to `80`.
+* `node['cookbook-openshift3']['erb_corsAllowedOrigins']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['erb_etcdClientInfo_urls']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['master_generated_certs_dir']` -  Defaults to `/var/www/html/master/generated_certs`.
+* `node['cookbook-openshift3']['etcd_conf_dir']` -  Defaults to `/etc/etcd`.
+* `node['cookbook-openshift3']['etcd_ca_dir']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/ca`.
+* `node['cookbook-openshift3']['etcd_generated_certs_dir']` -  Defaults to `/var/www/html/etcd/generated_certs`.
+* `node['cookbook-openshift3']['etcd_ca_cert']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/ca.crt`.
+* `node['cookbook-openshift3']['etcd_ca_peer']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/ca.crt`.
+* `node['cookbook-openshift3']['etcd_cert_file']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/server.crt`.
+* `node['cookbook-openshift3']['etcd_cert_key']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/server.key`.
+* `node['cookbook-openshift3']['etcd_peer_file']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/peer.crt`.
+* `node['cookbook-openshift3']['etcd_peer_key']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/peer.key`.
+* `node['cookbook-openshift3']['etcd_openssl_conf']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/openssl.cnf`.
+* `node['cookbook-openshift3']['etcd_ca_name']` -  Defaults to `etcd_ca`.
+* `node['cookbook-openshift3']['etcd_req_ext']` -  Defaults to `etcd_v3_req`.
+* `node['cookbook-openshift3']['etcd_ca_exts_peer']` -  Defaults to `etcd_v3_ca_peer`.
+* `node['cookbook-openshift3']['etcd_ca_exts_server']` -  Defaults to `etcd_v3_ca_server`.
+* `node['cookbook-openshift3']['etcd_initial_cluster_state']` -  Defaults to `new`.
+* `node['cookbook-openshift3']['etcd_initial_cluster_token']` -  Defaults to `etcd-cluster-1`.
+* `node['cookbook-openshift3']['etcd_data_dir']` -  Defaults to `/var/lib/etcd/`.
+* `node['cookbook-openshift3']['etcd_default_days']` -  Defaults to `365`.
+* `node['cookbook-openshift3']['etcd_client_port']` -  Defaults to `2379`.
+* `node['cookbook-openshift3']['etcd_peer_port']` -  Defaults to `2380`.
+* `node['cookbook-openshift3']['etcd_initial_advertise_peer_urls']` -  Defaults to `https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_peer_port']}`.
+* `node['cookbook-openshift3']['etcd_listen_peer_urls']` -  Defaults to `https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_peer_port']}`.
+* `node['cookbook-openshift3']['etcd_listen_client_urls']` -  Defaults to `https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_client_port']}`.
+* `node['cookbook-openshift3']['etcd_advertise_client_urls']` -  Defaults to `https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_client_port']}`.
+* `node['cookbook-openshift3']['oauth_Identity']` -  Defaults to `HTPasswdPasswordIdentityProvider`.
+* `node['cookbook-openshift3']['openshift_master_identity_provider']['HTPasswdPasswordIdentityProvider']` -  Defaults to `{ ... }`.
+* `node['cookbook-openshift3']['openshift_master_identity_provider']['LDAPPasswordIdentityProvider']` -  Defaults to `{ ... }`.
+* `node['cookbook-openshift3']['openshift_master_identity_provider']['RequestHeaderIdentityProvider']` -  Defaults to `{ ... }`.
+* `node['cookbook-openshift3']['openshift_master_htpasswd']` -  Defaults to `#{default['cookbook-openshift3']['openshift_common_master_dir']}/openshift-passwd`.
+* `node['cookbook-openshift3']['openshift_master_htpasswd_users']` -  Defaults to `[ ... ]`.
+
+# Recipes
+
+* cookbook-openshift3::default - Default recipe
+* cookbook-openshift3::common - Apply common logic
+* cookbook-openshift3::master - Configure basic master logic
+* cookbook-openshift3::master_standalone - Configure standalone master logic
+* cookbook-openshift3::master_cluster - Configure HA cluster master (Only Native method)
+* cookbook-openshift3::master_config_post - Configure Post actions for masters
+* cookbook-openshift3::nodes_certificates - Configure certificates for nodes
+* cookbook-openshift3::node - Configure node
+* cookbook-openshift3::etcd_cluster - Configure HA ETCD cluster
+* cookbook-openshift3::adhoc_uninstall - Adhoc action for uninstalling Openshit from server
+
+# Resources
+
+* [openshift_create_master](#openshift_create_master)
+* [openshift_delete_host](#openshift_delete_host)
+
+## openshift_create_master
+
+### Actions
+
+- create:  Default action.
+
+### Attribute Parameters
+
+- named_certificate:  Defaults to <code>[]</code>.
+- origins:  Defaults to <code>[]</code>.
+- standalone_registry:  Defaults to <code>false</code>.
+- master_file:  Defaults to <code>nil</code>.
+- etcd_servers:  Defaults to <code>[]</code>.
+- masters_size:  Defaults to <code>nil</code>.
+- openshift_service_type:  Defaults to <code>nil</code>.
+- cluster:  Defaults to <code>false</code>.
+- cluster_name:  Defaults to <code>nil</code>.
+
+## openshift_delete_host
+
+### Actions
+
+- delete:  Default action.
+
+# License and Maintainer
+
+Maintainer:: The Authors (<wburton@redhat.com>)
+Source:: https://github.com/IshentRas/cookbook-openshift3
+Issues:: https://github.com/IshentRas/cookbook-openshift3/issues
+
+License:: all_rights
