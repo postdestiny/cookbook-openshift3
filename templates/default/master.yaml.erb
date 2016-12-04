@@ -97,7 +97,7 @@ kubernetesMasterConfig:
   - v1
   apiServerArguments: null
   controllerArguments: null
-<% if node['cookbook-openshift3']['openshift_HA'] && node['cookbook-openshift3']['openshift_HA_method'] == 'native' %>
+<% if node['cookbook-openshift3']['openshift_HA'] %>
   masterCount: <%= @masters_size %>
 <%- else -%>
   masterCount: 1

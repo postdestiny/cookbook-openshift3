@@ -4,19 +4,10 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-master_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['master_servers']}")).sort! : node['cookbook-openshift3']['master_servers']
+master_servers = node['cookbook-openshift3']['master_servers']
 
-if node['cookbook-openshift3']['openshift_HA']
-  case node['cookbook-openshift3']['openshift_HA_method']
-  when 'native'
-    if node['cookbook-openshift3']['openshift_cluster_name'].nil?
-      Chef::Application.fatal!('A Cluster Name must be defined via \"openshift_cluster_name\"')
-    end
-  else
-    if node['cookbook-openshift3']['openshift_cluster_name'].nil? && node['cookbook-openshift3']['openshift_master_cluster_vip'].nil?
-      Chef::Application.fatal!('A Cluster Name and IP must be defined via \"openshift_cluster_name\" and \"openshift_master_cluster_vip\"')
-    end
-  end
+if node['cookbook-openshift3']['openshift_HA'] && node['cookbook-openshift3']['openshift_cluster_name'].nil?
+  Chef::Application.fatal!('A Cluster Name must be defined via \"openshift_cluster_name\"')
 end
 
 include_recipe 'cookbook-openshift3::etcd_cluster'

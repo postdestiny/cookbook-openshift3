@@ -40,10 +40,6 @@ if node['cookbook-openshift3']['use_wildcard_nodes'] && node['cookbook-openshift
   Chef::Application.fatal!('"wildcard_domain" cannot be left empty when using "use_wildcard_nodes attribute"')
 end
 
-if node['cookbook-openshift3']['use_params_roles'] && Chef::Config[:solo]
-  Chef::Application.fatal!('Chef-solo cannot be used with attribute "use_params_roles". Chef search function is required!')
-end
-
 if node['cookbook-openshift3']['register_dns']
   if node['cookbook-openshift3']['nameserver']['key_algorithm'].nil? || node['cookbook-openshift3']['nameserver']['key_name'].nil? || node['cookbook-openshift3']['nameserver']['key_secret'].nil?
     Chef::Log.warn("#{cookbook_name}::#{recipe_name} requires the attributes ['nameserver']['key_algorithm'] / ['nameserver']['key_name'] / ['nameserver']['key_secret'] to be set so as to register \"#{node['fqdn']}\" against the DNS.")

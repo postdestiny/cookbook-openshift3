@@ -4,15 +4,14 @@ maintainer_email 'wburton@redhat.com'
 license 'all_rights'
 source_url 'https://github.com/IshentRas/cookbook-openshift3'
 issues_url 'https://github.com/IshentRas/cookbook-openshift3/issues'
-description 'Installs/Configures Openshift 3.x (>= 3.1)'
+description 'Installs/Configures Openshift 3.x (>= 3.2)'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '1.10.19'
+version '1.10.20'
 supports 'redhat', '>= 7.1'
 supports 'centos', '>= 7.1'
 
 depends 'iptables', '>= 1.0.0'
 depends 'selinux_policy'
-depends 'yum'
 
 recipe 'cookbook-openshift3::default', 'Default recipe'
 recipe 'cookbook-openshift3::common', 'Apply common logic'

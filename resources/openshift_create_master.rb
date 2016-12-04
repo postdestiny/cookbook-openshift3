@@ -19,3 +19,4 @@ attribute :etcd_servers, kind_of: Array, regex: /.*/, required: false, default: 
 attribute :masters_size, kind_of: [String, Integer], regex: /.*/, required: false, default: nil
 attribute :openshift_service_type, kind_of: [String, Integer], regex: /.*/, required: true, default: nil
 attribute :cluster, kind_of: [TrueClass, FalseClass], regex: /.*/, required: false, default: false
+attribute :cluster_name, kind_of: String, regex: /.*/, required: false, default: nil

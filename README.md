@@ -165,9 +165,6 @@ Include the recipes in roles so as to ease the deployment.
 ENVIRONMENT
 ===========
 
-Create at least 3 environments which would be assigned to nodes based on their profiles (single, cluster-native, cluster-pcs).
-Please not that clsuter-pcs which relies on Pacemaker is only supported by Openshift <= 3.1.x.
-
 Modify the attributes as required in your environments to change how various configurations are applied per the attributes section above. 
 In general, override attributes in the environment should be used when changing attributes.
 
@@ -256,92 +253,6 @@ In general, override attributes in the environment should be used when changing 
   }
 }
 ```
-
-* CLUSTER-PCS (only supported when using OpenShift < 3.2)
-
-```json
-{
-  "name": "cluster_pcs",
-  "description": "",
-  "cookbook_versions": {
-
-  },
-  "json_class": "Chef::Environment",
-  "chef_type": "environment",
-  "default_attributes": {
-
-  },
-  "override_attributes": {
-    "cookbook-openshift3": {
-      "openshift_HA": true,
-      "openshift_HA_method": "pcs",
-      "openshift_master_cluster_vip": "1.1.1.100",
-      "openshift_cluster_name": "ose-cluster.domain.local",
-      "master_servers": [
-        {
-          "fqdn": "ose1-server.domain.local",
-          "ipaddress": "1.1.1.1"
-        },
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        },
-        {
-          "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
-        }
-      ],
-      "master_peers": [
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        },
-        {
-          "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
-        }
-      ],
-      "etcd_servers": [
-        {
-          "fqdn": "ose1-server.domain.local",
-          "ipaddress": "1.1.1.1"
-        },
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        },
-        {
-          "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
-        }
-      ],
-      "node_servers": [
-        {
-          "fqdn": "ose1-server.domain.local",
-          "ipaddress": "1.1.1.1"
-        },
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        },
-        {
-          "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
-        },
-        {
-          "fqdn": "ose4-server.domain.local",
-          "ipaddress": "1.1.1.4"
-        },
-        {
-          "fqdn": "ose5-server.domain.local",
-          "ipaddress": "1.1.1.5"
-        },        
-      ],
-    }
-  }
-}
-```
-
 * SINGLE
 
 ```json

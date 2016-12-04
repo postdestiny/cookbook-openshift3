@@ -4,7 +4,7 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-etcd_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{etcd_servers}")).sort! : node['cookbook-openshift3']['etcd_servers']
+etcd_servers = node['cookbook-openshift3']['etcd_servers']
 
 if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
   if etcd_servers.first['fqdn'] == node['fqdn']
@@ -44,35 +44,26 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
       creates "#{node['cookbook-openshift3']['etcd_ca_dir']}/ca.crt"
     end
 
+    %W(/var/www/html/etcd #{node['cookbook-openshift3']['etcd_generated_certs_dir']} #{node['cookbook-openshift3']['etcd_generated_certs_dir']}/etcd).each do |path|
+      directory path do
+        mode '0755'
+        owner 'apache'
+        group 'apache'
+      end
+    end
+
+    %w(ca.crt ca.key).each do |etcd_export_certificate|
+      remote_file "#{node['cookbook-openshift3']['etcd_generated_certs_dir']}/etcd/#{etcd_export_certificate}" do
+        source "file://#{node['cookbook-openshift3']['etcd_ca_dir']}/#{etcd_export_certificate}"
+        mode '0644'
+      end
+    end
+
     etcd_servers.each do |etcd_master|
-      directory '/var/www/html/etcd' do
-        mode '0755'
-        owner 'apache'
-        group 'apache'
-      end
-      directory '/var/www/html/etcd/generated_certs' do
-        mode '0755'
-        owner 'apache'
-        group 'apache'
-      end
-      directory "#{node['cookbook-openshift3']['etcd_generated_certs_dir']}/etcd" do
-        mode '0755'
-        owner 'apache'
-        group 'apache'
-        recursive true
-      end
       directory "#{node['cookbook-openshift3']['etcd_generated_certs_dir']}/etcd-#{etcd_master['fqdn']}" do
         mode '0755'
         owner 'apache'
         group 'apache'
-        recursive true
-      end
-
-      %w(ca.crt ca.key).each do |etcd_export_certificate|
-        link "#{node['cookbook-openshift3']['etcd_generated_certs_dir']}/etcd/#{etcd_export_certificate}" do
-          to "#{node['cookbook-openshift3']['etcd_ca_dir']}/#{etcd_export_certificate}"
-          link_type :hard
-        end
       end
 
       %w(server peer).each do |etcd_certificates|

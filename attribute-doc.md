@@ -29,7 +29,6 @@ yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.
 <tr><td>osn_cluster_dns_domain</td><td>Set the SkyDNS domain name.</td>cluster.local<td></td></tr>
 <tr><td>enabled_firewall_additional_rules_node</td><td>Set the list of additional FW rules to set for a node.</td><td>[]</td></tr>
 <tr><td>openshift_data_dir</td><td>Set the default directory for OSE data.</td><td>/var/lib/origin</td></tr>
-<tr><td>openshift_master_cluster_password</td><td>Set the default password for the pcs administration account.</td><td>'openshift_cluster'</td></tr>
 <tr><td>openshift_common_master_dir</td><td>Set the default root directory for master.</td><td>/etc/origin</td></tr>
 <tr><td>openshift_common_node_dir</td><td>Set the default root directory for node.</td><td>/etc/origin</td></tr>
 <tr><td>openshift_common_portal_net</td><td>Set the default user-defined networks for Kubernetes. Set to 172.30.0.0/16 to match the default Docker CIDR. Once set, do not update.</td><td>172.30.0.0/16</td></tr>
@@ -60,7 +59,7 @@ yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.
 <tr><td>openshift_master_debug_level</td><td>Set the default level for master logging.</td><td>2 </td></tr>
 <tr><td>openshift_master_dns_port</td><td>Set the default port for SkyDNS.</td><td>When deploy_dnsmasq is set to "true" : 8053. Otherwise : 53</td></tr>
 <tr><td>openshift_master_label</td><td>Set the default label for master selector.</td><td>region=infra</td></tr>
-<tr><td>openshift_master_generated_configs_dir</td><td>Set the default directory for generating the node certificates.</td><td>/var/www/html/generated-configs'</td></tr>
+<tr><td>openshift_node_generated_configs_dir</td><td>Set the default directory for generating the node certificates.</td><td>/var/www/html/generated-configs'</td></tr>
 <tr><td>openshift_master_router_subdomain</td><td>Set the default domain for the HaProxy routeaProxy.</td><td>cloudapps.domain.local'</td></tr>
 <tr><td>openshift_master_sdn_cluster_network_cidr</td><td>Set the default SDN Network address.</td><td>10.1.0.0/16</td></tr>
 <tr><td>openshift_master_sdn_host_subnet_length</td><td>Set the default number of allocated bit for hosts.</td><td>8</td></tr>
@@ -92,7 +91,6 @@ yum_repositories</td><td>Set the yum repositories. [*yum_repos*](https://github.
 <thead><tr><td><b>cookbook-openshift3 config item</b></td><td><b>Description</b></td><td><b>Default</b></td></tr></thead>
 <tr><td>openshift_cluster_name</td><td>Set the cluster public hostname.</td><td>nil</td></tr>
 <tr><td>openshift_master_cluster_vip</td><td>Set the cluster public IP address (Mandatory when using Pacemaker deployment).</td><td>nil</td></tr>
-<tr><td>openshift_HA_method</td><td>Set the HA Master method ('native' or 'pacemaker').</td><td>native</td></tr>
 </table>
 
 ### Identity provider settings ###

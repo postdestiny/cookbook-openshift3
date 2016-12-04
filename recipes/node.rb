@@ -4,8 +4,8 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-master_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['master_servers']}")).sort! : node['cookbook-openshift3']['master_servers']
-node_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['node_servers']}")).sort! : node['cookbook-openshift3']['node_servers']
+master_servers = node['cookbook-openshift3']['master_servers']
+node_servers = node['cookbook-openshift3']['node_servers']
 path_certificate = node['cookbook-openshift3']['use_wildcard_nodes'] ? 'wildcard_nodes.tgz' : "#{node['fqdn']}.tgz"
 
 if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }

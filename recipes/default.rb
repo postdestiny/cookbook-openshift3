@@ -3,7 +3,7 @@
 # Recipe:: default
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
-master_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['master_servers']}")).sort! : node['cookbook-openshift3']['master_servers']
+master_servers = node['cookbook-openshift3']['master_servers']
 
 service "#{node['cookbook-openshift3']['openshift_service_type']}-master"
 

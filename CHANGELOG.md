@@ -1,6 +1,16 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.20
+### Improvement
+- Remove the need to specify the master server peers.
+
+### Bug
+- Remove duplicated resources
+ 
+### Removal
+- Remove the node['cookbook-openshift3']['use_params_roles'] which used the CHEF search capability
+
 ## v1.10.19
 ### Improvement
 - Add the possibility to enable the Audit logging 

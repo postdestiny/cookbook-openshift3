@@ -4,9 +4,9 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-master_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['master_servers']}")).sort! : node['cookbook-openshift3']['master_servers']
-etcd_servers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['etcd_servers']}")).sort! : node['cookbook-openshift3']['etcd_servers']
-master_peers = node['cookbook-openshift3']['use_params_roles'] && !Chef::Config[:solo] ? search(:node, %(role:"#{node['cookbook-openshift3']['master_servers']}" NOT name:"#{master_servers.first['fqdn']}")) : node['cookbook-openshift3']['master_peers']
+master_servers = node['cookbook-openshift3']['master_servers']
+etcd_servers = node['cookbook-openshift3']['etcd_servers']
+master_peers = master_servers.reject { |h| h['fqdn'] == master_servers[0]['fqdn'] }
 
 node['cookbook-openshift3']['enabled_firewall_rules_master_cluster'].each do |rule|
   iptables_rule rule do
@@ -60,22 +60,19 @@ if etcd_servers.first['fqdn'] != master_servers.first['fqdn']
 end
 
 if master_servers.first['fqdn'] == node['fqdn']
+  %W(/var/www/html/master #{node['cookbook-openshift3']['master_generated_certs_dir']}).each do |path|
+    directory path do
+      mode '0755'
+      owner 'apache'
+      group 'apache'
+    end
+  end
+
   master_servers.each do |master_server|
-    directory '/var/www/html/master' do
-      mode '0755'
-      owner 'apache'
-      group 'apache'
-    end
-    directory '/var/www/html/master/generated_certs' do
-      mode '0755'
-      owner 'apache'
-      group 'apache'
-    end
     directory "#{node['cookbook-openshift3']['master_generated_certs_dir']}/openshift-master-#{master_server['fqdn']}" do
       mode '0755'
       owner 'apache'
       group 'apache'
-      recursive true
     end
 
     execute "ETCD Create the CLIENT csr for #{master_server['fqdn']}" do
@@ -219,29 +216,26 @@ end
 
 template "/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master" do
   source 'service_master.sysconfig.erb'
-  not_if { node['cookbook-openshift3']['openshift_HA_method'] == 'native' }
 end
 
-if node['cookbook-openshift3']['openshift_HA_method'] == 'native'
-  template node['cookbook-openshift3']['openshift_master_api_systemd'] do
-    source 'service_master-api.service.erb'
-    notifies :reload, 'service[daemon-reload]', :immediately
-  end
+template node['cookbook-openshift3']['openshift_master_api_systemd'] do
+  source 'service_master-api.service.erb'
+  notifies :reload, 'service[daemon-reload]', :immediately
+end
 
-  template node['cookbook-openshift3']['openshift_master_controllers_systemd'] do
-    source 'service_master-controllers.service.erb'
-    notifies :reload, 'service[daemon-reload]', :immediately
-  end
+template node['cookbook-openshift3']['openshift_master_controllers_systemd'] do
+  source 'service_master-controllers.service.erb'
+  notifies :reload, 'service[daemon-reload]', :immediately
+end
 
-  template node['cookbook-openshift3']['openshift_master_api_sysconfig'] do
-    source 'service_master-api.sysconfig.erb'
-    notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-api]", :immediately
-  end
+template node['cookbook-openshift3']['openshift_master_api_sysconfig'] do
+  source 'service_master-api.sysconfig.erb'
+  notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-api]", :immediately
+end
 
-  template node['cookbook-openshift3']['openshift_master_controllers_sysconfig'] do
-    source 'service_master-controllers.sysconfig.erb'
-    notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
-  end
+template node['cookbook-openshift3']['openshift_master_controllers_sysconfig'] do
+  source 'service_master-controllers.sysconfig.erb'
+  notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
 end
 
 openshift_create_master 'Create master configuration file' do
@@ -261,7 +255,6 @@ execute 'Activate services for Master API and Controllers' do
   notifies :start, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
   notifies :disable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master]", :immediately
   notifies :run, "ruby_block[Mask #{node['cookbook-openshift3']['openshift_service_type']}-master]", :immediately
-  only_if { node['cookbook-openshift3']['openshift_HA_method'] == 'native' }
 end
 
 # Use ruby_block as systemd service provider does not support 'mask' action
@@ -275,28 +268,7 @@ end
 
 execute 'Wait for API to become available' do
   command "echo | openssl s_client -connect #{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']} -servername #{node['cookbook-openshift3']['openshift_common_public_hostname']}"
-  retries 24
-  retry_delay 5
+  retries 15
+  retry_delay 2
   notifies :start, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
-  only_if { node['cookbook-openshift3']['openshift_HA_method'] == 'native' }
-end
-
-unless node['cookbook-openshift3']['openshift_HA_method'] == 'native'
-  package 'pcs'
-
-  service 'pcsd' do
-    action [:start, :enable]
-  end
-
-  execute 'Set the cluster user password' do
-    command "echo \"#{node['cookbook-openshift3']['openshift_master_cluster_password']}\" | passwd --stdin hacluster"
-  end
-
-  if master_servers.first['fqdn'] == node['fqdn']
-    include_recipe 'cookbook-openshift3::setup_cluster'
-
-    openshift_setup_cluster 'Wait until the VIP is up and running on the master server' do
-      action :init
-    end
-  end
 end
