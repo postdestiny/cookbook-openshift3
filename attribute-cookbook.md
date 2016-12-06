@@ -54,6 +54,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['enabled_firewall_additional_rules_node']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['enabled_firewall_rules_etcd']` -  Defaults to `%w(firewall_etcd)`.
 * `node['cookbook-openshift3']['openshift_service_type']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'atomic-openshift' : 'origin`.
+* `node['cookbook-openshift3']['registry_persistent_volume']` -  Defaults to `{ ... }`.
 * `node['cookbook-openshift3']['yum_repositories']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? %w() : [{ 'name' => 'centos-openshift-origin', 'baseurl' => 'http://mirror.centos.org/centos/7/paas/x86_64/openshift-origin/', 'gpgcheck' => false }]`.
 * `node['cookbook-openshift3']['openshift_data_dir']` -  Defaults to `/var/lib/origin`.
 * `node['cookbook-openshift3']['openshift_master_cluster_password']` -  Defaults to `openshift_cluster`.
@@ -64,7 +65,6 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_common_first_svc_ip']` -  Defaults to `node['cookbook-openshift3']['openshift_common_portal_net'].split('/')[0].gsub(/\.0$/, '.1')`.
 * `node['cookbook-openshift3']['openshift_common_reverse_svc_ip']` -  Defaults to `node['cookbook-openshift3']['openshift_common_portal_net'].split('/')[0].split('.')[0..1].reverse!.join('.')`.
 * `node['cookbook-openshift3']['openshift_common_default_nodeSelector']` -  Defaults to `region=user`.
-* `node['cookbook-openshift3']['openshift_common_infra_label']` -  Defaults to `region=infra`.
 * `node['cookbook-openshift3']['openshift_common_examples_base']` -  Defaults to `/usr/share/openshift/examples`.
 * `node['cookbook-openshift3']['openshift_common_hosted_base']` -  Defaults to `/usr/share/openshift/hosted`.
 * `node['cookbook-openshift3']['openshift_hosted_type']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'enterprise' : 'origin`.
@@ -76,6 +76,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_common_admin_binary']` -  Defaults to `node['cookbook-openshift3']['deploy_containerized'] == true ? '/usr/local/bin/oadm' : '/usr/bin/oadm`.
 * `node['cookbook-openshift3']['openshift_common_client_binary']` -  Defaults to `node['cookbook-openshift3']['deploy_containerized'] == true ? '/usr/local/bin/oc' : '/usr/bin/oc`.
 * `node['cookbook-openshift3']['openshift_common_service_accounts']` -  Defaults to `[ ... ]`.
+* `node['cookbook-openshift3']['openshift_common_service_accounts_additional']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['openshift_common_use_openshift_sdn']` -  Defaults to `true`.
 * `node['cookbook-openshift3']['openshift_common_sdn_network_plugin_name']` -  Defaults to `redhat/openshift-ovs-subnet`.
 * `node['cookbook-openshift3']['openshift_common_svc_names']` -  Defaults to `[ ... ]`.
@@ -102,7 +103,6 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_master_embedded_kube']` -  Defaults to `true`.
 * `node['cookbook-openshift3']['openshift_master_debug_level']` -  Defaults to `2`.
 * `node['cookbook-openshift3']['openshift_master_dns_port']` -  Defaults to `node['cookbook-openshift3']['deploy_dnsmasq'] == true ? '8053' : '53`.
-* `node['cookbook-openshift3']['openshift_master_label']` -  Defaults to `region=infra`.
 * `node['cookbook-openshift3']['openshift_master_metrics_public_url']` -  Defaults to `nil`.
 * `node['cookbook-openshift3']['openshift_master_image_bulk_imported']` -  Defaults to `5`.
 * `node['cookbook-openshift3']['openshift_master_pod_eviction_timeout']` -  Defaults to ``.
@@ -146,6 +146,12 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_node_maximum_dead_containers']` -  Defaults to `100`.
 * `node['cookbook-openshift3']['openshift_node_image_gc_high_threshold']` -  Defaults to `90`.
 * `node['cookbook-openshift3']['openshift_node_image_gc_low_threshold']` -  Defaults to `80`.
+* `node['cookbook-openshift3']['openshift_hosted_manage_router']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['openshift_hosted_router_selector']` -  Defaults to `region=infra`.
+* `node['cookbook-openshift3']['openshift_hosted_router_namespace']` -  Defaults to `default`.
+* `node['cookbook-openshift3']['openshift_hosted_manage_registry']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['openshift_hosted_registry_selector']` -  Defaults to `region=infra`.
+* `node['cookbook-openshift3']['openshift_hosted_registry_namespace']` -  Defaults to `default`.
 * `node['cookbook-openshift3']['erb_corsAllowedOrigins']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['erb_etcdClientInfo_urls']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['master_generated_certs_dir']` -  Defaults to `/var/www/html/master/generated_certs`.
@@ -197,6 +203,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 
 * [openshift_create_master](#openshift_create_master)
 * [openshift_delete_host](#openshift_delete_host)
+* [openshift_deploy_registry](#openshift_deploy_registry)
 
 ## openshift_create_master
 
@@ -221,6 +228,17 @@ Installs/Configures Openshift 3.x (>= 3.2)
 ### Actions
 
 - delete:  Default action.
+
+## openshift_deploy_registry
+
+### Actions
+
+- create:  Default action.
+
+### Attribute Parameters
+
+- number_instances:
+- persistent_registry:
 
 # License and Maintainer
 

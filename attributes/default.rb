@@ -50,7 +50,9 @@ default['cookbook-openshift3']['enabled_firewall_rules_node'] = %w(firewall_node
 default['cookbook-openshift3']['enabled_firewall_additional_rules_node'] = []
 default['cookbook-openshift3']['enabled_firewall_rules_etcd'] = %w(firewall_etcd)
 default['cookbook-openshift3']['openshift_service_type'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'atomic-openshift' : 'origin'
+default['cookbook-openshift3']['registry_persistent_volume'] = {}
 default['cookbook-openshift3']['yum_repositories'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? %w() : [{ 'name' => 'centos-openshift-origin', 'baseurl' => 'http://mirror.centos.org/centos/7/paas/x86_64/openshift-origin/', 'gpgcheck' => false }]
+
 default['cookbook-openshift3']['openshift_data_dir'] = '/var/lib/origin'
 default['cookbook-openshift3']['openshift_master_cluster_password'] = 'openshift_cluster'
 default['cookbook-openshift3']['openshift_common_base_dir'] = '/etc/origin'
@@ -60,7 +62,6 @@ default['cookbook-openshift3']['openshift_common_portal_net'] = '172.30.0.0/16'
 default['cookbook-openshift3']['openshift_common_first_svc_ip'] = node['cookbook-openshift3']['openshift_common_portal_net'].split('/')[0].gsub(/\.0$/, '.1')
 default['cookbook-openshift3']['openshift_common_reverse_svc_ip'] = node['cookbook-openshift3']['openshift_common_portal_net'].split('/')[0].split('.')[0..1].reverse!.join('.')
 default['cookbook-openshift3']['openshift_common_default_nodeSelector'] = 'region=user'
-default['cookbook-openshift3']['openshift_common_infra_label'] = 'region=infra'
 default['cookbook-openshift3']['openshift_common_examples_base'] = '/usr/share/openshift/examples'
 default['cookbook-openshift3']['openshift_common_hosted_base'] = '/usr/share/openshift/hosted'
 default['cookbook-openshift3']['openshift_hosted_type'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'enterprise' : 'origin'
@@ -72,6 +73,8 @@ default['cookbook-openshift3']['openshift_common_public_ip'] = node['ipaddress']
 default['cookbook-openshift3']['openshift_common_admin_binary'] = node['cookbook-openshift3']['deploy_containerized'] == true ? '/usr/local/bin/oadm' : '/usr/bin/oadm'
 default['cookbook-openshift3']['openshift_common_client_binary'] = node['cookbook-openshift3']['deploy_containerized'] == true ? '/usr/local/bin/oc' : '/usr/bin/oc'
 default['cookbook-openshift3']['openshift_common_service_accounts'] = []
+default['cookbook-openshift3']['openshift_common_service_accounts'] = [{ 'name' => 'router', 'namespace' => 'default', 'scc' => 'hostnetwork' }]
+default['cookbook-openshift3']['openshift_common_service_accounts_additional'] = []
 default['cookbook-openshift3']['openshift_common_use_openshift_sdn'] = true
 default['cookbook-openshift3']['openshift_common_sdn_network_plugin_name'] = 'redhat/openshift-ovs-subnet'
 default['cookbook-openshift3']['openshift_common_svc_names'] = ['openshift', 'openshift.default', 'openshift.default.svc', "openshift.default.svc.#{node['cookbook-openshift3']['osn_cluster_dns_domain']}", 'kubernetes', 'kubernetes.default', 'kubernetes.default.svc', "kubernetes.default.svc.#{node['cookbook-openshift3']['osn_cluster_dns_domain']}", node['cookbook-openshift3']['openshift_common_first_svc_ip']]
@@ -98,7 +101,6 @@ default['cookbook-openshift3']['openshift_master_embedded_dns'] = true
 default['cookbook-openshift3']['openshift_master_embedded_kube'] = true
 default['cookbook-openshift3']['openshift_master_debug_level'] = '2'
 default['cookbook-openshift3']['openshift_master_dns_port'] = node['cookbook-openshift3']['deploy_dnsmasq'] == true ? '8053' : '53'
-default['cookbook-openshift3']['openshift_master_label'] = 'region=infra'
 default['cookbook-openshift3']['openshift_master_metrics_public_url'] = nil
 default['cookbook-openshift3']['openshift_master_image_bulk_imported'] = 5
 default['cookbook-openshift3']['openshift_master_pod_eviction_timeout'] = ''
@@ -143,7 +145,15 @@ default['cookbook-openshift3']['openshift_node_maximum_dead_containers'] = '100'
 default['cookbook-openshift3']['openshift_node_image_gc_high_threshold'] = '90'
 default['cookbook-openshift3']['openshift_node_image_gc_low_threshold'] = '80'
 
-default['cookbook-openshift3']['erb_corsAllowedOrigins'] = ['127.0.0.1', 'localhost', node['cookbook-openshift3']['openshift_common_hostname'], node['cookbook-openshift3']['openshift_common_public_hostname']]
+default['cookbook-openshift3']['openshift_hosted_manage_router'] = true
+default['cookbook-openshift3']['openshift_hosted_router_selector'] = 'region=infra'
+default['cookbook-openshift3']['openshift_hosted_router_namespace'] = 'default'
+
+default['cookbook-openshift3']['openshift_hosted_manage_registry'] = true
+default['cookbook-openshift3']['openshift_hosted_registry_selector'] = 'region=infra'
+default['cookbook-openshift3']['openshift_hosted_registry_namespace'] = 'default'
+
+default['cookbook-openshift3']['erb_corsAllowedOrigins'] = ['127.0.0.1', 'localhost', node['cookbook-openshift3']['openshift_common_hostname'], node['cookbook-openshift3']['openshift_common_public_hostname']] + node['cookbook-openshift3']['openshift_common_svc_names']
 
 default['cookbook-openshift3']['erb_etcdClientInfo_urls'] = [node['cookbook-openshift3']['openshift_master_etcd_url'], "https://#{node['cookbook-openshift3']['openshift_common_hostname']}:#{node['cookbook-openshift3']['openshift_master_etcd_port']}"]
 

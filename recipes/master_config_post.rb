@@ -6,13 +6,14 @@
 
 master_servers = node['cookbook-openshift3']['master_servers']
 node_servers = node['cookbook-openshift3']['node_servers']
+service_accounts = node['cookbook-openshift3']['openshift_common_service_accounts_additional'].any? ? node['cookbook-openshift3']['openshift_common_service_accounts'] + node['cookbook-openshift3']['openshift_common_service_accounts_additional'] : node['cookbook-openshift3']['openshift_common_service_accounts']
 
 remote_file "#{Chef::Config[:file_cache_path]}/admin.kubeconfig" do
   source 'file:///etc/origin/master/admin.kubeconfig'
   mode '0644'
 end
 
-node['cookbook-openshift3']['openshift_common_service_accounts'].each do |serviceaccount|
+service_accounts.each do |serviceaccount|
   execute "Creation service account: \"#{serviceaccount['name']}\" ; Namespace: \"#{serviceaccount['namespace']}\"" do
     command 'oc create sa ${serviceaccount} -n ${namespace} --config=admin.kubeconfig'
     environment(
@@ -20,15 +21,15 @@ node['cookbook-openshift3']['openshift_common_service_accounts'].each do |servic
       'namespace' => serviceaccount['namespace']
     )
     cwd Chef::Config[:file_cache_path]
-    not_if "#{node['cookbook-openshift3']['openshift_common_client_binary']} get sa #{serviceaccount['name']} -n #{serviceaccount['namespace']}"
+    not_if "#{node['cookbook-openshift3']['openshift_common_client_binary']} get sa #{serviceaccount['name']} -n #{serviceaccount['namespace']} --config=admin.kubeconfig"
   end
 
   next unless serviceaccount.key?('scc')
 
   execute "Add SCC to service account: \"#{serviceaccount['name']}\" ; Namespace: \"#{serviceaccount['namespace']}\"" do
-    command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} policy add-scc-to-user privileged system:serviceaccount:#{serviceaccount['namespace']}:#{serviceaccount['name']} --config=admin.kubeconfig"
+    command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} policy add-scc-to-user #{serviceaccount['scc']} -z #{serviceaccount['name']} --config=admin.kubeconfig -n #{serviceaccount['namespace']}"
     cwd Chef::Config[:file_cache_path]
-    not_if "#{node['cookbook-openshift3']['openshift_common_client_binary']} get scc/privileged -n default -o yaml | grep default:#{serviceaccount['name']}"
+    not_if "#{node['cookbook-openshift3']['openshift_common_client_binary']} get scc/#{serviceaccount['scc']} -n #{serviceaccount['namespace']} -o yaml --config=admin.kubeconfig | grep system:serviceaccount:#{serviceaccount['namespace']}:#{serviceaccount['name']}"
   end
 end
 
@@ -106,5 +107,26 @@ node_servers.each do |nodes|
     only_if do
       nodes.key?('labels')
     end
+  end
+end
+
+if node['cookbook-openshift3']['openshift_hosted_manage_router']
+  execute 'Deploy Hosted Router' do
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm router --selector=${selector_router} --replicas=${replica_number} -n ${namespace_router} --config=admin.kubeconfig || true"
+    environment(
+      'selector_router' => node['cookbook-openshift3']['openshift_hosted_router_selector'],
+      'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace'],
+      'replica_number' => Mixlib::ShellOut.new("oc get node --selector=#{node['cookbook-openshift3']['openshift_hosted_router_selector']} --no-headers --config=#{Chef::Config[:file_cache_path]}/admin.kubeconfig | wc -l").run_command.stdout
+    )
+    cwd Chef::Config[:file_cache_path]
+    only_if '[[ `oc get pod --selector=router=router --no-headers --config=admin.kubeconfig | wc -l` -ne $replica_number || `oc get pod --selector=router=router --config=admin.kubeconfig | wc -l` -eq 0 ]]'
+  end
+end
+
+openshift_deploy_registry 'Deploy Registry' do
+  number_instances Mixlib::ShellOut.new("oc get node --selector=#{node['cookbook-openshift3']['openshift_hosted_registry_selector']} --no-headers --config=admin.kubeconfig | wc -l").run_command.stdout
+  persistent_registry node['cookbook-openshift3']['registry_persistent_volume'].empty? ? false : true
+  only_if do
+    node['cookbook-openshift3']['openshift_hosted_manage_registry']
   end
 end

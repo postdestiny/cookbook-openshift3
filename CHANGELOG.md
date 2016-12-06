@@ -4,6 +4,7 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 ## v1.10.20
 ### Improvement
 - Remove the need to specify the master server peers.
+- Add the possibility to specify scc rather than assuming \'privileged\' one
 
 ### Bug
 - Remove duplicated resources
