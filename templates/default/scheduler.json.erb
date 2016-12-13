@@ -1,16 +1,71 @@
 {
-  "kind": "Policy",
-  "apiVersion": "v1",
-  "predicates": [
-    {"name": "MatchNodeSelector"},
-    {"name": "PodFitsResources"},
-    {"name": "PodFitsPorts"},
-    {"name": "NoDiskConflict"},
-    {"name": "Region", "argument": {"serviceAffinity" : {"labels" : ["region"]}}}
-  ],"priorities": [
-    {"name": "LeastRequestedPriority", "weight": 1},
-    {"name": "ServiceSpreadingPriority", "weight": 1},
-    {"name": "Zone", "weight" : 2, "argument": {"serviceAntiAffinity" : {"label": "zone"}}}
-  ]
+    "apiVersion": "v1", 
+    "kind": "Policy", 
+    "predicates": [
+        {
+            "name": "NoDiskConflict"
+        }, 
+        {
+            "name": "NoVolumeZoneConflict"
+        }, 
+        {
+            "name": "MaxEBSVolumeCount"
+        }, 
+        {
+            "name": "MaxGCEPDVolumeCount"
+        }, 
+        {
+            "name": "GeneralPredicates"
+        }, 
+        {
+            "name": "PodToleratesNodeTaints"
+        }, 
+        {
+            "name": "CheckNodeMemoryPressure"
+        }, 
+        {
+            "name": "MatchInterPodAffinity"
+        }, 
+        {
+            "argument": {
+                "serviceAffinity": {
+                    "labels": [
+                        "region"
+                    ]
+                }
+            }, 
+            "name": "Region"
+        }
+    ], 
+    "priorities": [
+        {
+            "name": "LeastRequestedPriority", 
+            "weight": 1
+        }, 
+        {
+            "name": "BalancedResourceAllocation", 
+            "weight": 1
+        }, 
+        {
+            "name": "SelectorSpreadPriority", 
+            "weight": 1
+        }, 
+        {
+            "name": "NodeAffinityPriority", 
+            "weight": 1
+        }, 
+        {
+            "name": "TaintTolerationPriority", 
+            "weight": 1
+        }, 
+        {
+            "argument": {
+                "serviceAntiAffinity": {
+                    "label": "zone"
+                }
+            }, 
+            "name": "Zone", 
+            "weight": 2
+        }
+    ]
 }
-

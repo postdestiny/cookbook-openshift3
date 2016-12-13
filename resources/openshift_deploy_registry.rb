@@ -25,16 +25,16 @@ action :create do
       'replica_number' => persistent_registry ? number_instances : '1'
     )
     cwd Chef::Config[:file_cache_path]
-    # only_if '[ `oc get pod --selector=docker-registry=default --no-headers | wc -l` -ne $replica_number ]'
+    only_if '[[ `oc get pod --selector=docker-registry=default --no-headers --config=admin.kubeconfig | wc -l` -ne $replica_number || `oc get pod --selector=docker-registry=default --no-headers --config=admin.kubeconfig | wc -l` -eq 0 ]]'
   end
 
-  bash 'Create PV / PVC for registry' do
-    code <<-EOC
-      echo -e "---\napiVersion: v1\nkind: PersistentVolume\nmetadata:\n name: #{node['cookbook-openshift3']['registry_persistent_volume']['volume_name']}-pv\nspec:\n capacity:\n  storage: #{node['cookbook-openshift3']['registry_persistent_volume']['volume_size']}\n accessModes:\n  - ReadWriteMany\n persistentVolumeReclaimPolicy: Retain\n nfs:\n  path: #{node['cookbook-openshift3']['registry_persistent_volume']['nfs_directory']}/#{node['cookbook-openshift3']['registry_persistent_volume']['volume_name']}\n  server: #{node['cookbook-openshift3']['registry_persistent_volume']['host']}\n  readOnly: false\n" | oc create -f -
-    EOC
-    # only_if do
-    #   persistent_registry
-    #   !Mixlib::ShellOut.new("oc get pvc | grep #{node['cookbook-openshift3']['registry_persistent_volume']['volume_name']}-pvc").run_command.error?
-    # end
-  end
+  # bash 'Create PV / PVC for registry' do
+  #   code <<-EOC
+  #     echo -e "---\napiVersion: v1\nkind: PersistentVolume\nmetadata:\n name: #{node['cookbook-openshift3']['registry_persistent_volume']['volume_name']}-pv\nspec:\n capacity:\n  storage: #{node['cookbook-openshift3']['registry_persistent_volume']['volume_size']}\n accessModes:\n  - ReadWriteMany\n persistentVolumeReclaimPolicy: Retain\n nfs:\n  path: #{node['cookbook-openshift3']['registry_persistent_volume']['nfs_directory']}/#{node['cookbook-openshift3']['registry_persistent_volume']['volume_name']}\n  server: #{node['cookbook-openshift3']['registry_persistent_volume']['host']}\n  readOnly: false\n" | oc create -f -
+  #   EOC
+  #   # only_if do
+  #   #   persistent_registry
+  #   #   !Mixlib::ShellOut.new("oc get pvc | grep #{node['cookbook-openshift3']['registry_persistent_volume']['volume_name']}-pvc").run_command.error?
+  #   # end
+  # end
 end
