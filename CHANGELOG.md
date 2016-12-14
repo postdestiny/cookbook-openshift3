@@ -9,6 +9,7 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 
 ### Bug
 - Remove duplicated resources
+- Fix Docker log-driver for json
  
 ### Removal
 - Remove the node['cookbook-openshift3']['use_params_roles'] which used the CHEF search capability
