@@ -124,7 +124,7 @@ if node['cookbook-openshift3']['openshift_hosted_manage_router']
 end
 
 openshift_deploy_registry 'Deploy Registry' do
-  number_instances Mixlib::ShellOut.new("oc get node --selector=#{node['cookbook-openshift3']['openshift_hosted_registry_selector']} --no-headers --config=admin.kubeconfig | wc -l").run_command.stdout
+  number_instances Mixlib::ShellOut.new("oc get node --selector=#{node['cookbook-openshift3']['openshift_hosted_registry_selector']} --no-headers | wc -l").run_command.stdout
   persistent_registry node['cookbook-openshift3']['registry_persistent_volume'].empty? ? false : true
   only_if do
     node['cookbook-openshift3']['openshift_hosted_manage_registry']
