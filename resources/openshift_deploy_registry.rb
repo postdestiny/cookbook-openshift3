@@ -74,7 +74,7 @@ action :create do
       'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
     )
     cwd Chef::Config[:file_cache_path]
-    not_if '[[ `oc env dc/docker-registry --list -n ${namespace_registry} --no-headers --config=admin.kubeconfig` =~ "REGISTRY_HTTP_TLS_CERTIFICATE=/etc/secrets/registry.crt" && `oc env dc/docker-registry --list -n ${namespace_registry} --no-headers --config=admin.kubeconfig` =~ "REGISTRY_HTTP_TLS_KEY=/etc/secrets/registry.key" ]]'
+    not_if '[[ `oc env dc/docker-registry --list -n ${namespace_registry} --config=admin.kubeconfig` =~ "REGISTRY_HTTP_TLS_CERTIFICATE=/etc/secrets/registry.crt" && `oc env dc/docker-registry --list -n ${namespace_registry} --config=admin.kubeconfig` =~ "REGISTRY_HTTP_TLS_KEY=/etc/secrets/registry.key" ]]'
   end
 
   execute 'Update registry liveness probe from HTTP to HTTPS' do
