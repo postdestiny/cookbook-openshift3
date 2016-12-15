@@ -60,7 +60,7 @@ action :create do
   end
 
   execute 'Attach registry-certificates secret volume' do
-    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} volume dc/docker-registry --add --type=secret --secret-name=registry-certificates -m /etc/secrets secrets -n ${namespace_registry} --config=admin.kubeconfig"
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} volume dc/docker-registry --add --type=secret --secret-name=registry-certificates -m /etc/secrets -n ${namespace_registry} --config=admin.kubeconfig"
     environment(
       'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
     )

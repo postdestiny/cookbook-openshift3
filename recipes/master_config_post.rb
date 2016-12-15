@@ -74,6 +74,12 @@ execute 'Import Openshift Examples xpaas-templates' do
   ignore_failure true
 end
 
+execute 'Wait 10s for nodes registration' do
+  command 'sleep 10s'
+  cwd Chef::Config[:file_cache_path]
+  only_if '[[ `oc get node --no-headers --config=admin.kubeconfig | grep -wc "Ready"` -eq 0 ]]'
+end
+
 node_servers.each do |nodes|
   next if Mixlib::ShellOut.new("oc get node | egrep \"#{nodes['fqdn']}[[:space:]]\+Ready\"").run_command.error?
   execute "Set schedulability for Master node : #{nodes['fqdn']}" do
