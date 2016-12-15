@@ -74,14 +74,8 @@ execute 'Import Openshift Examples xpaas-templates' do
   ignore_failure true
 end
 
-execute 'Wait 10s for nodes registration' do
-  command 'sleep 10s'
-  cwd Chef::Config[:file_cache_path]
-  only_if '[[ `oc get node --no-headers --config=admin.kubeconfig | grep -wc "Ready"` -eq 0 ]]'
-end
-
 node_servers.each do |nodes|
-  next if Mixlib::ShellOut.new("oc get node | egrep \"#{nodes['fqdn']}[[:space:]]\+Ready\"").run_command.error?
+  # next if Mixlib::ShellOut.new("oc get node | egrep \"#{nodes['fqdn']}[[:space:]]\+Ready\"").run_command.error?
   execute "Set schedulability for Master node : #{nodes['fqdn']}" do
     command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} manage-node #{nodes['fqdn']} --schedulable=${schedulability} --config=admin.kubeconfig"
     environment(
@@ -116,6 +110,12 @@ node_servers.each do |nodes|
   end
 end
 
+execute 'Wait 10s for nodes registration' do
+  command 'sleep 10s'
+  cwd Chef::Config[:file_cache_path]
+  only_if '[[ `oc get node --no-headers --config=admin.kubeconfig | grep -wc "Ready"` -eq 0 ]]'
+end
+
 if node['cookbook-openshift3']['openshift_hosted_manage_router']
   execute 'Deploy Hosted Router' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm router --selector=${selector_router} --replicas=${replica_number} -n ${namespace_router} --config=admin.kubeconfig || true"
@@ -129,10 +129,12 @@ if node['cookbook-openshift3']['openshift_hosted_manage_router']
   end
 end
 
-openshift_deploy_registry 'Deploy Registry' do
-  number_instances Mixlib::ShellOut.new("oc get node --selector=#{node['cookbook-openshift3']['openshift_hosted_registry_selector']} --no-headers | wc -l").run_command.stdout
-  persistent_registry node['cookbook-openshift3']['registry_persistent_volume'].empty? ? false : true
-  only_if do
-    node['cookbook-openshift3']['openshift_hosted_manage_registry']
+if node['cookbook-openshift3']['openshift_hosted_manage_registry']
+  openshift_deploy_registry 'Deploy Registry' do
+    number_instances Mixlib::ShellOut.new("oc get node --selector=#{node['cookbook-openshift3']['openshift_hosted_registry_selector']} --no-headers | wc -l").run_command.stdout
+    persistent_registry node['cookbook-openshift3']['registry_persistent_volume'].empty? ? false : true
+    only_if do
+      node['cookbook-openshift3']['openshift_hosted_manage_registry']
+    end
   end
 end
