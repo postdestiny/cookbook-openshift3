@@ -1,6 +1,11 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.21
+### Bug
+- Improve delete adhoc
+- Remove duplicates for cors origin (Forcing ETCD to fail)
+
 ## v1.10.20
 ### Improvement
 - Remove the need to specify the master server peers.
