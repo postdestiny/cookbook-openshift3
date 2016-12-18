@@ -6,6 +6,10 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 - Remove the need to specify the master server peers.
 - Add the possibility to specify scc rather than assuming \'privileged\' one
 - Add new scheduler predicates & priorities
+- Add the possibility to create PV and PVC (Type NFS only)
+- Deploy Hosted environment (Registry & Router)
+- Autoscale Hosted environment (Registry & Router) based on labelling
+- Only 1 recipe is needed for deploying the environment : recipe[cookbook-openshift3]
 
 ### Bug
 - Remove duplicated resources

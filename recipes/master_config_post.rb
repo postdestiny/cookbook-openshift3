@@ -74,8 +74,11 @@ execute 'Import Openshift Examples xpaas-templates' do
   ignore_failure true
 end
 
+openshift_create_pv 'Create Persistent Storage' do
+  persistent_storage node['cookbook-openshift3']['persistent_storage']
+end
+
 node_servers.each do |nodes|
-  # next if Mixlib::ShellOut.new("oc get node | egrep \"#{nodes['fqdn']}[[:space:]]\+Ready\"").run_command.error?
   execute "Set schedulability for Master node : #{nodes['fqdn']}" do
     command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} manage-node #{nodes['fqdn']} --schedulable=${schedulability} --config=admin.kubeconfig"
     environment(
@@ -110,28 +113,37 @@ node_servers.each do |nodes|
   end
 end
 
-execute 'Wait 10s for nodes registration' do
-  command 'sleep 10s'
+execute 'Wait up to 30s for nodes registration' do
+  command '[[ `oc get node --no-headers --config=admin.kubeconfig | grep -wc "Ready"` -ne 0 ]]'
   cwd Chef::Config[:file_cache_path]
   only_if '[[ `oc get node --no-headers --config=admin.kubeconfig | grep -wc "Ready"` -eq 0 ]]'
+  retries 6
+  retry_delay 5
 end
 
 if node['cookbook-openshift3']['openshift_hosted_manage_router']
   execute 'Deploy Hosted Router' do
-    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm router --selector=${selector_router} --replicas=${replica_number} -n ${namespace_router} --config=admin.kubeconfig || true"
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm router --selector=${selector_router} -n ${namespace_router} --config=admin.kubeconfig || true"
     environment(
       'selector_router' => node['cookbook-openshift3']['openshift_hosted_router_selector'],
-      'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace'],
-      'replica_number' => Mixlib::ShellOut.new("oc get node --selector=#{node['cookbook-openshift3']['openshift_hosted_router_selector']} --no-headers --config=#{Chef::Config[:file_cache_path]}/admin.kubeconfig | wc -l").run_command.stdout
+      'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace']
     )
     cwd Chef::Config[:file_cache_path]
-    only_if '[[ `oc get pod --selector=router=router --no-headers --config=admin.kubeconfig | wc -l` -ne $replica_number || `oc get pod --selector=router=router --config=admin.kubeconfig | wc -l` -eq 0 ]]'
+    only_if '[[ `oc get pod --selector=router=router --config=admin.kubeconfig | wc -l` -eq 0 ]]'
+  end
+  execute 'Auto Scale Router based on label' do
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} scale dc/router --replicas=${replica_number} -n ${namespace_router} --config=admin.kubeconfig"
+    environment(
+      'replica_number' => Mixlib::ShellOut.new("oc get node --no-headers --selector=#{node['cookbook-openshift3']['openshift_hosted_router_selector']} --config=#{Chef::Config[:file_cache_path]}/admin.kubeconfig | wc -l").run_command.stdout.strip,
+      'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace']
+    )
+    cwd Chef::Config[:file_cache_path]
+    not_if '[[ `oc get pod --selector=router=router --config=admin.kubeconfig --no-headers | wc -l` -eq ${replica_number} ]]'
   end
 end
 
 if node['cookbook-openshift3']['openshift_hosted_manage_registry']
   openshift_deploy_registry 'Deploy Registry' do
-    number_instances Mixlib::ShellOut.new("oc get node --selector=#{node['cookbook-openshift3']['openshift_hosted_registry_selector']} --no-headers | wc -l").run_command.stdout
     persistent_registry node['cookbook-openshift3']['registry_persistent_volume'].empty? ? false : true
     only_if do
       node['cookbook-openshift3']['openshift_hosted_manage_registry']

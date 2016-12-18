@@ -31,6 +31,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_master_etcd_port']` -  Defaults to `4001`.
 * `node['cookbook-openshift3']['master_etcd_cert_prefix']` -  Defaults to ``.
 * `node['cookbook-openshift3']['ose_version']` -  Defaults to `nil`.
+* `node['cookbook-openshift3']['persistent_storage']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['openshift_deployment_type']` -  Defaults to `enterprise`.
 * `node['cookbook-openshift3']['ose_major_version']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? '3.3' : '1.3`.
 * `node['cookbook-openshift3']['deploy_containerized']` -  Defaults to `false`.
@@ -54,7 +55,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['enabled_firewall_additional_rules_node']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['enabled_firewall_rules_etcd']` -  Defaults to `%w(firewall_etcd)`.
 * `node['cookbook-openshift3']['openshift_service_type']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'atomic-openshift' : 'origin`.
-* `node['cookbook-openshift3']['registry_persistent_volume']` -  Defaults to `{ ... }`.
+* `node['cookbook-openshift3']['registry_persistent_volume']` -  Defaults to ``.
 * `node['cookbook-openshift3']['yum_repositories']` -  Defaults to `node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? %w() : [{ 'name' => 'centos-openshift-origin', 'baseurl' => 'http://mirror.centos.org/centos/7/paas/x86_64/openshift-origin/', 'gpgcheck' => false }]`.
 * `node['cookbook-openshift3']['openshift_data_dir']` -  Defaults to `/var/lib/origin`.
 * `node['cookbook-openshift3']['openshift_master_cluster_password']` -  Defaults to `openshift_cluster`.
@@ -202,6 +203,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 # Resources
 
 * [openshift_create_master](#openshift_create_master)
+* [openshift_create_pv](#openshift_create_pv)
 * [openshift_delete_host](#openshift_delete_host)
 * [openshift_deploy_registry](#openshift_deploy_registry)
 
@@ -223,6 +225,16 @@ Installs/Configures Openshift 3.x (>= 3.2)
 - cluster:  Defaults to <code>false</code>.
 - cluster_name:  Defaults to <code>nil</code>.
 
+## openshift_create_pv
+
+### Actions
+
+- create:  Default action.
+
+### Attribute Parameters
+
+- persistent_storage:
+
 ## openshift_delete_host
 
 ### Actions
@@ -237,7 +249,6 @@ Installs/Configures Openshift 3.x (>= 3.2)
 
 ### Attribute Parameters
 
-- number_instances:
 - persistent_registry:
 
 # License and Maintainer

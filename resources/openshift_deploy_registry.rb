@@ -8,7 +8,6 @@ resource_name :openshift_deploy_registry
 
 default_action :create
 
-property :number_instances, [String, Integer], required: true
 property :persistent_registry, [TrueClass, FalseClass], required: true
 
 action :create do
@@ -18,14 +17,13 @@ action :create do
   end
 
   execute 'Deploy Hosted Registry' do
-    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm registry --selector=${selector_router} --replicas=${replica_number} -n ${namespace_registry} --config=admin.kubeconfig"
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm registry --selector=${selector_router} -n ${namespace_registry} --config=admin.kubeconfig"
     environment(
       'selector_registry' => node['cookbook-openshift3']['openshift_hosted_registry_selector'],
-      'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace'],
-      'replica_number' => persistent_registry ? number_instances : '1'
+      'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
     )
     cwd Chef::Config[:file_cache_path]
-    only_if '[[ `oc get pod --selector=docker-registry=default --no-headers --config=admin.kubeconfig | wc -l` -ne $replica_number || `oc get pod --selector=docker-registry=default --no-headers --config=admin.kubeconfig | wc -l` -eq 0 ]]'
+    only_if '[[ `oc get pod --selector=docker-registry=default --no-headers --config=admin.kubeconfig | wc -l` -eq 0 ]]'
   end
 
   execute 'Generate certificates for Hosted Registry' do
@@ -51,11 +49,13 @@ action :create do
 
   %w(default registry).each do |service_account|
     execute "Add secret to registry's pod service accounts (#{service_account})" do
-      command "#{node['cookbook-openshift3']['openshift_common_client_binary']} secrets add #{service_account} registry-certificates -n ${namespace_registry} --config=admin.kubeconfig"
+      command "#{node['cookbook-openshift3']['openshift_common_client_binary']} secrets add ${sa} registry-certificates -n ${namespace_registry} --config=admin.kubeconfig"
       environment(
-        'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
+        'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace'],
+        'sa' => service_account
       )
       cwd Chef::Config[:file_cache_path]
+      not_if '[[ `oc get -o template sa/${sa} --template={{.secrets}} -n ${namespace_registry} --config=admin.kubeconfig` =~ "registry-certificates" ]]'
     end
   end
 
@@ -94,13 +94,25 @@ action :create do
     cwd Chef::Config[:file_cache_path]
     not_if '[[ `oc get dc/docker-registry -o jsonpath=\'{.spec.template.spec.containers[*].readinessProbe.httpGet.scheme}\' -n ${namespace_registry} --no-headers --config=admin.kubeconfig` =~ "HTTPS" ]]'
   end
-  # bash 'Create PV / PVC for registry' do
-  #   code <<-EOC
-  #     echo -e "---\napiVersion: v1\nkind: PersistentVolume\nmetadata:\n name: #{node['cookbook-openshift3']['registry_persistent_volume']['volume_name']}-pv\nspec:\n capacity:\n  storage: #{node['cookbook-openshift3']['registry_persistent_volume']['volume_size']}\n accessModes:\n  - ReadWriteMany\n persistentVolumeReclaimPolicy: Retain\n nfs:\n  path: #{node['cookbook-openshift3']['registry_persistent_volume']['nfs_directory']}/#{node['cookbook-openshift3']['registry_persistent_volume']['volume_name']}\n  server: #{node['cookbook-openshift3']['registry_persistent_volume']['host']}\n  readOnly: false\n" | oc create -f -
-  #   EOC
-  #   # only_if do
-  #   #   persistent_registry
-  #   #   !Mixlib::ShellOut.new("oc get pvc | grep #{node['cookbook-openshift3']['registry_persistent_volume']['volume_name']}-pvc").run_command.error?
-  #   # end
-  # end
+
+  if persistent_registry
+    execute 'Add volume to Hosted Registry' do
+      command 'oc volume dc/docker-registry --add --overwrite -t persistentVolumeClaim --claim-name=${registry_claim} --name=registry-storage -n ${namespace_registry} --config=admin.kubeconfig'
+      environment(
+        'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace'],
+        'registry_claim' => "#{node['cookbook-openshift3']['registry_persistent_volume']}-claim"
+      )
+      cwd Chef::Config[:file_cache_path]
+      not_if '[[ `oc get -o template dc/docker-registry --template={{.spec.template.spec.volumes}} -n ${namespace_registry} --config=admin.kubeconfig` =~ "${registry_claim}" ]]'
+    end
+    execute 'Auto Scale Registry based on label' do
+      command "#{node['cookbook-openshift3']['openshift_common_client_binary']} scale dc/docker-registry --replicas=${replica_number} -n ${namespace_registry} --config=admin.kubeconfig"
+      environment(
+        'replica_number' => Mixlib::ShellOut.new("oc get node --no-headers --selector=#{node['cookbook-openshift3']['openshift_hosted_registry_selector']} --config=#{Chef::Config[:file_cache_path]}/admin.kubeconfig | wc -l").run_command.stdout.strip,
+        'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
+      )
+      cwd Chef::Config[:file_cache_path]
+      not_if '[[ `oc get pod --selector=docker-registry=default --config=admin.kubeconfig --no-headers | wc -l` -eq ${replica_number} ]]'
+    end
+  end
 end

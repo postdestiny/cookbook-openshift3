@@ -96,6 +96,24 @@ Override Attributes
   }
 ]
 ```
+
+
+* `node['cookbook-openshift3']['persistent_storage']`
+
+* They key called 'claim' is optional and will automatically create a PersistentVolumeClaim within a specified namespace.
+ 
+```json
+{
+  "name": "registry",
+  "capacity": "5Gi",
+  "access_modes": "ReadWriteMany",
+  "server": "core.domain.local",
+  "path": "/var/nfs/registry",
+  "claim": {
+    "namespace": "default"
+  }
+}
+
 =====
 
 Include the default recipe in a CHEF role so as to ease the deployment. 
@@ -172,6 +190,34 @@ In general, override attributes in the environment should be used when changing 
     "cookbook-openshift3": {
       "openshift_HA": true,
       "openshift_cluster_name": "ose-cluster.domain.local",
+      "persistent_storage": [
+        {
+          "name": "registry",
+          "capacity": "5Gi",
+          "access_modes": "ReadWriteMany",
+          "server": "core.domain.local",
+          "path": "/var/nfs/registry",
+          "claim": {
+            "namespace": "default"
+          }
+        },
+        {
+          "name": "metrics",
+          "capacity": "3Gi",
+          "access_modes": "ReadWriteOnce",
+          "server": "core.domain.local",
+          "path": "/var/nfs/metrics",
+          "policy": "Recycle"
+        },
+        {
+          "name": "logging",
+          "capacity": "2Gi",
+          "access_modes": "ReadWriteOnce",
+          "server": "core.domain.local",
+          "path": "/var/nfs/logging",
+          "policy": "Recycle"
+        }
+      ],
       "master_servers": [
         {
           "fqdn": "ose1-server.domain.local",

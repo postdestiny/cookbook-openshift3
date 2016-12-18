@@ -26,6 +26,7 @@ else
 end
 
 default['cookbook-openshift3']['ose_version'] = nil
+default['cookbook-openshift3']['persistent_storage'] = []
 default['cookbook-openshift3']['openshift_deployment_type'] = 'enterprise'
 default['cookbook-openshift3']['ose_major_version'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? '3.3' : '1.3'
 default['cookbook-openshift3']['deploy_containerized'] = false
@@ -50,7 +51,7 @@ default['cookbook-openshift3']['enabled_firewall_rules_node'] = %w(firewall_node
 default['cookbook-openshift3']['enabled_firewall_additional_rules_node'] = []
 default['cookbook-openshift3']['enabled_firewall_rules_etcd'] = %w(firewall_etcd)
 default['cookbook-openshift3']['openshift_service_type'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'atomic-openshift' : 'origin'
-default['cookbook-openshift3']['registry_persistent_volume'] = {}
+default['cookbook-openshift3']['registry_persistent_volume'] = ''
 default['cookbook-openshift3']['yum_repositories'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? %w() : [{ 'name' => 'centos-openshift-origin', 'baseurl' => 'http://mirror.centos.org/centos/7/paas/x86_64/openshift-origin/', 'gpgcheck' => false }]
 
 default['cookbook-openshift3']['openshift_data_dir'] = '/var/lib/origin'
