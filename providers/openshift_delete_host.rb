@@ -42,6 +42,10 @@ action :delete do
     Mixlib::ShellOut.new("rm -rf #{file_to_remove}").run_command
   end
 
+  execute 'Clean /var/lib/origin' do
+    command 'rm -rf /var/lib/origin/*'
+  end
+
   reboot 'Uninstall require reboot' do
     action :request_reboot
     reason 'Need to reboot when the run completes successfully.'

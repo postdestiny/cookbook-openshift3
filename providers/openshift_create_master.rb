@@ -45,7 +45,7 @@ action :create do
     template new_resource.master_file do
       source 'master.yaml.erb'
       variables(
-        erb_corsAllowedOrigins: new_resource.origins + [Resolv.getaddress(node['cookbook-openshift3']['openshift_common_public_hostname'])] + node['cookbook-openshift3']['openshift_common_svc_names'],
+        erb_corsAllowedOrigins: new_resource.origins + [Resolv.getaddress(node['cookbook-openshift3']['openshift_common_public_hostname'])],
         standalone_registry: new_resource.standalone_registry,
         erb_master_named_certificates: named_certificates,
         etcd_servers: new_resource.etcd_servers,
@@ -58,7 +58,7 @@ action :create do
     template new_resource.master_file do
       source 'master.yaml.erb'
       variables(
-        erb_corsAllowedOrigins: new_resource.origins + [node['cookbook-openshift3']['openshift_common_public_ip']] + node['cookbook-openshift3']['openshift_common_svc_names'],
+        erb_corsAllowedOrigins: new_resource.origins + [node['cookbook-openshift3']['openshift_common_public_ip']],
         standalone_registry: new_resource.standalone_registry,
         erb_master_named_certificates: named_certificates,
         etcd_servers: new_resource.etcd_servers,
