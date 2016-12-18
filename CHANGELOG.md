@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.22
+### Bug
+- Skip nodes which are not listed when labelling or seetingn schedulability (https://github.com/IshentRas/cookbook-openshift3/issues/32)
+
 ## v1.10.21
 ### Bug
 - Improve delete adhoc
