@@ -4,12 +4,20 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 ## v1.10.20
 ### Improvement
 - Remove the need to specify the master server peers.
+- Add the possibility to specify scc rather than assuming \'privileged\' one
+- Add new scheduler predicates & priorities
+- Add the possibility to create PV and PVC (Type NFS only)
+- Deploy Hosted environment (Registry & Router)
+- Autoscale Hosted environment (Registry & Router) based on labelling
+- Only 1 recipe is needed for deploying the environment : recipe[cookbook-openshift3]
 
 ### Bug
 - Remove duplicated resources
+- Fix Docker log-driver for json
  
 ### Removal
 - Remove the node['cookbook-openshift3']['use_params_roles'] which used the CHEF search capability
+- Remove the node['cookbook-openshift3']['set_nameserver'] and node['cookbook-openshift3']['register_dns']
 
 ## v1.10.19
 ### Improvement

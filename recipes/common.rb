@@ -7,29 +7,6 @@
 include_recipe 'iptables::default'
 include_recipe 'selinux_policy::default'
 
-if node['cookbook-openshift3']['set_nameserver']
-  if node['cookbook-openshift3']['nameserver']['nameservers'].empty? || node['cookbook-openshift3']['nameserver']['nameservers'][0].empty?
-    Chef::Log.warn("#{cookbook_name}::#{recipe_name} requires that attribute ['nameserver']['nameservers'] is set.")
-    Chef::Log.warn("#{cookbook_name}::#{recipe_name} \" Set Nameserver\" will be skipped to prevent a potential breaking change in /etc/resolv.conf.")
-    return
-  else
-    ruby_block 'Disable PEER DNS if present' do
-      block do
-        peer_settings = Chef::Util::FileEdit.new("/etc/sysconfig/network-scripts/ifcfg-#{node['network']['default_interface']}")
-        peer_settings.search_file_replace_line(/^PEERDNS=/, 'PEERDNS=no')
-        peer_settings.write_file
-      end
-    end
-    template '/etc/resolv.conf' do
-      source 'resolv.conf.erb'
-      owner 'root'
-      group 'root'
-      mode '0644'
-      variables node['cookbook-openshift3']['nameserver']
-    end
-  end
-end
-
 if node['cookbook-openshift3']['ose_version']
   if node['cookbook-openshift3']['ose_version'].to_f.round(1) != node['cookbook-openshift3']['ose_major_version'].to_f.round(1)
     Chef::Application.fatal!("\"ose_version\" #{node['cookbook-openshift3']['ose_version']} should be a subset of \"ose_major_version\" #{node['cookbook-openshift3']['ose_major_version']}")
@@ -38,21 +15,6 @@ end
 
 if node['cookbook-openshift3']['use_wildcard_nodes'] && node['cookbook-openshift3']['wildcard_domain'].empty?
   Chef::Application.fatal!('"wildcard_domain" cannot be left empty when using "use_wildcard_nodes attribute"')
-end
-
-if node['cookbook-openshift3']['register_dns']
-  if node['cookbook-openshift3']['nameserver']['key_algorithm'].nil? || node['cookbook-openshift3']['nameserver']['key_name'].nil? || node['cookbook-openshift3']['nameserver']['key_secret'].nil?
-    Chef::Log.warn("#{cookbook_name}::#{recipe_name} requires the attributes ['nameserver']['key_algorithm'] / ['nameserver']['key_name'] / ['nameserver']['key_secret'] to be set so as to register \"#{node['fqdn']}\" against the DNS.")
-    Chef::Log.warn("#{cookbook_name}::#{recipe_name} \"Register DNS\" will be skipped...")
-    return
-  else
-    openshift_reghost node['fqdn'] do
-      type :a
-      keyalgo node['cookbook-openshift3']['nameserver']['key_algorithm']
-      keyname node['cookbook-openshift3']['nameserver']['key_name']
-      keysecret node['cookbook-openshift3']['nameserver']['key_secret']
-    end
-  end
 end
 
 if node['cookbook-openshift3']['install_method'].eql? 'yum'

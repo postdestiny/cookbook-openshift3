@@ -20,7 +20,7 @@ Requirements
 Override Attributes
 ===================
 
-[Read more about overriding attributes here!](https://github.com/IshentRas/cookbook-openshift3/blob/master/attribute-doc.md)
+[Read more about overriding attributes here!](https://github.com/IshentRas/cookbook-openshift3/blob/master/attribute-cookbook.md)
 
 #### Structure ####
 -------------------
@@ -65,19 +65,6 @@ Override Attributes
 }
 ```
 
-* `node['cookbook-openshift3']['nameserver']` 
-
-```json
-{
- "search": "domain.local",
- "domain": "domain.local",
- "nameservers": ["8.8.8.8","8.8.4.4"],
- "key_algorithm": "hmac-md5",
- "key_name": "domain.local.key",
- "key_secret": "DTngw5O8I5Axx631GjQ9pA=="
-}
-```
-
 * `node['cookbook-openshift3']['openshift_node_docker-storage']`
 
 ```json
@@ -109,9 +96,27 @@ Override Attributes
   }
 ]
 ```
+
+
+* `node['cookbook-openshift3']['persistent_storage']`
+
+* They key called 'claim' is optional and will automatically create a PersistentVolumeClaim within a specified namespace.
+ 
+```json
+{
+  "name": "registry",
+  "capacity": "5Gi",
+  "access_modes": "ReadWriteMany",
+  "server": "core.domain.local",
+  "path": "/var/nfs/registry",
+  "claim": {
+    "namespace": "default"
+  }
+}
+
 =====
 
-Include the recipes in roles so as to ease the deployment. 
+Include the default recipe in a CHEF role so as to ease the deployment. 
 
 ## Roles (Examples) 
 
@@ -129,10 +134,7 @@ Include the recipes in roles so as to ease the deployment.
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[cookbook-openshift3]",
-    "recipe[cookbook-openshift3::common]",
-    "recipe[cookbook-openshift3::master]",
-    "recipe[cookbook-openshift3::node]"
+    "recipe[cookbook-openshift3]"
   ],
   "env_run_lists": {
 
@@ -170,7 +172,7 @@ In general, override attributes in the environment should be used when changing 
 
 ### Minimal example ###
 
-* CLUSTER-NATIVE (Only available option since 3.2)
+* CLUSTER-NATIVE (Only available option)
 
 ```json
 {
@@ -188,22 +190,39 @@ In general, override attributes in the environment should be used when changing 
     "cookbook-openshift3": {
       "openshift_HA": true,
       "openshift_cluster_name": "ose-cluster.domain.local",
-      "openshift_master_cluster_vip": "1.1.1.100",
+      "persistent_storage": [
+        {
+          "name": "registry",
+          "capacity": "5Gi",
+          "access_modes": "ReadWriteMany",
+          "server": "core.domain.local",
+          "path": "/var/nfs/registry",
+          "claim": {
+            "namespace": "default"
+          }
+        },
+        {
+          "name": "metrics",
+          "capacity": "3Gi",
+          "access_modes": "ReadWriteOnce",
+          "server": "core.domain.local",
+          "path": "/var/nfs/metrics",
+          "policy": "Recycle"
+        },
+        {
+          "name": "logging",
+          "capacity": "2Gi",
+          "access_modes": "ReadWriteOnce",
+          "server": "core.domain.local",
+          "path": "/var/nfs/logging",
+          "policy": "Recycle"
+        }
+      ],
       "master_servers": [
         {
           "fqdn": "ose1-server.domain.local",
           "ipaddress": "1.1.1.1"
         },
-        {
-          "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
-        },
-        {
-          "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
-        }
-      ],
-      "master_peers": [
         {
           "fqdn": "ose2-server.domain.local",
           "ipaddress": "1.1.1.2"
@@ -221,6 +240,7 @@ In general, override attributes in the environment should be used when changing 
         {
           "fqdn": "ose2-server.domain.local",
           "ipaddress": "1.1.1.2"
+         
         },
         {
           "fqdn": "ose3-server.domain.local",
@@ -230,30 +250,38 @@ In general, override attributes in the environment should be used when changing 
       "node_servers": [
         {
           "fqdn": "ose1-server.domain.local",
-          "ipaddress": "1.1.1.1"
+          "ipaddress": "1.1.1.1",
+          "schedulable": true,
+          "labels": "region=infra"
         },
         {
           "fqdn": "ose2-server.domain.local",
           "ipaddress": "1.1.1.2"
+          "schedulable": true,
+          "labels": "region=infra"
         },
         {
           "fqdn": "ose3-server.domain.local",
           "ipaddress": "1.1.1.3"
+          "schedulable": true,
+          "labels": "region=infra"
         },
         {
           "fqdn": "ose4-server.domain.local",
-          "ipaddress": "1.1.1.4"
+          "ipaddress": "1.1.1.4",
+          "labels": "region=user zone=east"
         },
         {
           "fqdn": "ose5-server.domain.local",
-          "ipaddress": "1.1.1.5"
+          "ipaddress": "1.1.1.5",
+          "labels": "region=user zone=west"
         },        
       ],
     }
   }
 }
 ```
-* SINGLE
+* SINGLE MASTER (EMBEDDED ETCD)
 
 ```json
 {
@@ -283,6 +311,7 @@ In general, override attributes in the environment should be used when changing 
         {
           "fqdn": "ose2-server.domain.local",
           "ipaddress": "1.1.1.2"
+          "labels": "region=user"
         }
       ],
     }
@@ -293,47 +322,6 @@ In general, override attributes in the environment should be used when changing 
 ###Once it is done you should assign the node to the relevant environment.###
 ```
 knife node environment set NODE_NAME ENVIRONMENT_NAME
-```
-
-LWRP
-==================
-
-*Create a DNS record using LWRP - ose_reghost*
-
-```ruby
-ose_reghost node["fqdn"] do
-  type :a
-  keyalgo "HMAC-MD5"
-  keyname "example.com"
-  keysecret "ddwDEdeedEEEdddd=ee=de=="
-  action :create
-end
-```
-
-*Delete a DNS record using LWRP - ose_reghost*
-
-```ruby
-ose_reghost node["fqdn"] do
-  type :a
-  keyalgo "HMAC-MD5"
-  keyname "example.com"
-  keysecret "ddwDEdeedEEEdddd=ee=de=="
-  action :delete
-end
-```
-
-```ruby
-ose_setup_cluster 'Setup Pacemaker' do
-  master_hosts ['1.1.1.1', '2.2.2.2', '3.3.3.3'] 
-  cluster_password 'password_for_pacemaker'
-  action :setup
-end
-```
-
-```ruby
-ose_setup_cluster 'Wait until the VIP is up and running on the master server' do 
-  action :init
-end
 ```
 
 Run list

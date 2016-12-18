@@ -77,7 +77,7 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
 
   remote_file "Retrieve certificate from Master[#{master_servers.first['fqdn']}]" do
     path "#{node['cookbook-openshift3']['openshift_node_config_dir']}/#{node['fqdn']}.tgz"
-    source "http://#{master_servers.first['ipaddress']}:#{node['cookbook-openshift3']['httpd_xfer_port']}/generated-configs/#{path_certificate}"
+    source "http://#{master_servers.first['ipaddress']}:#{node['cookbook-openshift3']['httpd_xfer_port']}/node/generated-configs/#{path_certificate}"
     action :create_if_missing
     notifies :run, 'execute[Extract certificate to Node folder]', :immediately
     retries 12
