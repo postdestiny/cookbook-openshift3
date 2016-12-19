@@ -86,8 +86,8 @@ node_servers.each do |nodes|
     )
     cwd Chef::Config[:file_cache_path]
     only_if do
-      master_servers.find { |server_node| server_node['fqdn'] == nodes['fqdn'] }
-      !Mixlib::ShellOut.new("oc get node | grep #{nodes['fqdn']}").run_command.error?
+      master_servers.find { |server_node| server_node['fqdn'] == nodes['fqdn'] } &&
+        !Mixlib::ShellOut.new("oc get node | grep #{nodes['fqdn']}").run_command.error?
     end
   end
 
@@ -98,8 +98,8 @@ node_servers.each do |nodes|
     )
     cwd Chef::Config[:file_cache_path]
     not_if do
-      master_servers.find { |server_node| server_node['fqdn'] == nodes['fqdn'] }
-      Mixlib::ShellOut.new("oc get node | grep #{nodes['fqdn']}").run_command.error?
+      master_servers.find { |server_node| server_node['fqdn'] == nodes['fqdn'] } ||
+        Mixlib::ShellOut.new("oc get node | grep #{nodes['fqdn']}").run_command.error?
     end
   end
 
@@ -110,8 +110,8 @@ node_servers.each do |nodes|
     )
     cwd Chef::Config[:file_cache_path]
     only_if do
-      nodes.key?('labels')
-      !Mixlib::ShellOut.new("oc get node | grep #{nodes['fqdn']}").run_command.error?
+      nodes.key?('labels') &&
+        !Mixlib::ShellOut.new("oc get node | grep #{nodes['fqdn']}").run_command.error?
     end
   end
 end
