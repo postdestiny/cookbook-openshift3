@@ -256,13 +256,13 @@ In general, override attributes in the environment should be used when changing 
         },
         {
           "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
+          "ipaddress": "1.1.1.2",
           "schedulable": true,
           "labels": "region=infra"
         },
         {
           "fqdn": "ose3-server.domain.local",
-          "ipaddress": "1.1.1.3"
+          "ipaddress": "1.1.1.3",
           "schedulable": true,
           "labels": "region=infra"
         },
