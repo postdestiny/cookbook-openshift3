@@ -7,16 +7,6 @@
 include_recipe 'iptables::default'
 include_recipe 'selinux_policy::default'
 
-if node['cookbook-openshift3']['ose_version']
-  if node['cookbook-openshift3']['ose_version'].to_f.round(1) != node['cookbook-openshift3']['ose_major_version'].to_f.round(1)
-    Chef::Application.fatal!("\"ose_version\" #{node['cookbook-openshift3']['ose_version']} should be a subset of \"ose_major_version\" #{node['cookbook-openshift3']['ose_major_version']}")
-  end
-end
-
-if node['cookbook-openshift3']['use_wildcard_nodes'] && node['cookbook-openshift3']['wildcard_domain'].empty?
-  Chef::Application.fatal!('"wildcard_domain" cannot be left empty when using "use_wildcard_nodes attribute"')
-end
-
 if node['cookbook-openshift3']['install_method'].eql? 'yum'
   node['cookbook-openshift3']['yum_repositories'].each do |repo|
     yum_repository repo['name'] do

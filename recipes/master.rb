@@ -6,10 +6,6 @@
 
 master_servers = node['cookbook-openshift3']['master_servers']
 
-if node['cookbook-openshift3']['openshift_HA'] && node['cookbook-openshift3']['openshift_cluster_name'].nil?
-  Chef::Application.fatal!('A Cluster Name must be defined via \"openshift_cluster_name\"')
-end
-
 include_recipe 'cookbook-openshift3::etcd_cluster'
 
 if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }

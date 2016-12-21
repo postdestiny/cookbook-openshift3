@@ -1,6 +1,13 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.24
+### Improvement
+- Add the possibility to run adhoc command for redeploying OSE certificates
+
+### Bug
+- Fix adhoc uninstall
+
 ## v1.10.23
 ### Bug
 - Typo in README
