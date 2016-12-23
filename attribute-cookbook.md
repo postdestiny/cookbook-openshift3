@@ -44,7 +44,8 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['deploy_example_xpaas-streams']` -  Defaults to `false`.
 * `node['cookbook-openshift3']['deploy_example_xpaas-templates']` -  Defaults to `false`.
 * `node['cookbook-openshift3']['docker_version']` -  Defaults to `nil`.
-* `node['cookbook-openshift3']['docker_log_options']` -  Defaults to `nil`.
+* `node['cookbook-openshift3']['docker_log_driver']` -  Defaults to `json-file`.
+* `node['cookbook-openshift3']['docker_log_options']` -  Defaults to `{ ... }`.
 * `node['cookbook-openshift3']['install_method']` -  Defaults to `yum`.
 * `node['cookbook-openshift3']['httpd_xfer_port']` -  Defaults to `9999`.
 * `node['cookbook-openshift3']['core_packages']` -  Defaults to `%w(libselinux-python wget vim-enhanced net-tools bind-utils git bash-completion bash-completion dnsmasq)`.
@@ -165,7 +166,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['etcd_cert_key']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/server.key`.
 * `node['cookbook-openshift3']['etcd_peer_file']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/peer.crt`.
 * `node['cookbook-openshift3']['etcd_peer_key']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/peer.key`.
-* `node['cookbook-openshift3']['etcd_openssl_conf']` -  Defaults to `#{node['cookbook-openshift3']['etcd_conf_dir']}/openssl.cnf`.
+* `node['cookbook-openshift3']['etcd_openssl_conf']` -  Defaults to `#{node['cookbook-openshift3']['etcd_ca_dir']}/openssl.cnf`.
 * `node['cookbook-openshift3']['etcd_ca_name']` -  Defaults to `etcd_ca`.
 * `node['cookbook-openshift3']['etcd_req_ext']` -  Defaults to `etcd_v3_req`.
 * `node['cookbook-openshift3']['etcd_ca_exts_peer']` -  Defaults to `etcd_v3_ca_peer`.
@@ -206,6 +207,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * [openshift_create_pv](#openshift_create_pv)
 * [openshift_delete_host](#openshift_delete_host)
 * [openshift_deploy_registry](#openshift_deploy_registry)
+* [openshift_redeploy_certificate](#openshift_redeploy_certificate)
 
 ## openshift_create_master
 
@@ -250,6 +252,12 @@ Installs/Configures Openshift 3.x (>= 3.2)
 ### Attribute Parameters
 
 - persistent_registry:
+
+## openshift_redeploy_certificate
+
+### Actions
+
+- redeploy:  Default action.
 
 # License and Maintainer
 
