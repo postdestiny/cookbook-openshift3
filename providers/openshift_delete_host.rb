@@ -23,8 +23,14 @@ action :delete do
   Mixlib::ShellOut.new('systemctl daemon-reload').run_command
   Mixlib::ShellOut.new('systemctl unmask firewalld').run_command
 
+  execute 'Remove br0 interface' do
+    command 'ovs-vsctl del-br br0 || true'
+  end
+
   %w(lbr0 vlinuxbr vovsbr).each do |interface|
-    Mixlib::ShellOut.new("ip link del #{interface}").run_command
+    execute "Remove linux interfaces #{interface}" do
+      command "ovs-vsctl del #{interface} || true"
+    end
   end
 
   execute 'Unmount kube volumes' do
@@ -46,6 +52,10 @@ action :delete do
 
   execute 'Clean /var/lib/origin' do
     command 'rm -rf /var/lib/origin/*'
+  end
+
+  execute 'Clean Iptables rules' do
+    command 'sed -i \'/OS_FIREWALL_ALLOW/d\'  /etc/sysconfig/iptables /etc/sysconfig/iptables.save && rm -rf /etc/iptables.d/firewall_*'
   end
 
   reboot 'Uninstall require reboot' do

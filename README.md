@@ -78,6 +78,7 @@ Override Attributes
 * `node['cookbook-openshift3']['docker_log_driver'`
 
 Set to `'json-file'` (default), `'journald'` or any other supported [docker log driver](https://docs.docker.com/engine/admin/logging/overview/).
+Set to '' to disable it.
 
 * `node['cookbook-openshift3']['docker_log_options']`
 

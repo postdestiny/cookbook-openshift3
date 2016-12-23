@@ -7,6 +7,10 @@
 include_recipe 'iptables::default'
 include_recipe 'selinux_policy::default'
 
+iptables_rule 'firewall_jump_rule' do
+  lines '-A INPUT -j OS_FIREWALL_ALLOW'
+end
+
 if node['cookbook-openshift3']['install_method'].eql? 'yum'
   node['cookbook-openshift3']['yum_repositories'].each do |repo|
     yum_repository repo['name'] do
