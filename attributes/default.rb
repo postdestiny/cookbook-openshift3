@@ -187,4 +187,3 @@ default['cookbook-openshift3']['etcd_initial_advertise_peer_urls'] = "https://#{
 default['cookbook-openshift3']['etcd_listen_peer_urls'] = "https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_peer_port']}"
 default['cookbook-openshift3']['etcd_listen_client_urls'] = "https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_client_port']}"
 default['cookbook-openshift3']['etcd_advertise_client_urls'] = "https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_client_port']}"
-default['cookbook-openshift3']['etcd_listen_client_urls'] = "https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_client_port']}"
