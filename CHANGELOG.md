@@ -1,6 +1,11 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.27
+### Bug
+- Fix the Origin deployment issue (https://github.com/IshentRas/cookbook-openshift3/issues/20)
+- Fix master-api service and master-controllers service (https://github.com/IshentRas/cookbook-openshift3/issues/40)
+
 ## v1.10.26
 ### Improvement
 - Set the default ipaddress used in etcd-related attributes accordingly with the etcd_server variable

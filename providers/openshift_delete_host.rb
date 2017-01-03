@@ -55,7 +55,12 @@ action :delete do
   end
 
   execute 'Clean Iptables rules' do
-    command 'sed -i \'/OS_FIREWALL_ALLOW/d\'  /etc/sysconfig/iptables /etc/sysconfig/iptables.save && rm -rf /etc/iptables.d/firewall_*'
+    command 'sed -i \'/OS_FIREWALL_ALLOW/d\'  /etc/sysconfig/iptables && rm -rf /etc/iptables.d/firewall_*'
+  end
+
+  execute 'Clean Iptables saved rules' do
+    command 'sed -i \'/OS_FIREWALL_ALLOW/d\' /etc/sysconfig/iptables.save'
+    only_if '[ -f /etc/sysconfig/iptables.save ]'
   end
 
   reboot 'Uninstall require reboot' do
