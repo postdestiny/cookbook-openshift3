@@ -53,7 +53,7 @@ etcdClientInfo:
 <% if node['cookbook-openshift3']['openshift_HA'] %>
   urls:
 <%- @etcd_servers.each do |etcd_host| -%>
-    - https://<%= etcd_host['fqdn'] %>:<%= node['cookbook-openshift3']['openshift_master_etcd_port'] %>
+    - https://<%= etcd_host['ipaddress'] %>:<%= node['cookbook-openshift3']['openshift_master_etcd_port'] %>
 <%- end -%>
 <%- else -%>
   urls:
