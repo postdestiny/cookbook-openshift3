@@ -154,6 +154,9 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_hosted_manage_registry']` -  Defaults to `true`.
 * `node['cookbook-openshift3']['openshift_hosted_registry_selector']` -  Defaults to `region=infra`.
 * `node['cookbook-openshift3']['openshift_hosted_registry_namespace']` -  Defaults to `default`.
+* `node['cookbook-openshift3']['openshift_hosted_cluster_metrics']` -  Defaults to `false`.
+* `node['cookbook-openshift3']['openshift_hosted_metrics_secrets']` -  Defaults to ``.
+* `node['cookbook-openshift3']['openshift_hosted_metrics_parameters']` -  Defaults to `{ ... }`.
 * `node['cookbook-openshift3']['erb_corsAllowedOrigins']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['erb_etcdClientInfo_urls']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['master_generated_certs_dir']` -  Defaults to `/var/www/html/master/generated_certs`.
@@ -177,10 +180,6 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['etcd_default_days']` -  Defaults to `365`.
 * `node['cookbook-openshift3']['etcd_client_port']` -  Defaults to `2379`.
 * `node['cookbook-openshift3']['etcd_peer_port']` -  Defaults to `2380`.
-* `node['cookbook-openshift3']['etcd_initial_advertise_peer_urls']` -  Defaults to `https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_peer_port']}`.
-* `node['cookbook-openshift3']['etcd_listen_peer_urls']` -  Defaults to `https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_peer_port']}`.
-* `node['cookbook-openshift3']['etcd_listen_client_urls']` -  Defaults to `https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_client_port']}`.
-* `node['cookbook-openshift3']['etcd_advertise_client_urls']` -  Defaults to `https://#{node['ipaddress']}:#{node['cookbook-openshift3']['etcd_client_port']}`.
 * `node['cookbook-openshift3']['oauth_Identity']` -  Defaults to `HTPasswdPasswordIdentityProvider`.
 * `node['cookbook-openshift3']['openshift_master_identity_provider']['HTPasswdPasswordIdentityProvider']` -  Defaults to `{ ... }`.
 * `node['cookbook-openshift3']['openshift_master_identity_provider']['LDAPPasswordIdentityProvider']` -  Defaults to `{ ... }`.
@@ -206,6 +205,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * [openshift_create_master](#openshift_create_master)
 * [openshift_create_pv](#openshift_create_pv)
 * [openshift_delete_host](#openshift_delete_host)
+* [openshift_deploy_metrics](#openshift_deploy_metrics)
 * [openshift_deploy_registry](#openshift_deploy_registry)
 * [openshift_redeploy_certificate](#openshift_redeploy_certificate)
 
@@ -242,6 +242,16 @@ Installs/Configures Openshift 3.x (>= 3.2)
 ### Actions
 
 - delete:  Default action.
+
+## openshift_deploy_metrics
+
+### Actions
+
+- create:  Default action.
+
+### Attribute Parameters
+
+- metrics_params:
 
 ## openshift_deploy_registry
 

@@ -1,6 +1,14 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.28
+### Improvement
+- Add the possibility to deploy the cluster metrics
+
+### Bug
+- Fix issue with systemd when uninstalling the Openshift
+- Fix issue for systemctl daemon-reload
+
 ## v1.10.27
 ### Bug
 - Fix the Origin deployment issue (https://github.com/IshentRas/cookbook-openshift3/issues/20)
@@ -66,7 +74,7 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 - Add the possibility to enable the Audit logging 
 - Add the possibility to label nodes
 - Add the possibility to set scheduling against nodes
-- Add the plossibilty to deploy the Stand-alone Registry
+- Add the possibility to deploy the Stand-alone Registry & Router
 
 ### Bug
 - Remove automatic rebooting when playing adhoc uninstallation

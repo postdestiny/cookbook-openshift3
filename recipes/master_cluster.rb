@@ -193,7 +193,7 @@ end
 package "#{node['cookbook-openshift3']['openshift_service_type']}-master" do
   action :install
   version node['cookbook-openshift3']['ose_version'] unless node['cookbook-openshift3']['ose_version'].nil?
-  notifies :reload, 'service[daemon-reload]', :immediately
+  notifies :run, 'execute[daemon-reload]', :immediately
 end
 
 execute 'Create the policy file' do
@@ -220,12 +220,12 @@ end
 
 template node['cookbook-openshift3']['openshift_master_api_systemd'] do
   source 'service_master-api.service.erb'
-  notifies :reload, 'service[daemon-reload]', :immediately
+  notifies :run, 'execute[daemon-reload]', :immediately
 end
 
 template node['cookbook-openshift3']['openshift_master_controllers_systemd'] do
   source 'service_master-controllers.service.erb'
-  notifies :reload, 'service[daemon-reload]', :immediately
+  notifies :run, 'execute[daemon-reload]', :immediately
 end
 
 template node['cookbook-openshift3']['openshift_master_api_sysconfig'] do

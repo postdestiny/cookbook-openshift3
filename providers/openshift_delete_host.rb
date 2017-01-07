@@ -63,6 +63,8 @@ action :delete do
     only_if '[ -f /etc/sysconfig/iptables.save ]'
   end
 
+  Mixlib::ShellOut.new('systemctl daemon-reload').run_command
+
   reboot 'Uninstall require reboot' do
     action :request_reboot
     reason 'Need to reboot when the run completes successfully.'

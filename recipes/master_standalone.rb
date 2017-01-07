@@ -40,13 +40,13 @@ end
 package "#{node['cookbook-openshift3']['openshift_service_type']}-master" do
   action :install
   version node['cookbook-openshift3']['ose_version'] unless node['cookbook-openshift3']['ose_version'].nil?
-  notifies :reload, 'service[daemon-reload]', :immediately
+  notifies :run, 'execute[daemon-reload]', :immediately
   not_if { node['cookbook-openshift3']['deploy_containerized'] }
 end
 
 template "/etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-master.service" do
   source 'service_master-containerized.service.erb'
-  notifies :reload, 'service[daemon-reload]', :immediately
+  notifies :run, 'execute[daemon-reload]', :immediately
   only_if { node['cookbook-openshift3']['deploy_containerized'] }
 end
 
