@@ -341,8 +341,8 @@ Run list
 knife node run_list add NODE_NAME 'role[base]'
 ```
 
-Test (ORIGIN)
-==================
+Manual Integration Test (ORIGIN)
+================================
 
 There is a way to quickly test this cookbook. 
 You will need a CentOS 7.1+  with "Minimal" installation option and at least 10GB left on the Volume group. (Later used by Docker)
@@ -351,6 +351,24 @@ You will need a CentOS 7.1+  with "Minimal" installation option and at least 10G
 ```
 bash <(curl -s https://raw.githubusercontent.com/IshentRas/cookbook-openshift3/master/scripts/origin_deploy.sh)
 ```
+
+Automated Integration Tests (KITCHEN)
+=====================================
+
+This cookbook features [inspect](http://inspec.io/) integration tests,
+for both standalone and cluster-native (HA) variants.
+
+Assuming the latest [chef-dk](https://downloads.chef.io/chefdk) is installed,
+running the tests is as simple as:
+
+```sh
+kitchen converge
+# wait a few minutes to give openshift a chance to initialize before running the tests
+kitchen verify
+kitchen destroy
+```
+
+Check the `.kitchen.yml` file to get started.
 
 Development
 ==================
