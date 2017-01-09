@@ -134,6 +134,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_master_named_certificates']` -  Defaults to `%w()`.
 * `node['cookbook-openshift3']['openshift_master_scheduler_conf']` -  Defaults to `#{node['cookbook-openshift3']['openshift_master_config_dir']}/scheduler.json`.
 * `node['cookbook-openshift3']['openshift_master_certs_no_etcd']` -  Defaults to `%w(admin.crt master.kubelet-client.crt master.server.crt openshift-master.crt openshift-registry.crt openshift-router.crt etcd.server.crt)`.
+* `node['cookbook-openshift3']['openshift_master_managed_names_additional']` -  Defaults to `%w()`.
 * `node['cookbook-openshift3']['openshift_node_config_dir']` -  Defaults to `#{node['cookbook-openshift3']['openshift_common_node_dir']}/node`.
 * `node['cookbook-openshift3']['openshift_node_config_file']` -  Defaults to `#{node['cookbook-openshift3']['openshift_node_config_dir']}/node-config.yaml`.
 * `node['cookbook-openshift3']['openshift_node_debug_level']` -  Defaults to `2`.

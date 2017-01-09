@@ -4,8 +4,10 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 ## v1.10.28
 ### Improvement
 - Add the possibility to deploy the cluster metrics
+- Add the possibility to add more manageName serviceaccount in master config
 
 ### Bug
+- Fix README.md typo
 - Fix issue with systemd when uninstalling the Openshift
 - Fix issue for systemctl daemon-reload
 
