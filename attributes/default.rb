@@ -156,6 +156,10 @@ default['cookbook-openshift3']['openshift_hosted_manage_registry'] = true
 default['cookbook-openshift3']['openshift_hosted_registry_selector'] = 'region=infra'
 default['cookbook-openshift3']['openshift_hosted_registry_namespace'] = 'default'
 
+default['cookbook-openshift3']['openshift_hosted_cluster_metrics'] = false
+default['cookbook-openshift3']['openshift_hosted_metrics_secrets'] = ''
+default['cookbook-openshift3']['openshift_hosted_metrics_parameters'] = {}
+
 default['cookbook-openshift3']['erb_corsAllowedOrigins'] = ['127.0.0.1', 'localhost', node['cookbook-openshift3']['openshift_common_hostname'], node['cookbook-openshift3']['openshift_common_public_hostname']] + node['cookbook-openshift3']['openshift_common_svc_names']
 
 default['cookbook-openshift3']['erb_etcdClientInfo_urls'] = [node['cookbook-openshift3']['openshift_master_etcd_url'], "https://#{node['cookbook-openshift3']['openshift_common_hostname']}:#{node['cookbook-openshift3']['openshift_master_etcd_port']}"]

@@ -38,17 +38,17 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
 
     template "/etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node-dep.service" do
       source 'service_node-deps-containerized.service.erb'
-      notifies :reload, 'service[daemon-reload]', :immediately
+      notifies :run, 'execute[daemon-reload]', :immediately
     end
 
     template "/etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node.service" do
       source 'service_node-containerized.service.erb'
-      notifies :reload, 'service[daemon-reload]', :immediately
+      notifies :run, 'execute[daemon-reload]', :immediately
     end
 
     template '/etc/systemd/system/openvswitch.service' do
       source 'service_openvsitch-containerized.service.erb'
-      notifies :reload, 'service[daemon-reload]', :immediately
+      notifies :run, 'execute[daemon-reload]', :immediately
     end
 
     template '/etc/sysconfig/openvswitch' do

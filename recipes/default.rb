@@ -14,7 +14,10 @@ end
 
 service "#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers"
 
-service 'daemon-reload'
+execute 'daemon-reload' do
+  command 'systemctl daemon-reload'
+  action :nothing
+end
 
 service 'httpd'
 
