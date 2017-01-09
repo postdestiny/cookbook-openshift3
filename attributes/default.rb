@@ -132,6 +132,7 @@ default['cookbook-openshift3']['openshift_master_controllers_systemd'] = "/usr/l
 default['cookbook-openshift3']['openshift_master_named_certificates'] = %w()
 default['cookbook-openshift3']['openshift_master_scheduler_conf'] = "#{node['cookbook-openshift3']['openshift_master_config_dir']}/scheduler.json"
 default['cookbook-openshift3']['openshift_master_certs_no_etcd'] = %w(admin.crt master.kubelet-client.crt master.server.crt openshift-master.crt openshift-registry.crt openshift-router.crt etcd.server.crt)
+default['cookbook-openshift3']['openshift_master_managed_names_additional'] = %w()
 default['cookbook-openshift3']['openshift_node_config_dir'] = "#{node['cookbook-openshift3']['openshift_common_node_dir']}/node"
 default['cookbook-openshift3']['openshift_node_config_file'] = "#{node['cookbook-openshift3']['openshift_node_config_dir']}/node-config.yaml"
 default['cookbook-openshift3']['openshift_node_debug_level'] = '2'

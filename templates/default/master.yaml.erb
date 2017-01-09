@@ -154,6 +154,9 @@ routingConfig:
 serviceAccountConfig:
   limitSecretReferences: false
   managedNames:
+<% node['cookbook-openshift3']['openshift_master_managed_names_additional'].each do |managed_name| %>
+  - <%= managed_name %>
+<%- end -%>
   - default
   - builder
   - deployer
