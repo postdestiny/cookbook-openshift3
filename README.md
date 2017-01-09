@@ -75,7 +75,7 @@ Override Attributes
 }
 ```
 
-* `node['cookbook-openshift3']['docker_log_driver'`
+* `node['cookbook-openshift3']['docker_log_driver']`
 
 Set to `'json-file'` (default), `'journald'` or any other supported [docker log driver](https://docs.docker.com/engine/admin/logging/overview/).
 Set to '' to disable it.
@@ -320,7 +320,7 @@ In general, override attributes in the environment should be used when changing 
         },
         {
           "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
+          "ipaddress": "1.1.1.2",
           "labels": "region=user"
         }
       ],
