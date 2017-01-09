@@ -107,7 +107,6 @@ Any option can be set, as long as they are supported by the current [docker log 
 ]
 ```
 
-
 * `node['cookbook-openshift3']['persistent_storage']`
 
 * They key called 'claim' is optional and will automatically create a PersistentVolumeClaim within a specified namespace.
@@ -123,6 +122,21 @@ Any option can be set, as long as they are supported by the current [docker log 
     "namespace": "default"
   }
 }
+```
+* `node['cookbook-openshift3']['openshift_hosted_metrics_parameters']`
+
+Any option can be set, as long as they are supported by the current [Metrics deployer template](https://docs.openshift.com/container-platform/latest/install_config/cluster_metrics.html#deployer-template-parameters).
+
+The name of the key can be set in upper case or lower case
+
+```json
+{
+  "openshift_hosted_metrics_parameters": {
+    "hawkular_metrics_hostname": "metric.domain.local",
+    "METRIC_DURATION": "30"
+  }
+}
+```
 
 =====
 
