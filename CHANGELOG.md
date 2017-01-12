@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.29
+### Bug
+- Remove property attributes for resources (backward compatibility)
+
 ## v1.10.28
 ### Improvement
 - Add the possibility to deploy the cluster metrics

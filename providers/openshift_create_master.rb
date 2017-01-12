@@ -67,4 +67,5 @@ action :create do
       notifies :restart, "service[#{new_resource.openshift_service_type}-master]", :delayed
     end
   end
+  new_resource.updated_by_last_action(true)
 end
