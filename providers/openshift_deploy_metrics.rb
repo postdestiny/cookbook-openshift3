@@ -1,11 +1,11 @@
 #
 # Cookbook Name:: cookbook-openshift3
-# Resources:: openshift_deploy_registry
+# Resources:: openshift_deploy_metrics
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
 use_inline_resources
-provides :openshift_deploy_registry if defined? provides
+provides :openshift_deploy_metrics if defined? provides
 
 def whyrun_supported?
   true

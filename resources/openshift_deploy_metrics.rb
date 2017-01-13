@@ -12,4 +12,3 @@ actions :create
 default_action :create
 
 attribute :metrics_params, kind_of: Hash, required: true
-

@@ -12,4 +12,3 @@ actions :create
 default_action :create
 
 attribute :persistent_storage, kind_of: Array, regex: /.*/, required: true
-
