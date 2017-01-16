@@ -384,6 +384,21 @@ kitchen destroy
 
 Check the `.kitchen.yml` file to get started.
 
+Automated Integration Tests (SHUTIT)
+=====================================
+
+For multi-node setups, testing can be done using a [ShutIt](http://ianmiell.github.io/shutit) script.
+
+There is a [chef branch](https://github.com/ianmiell/shutit-openshift-cluster/tree/chef), which tests this cookbook.
+
+```sh
+[sudo] pip install shutit
+git clone --recursive https://github.com/ianmiell/shutit-openshift-cluster/tree/chef
+cd shutit-openshift-cluster
+./run.sh
+```
+
+
 Development
 ==================
 
