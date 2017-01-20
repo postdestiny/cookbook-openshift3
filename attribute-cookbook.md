@@ -208,6 +208,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * [openshift_delete_host](#openshift_delete_host)
 * [openshift_deploy_metrics](#openshift_deploy_metrics)
 * [openshift_deploy_registry](#openshift_deploy_registry)
+* [openshift_deploy_router](#openshift_deploy_router)
 * [openshift_redeploy_certificate](#openshift_redeploy_certificate)
 
 ## openshift_create_master
@@ -263,6 +264,16 @@ Installs/Configures Openshift 3.x (>= 3.2)
 ### Attribute Parameters
 
 - persistent_registry:
+
+## openshift_deploy_router
+
+### Actions
+
+- create:  Default action.
+
+### Attribute Parameters
+
+- none (for now)
 
 ## openshift_redeploy_certificate
 
