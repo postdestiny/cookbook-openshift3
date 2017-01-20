@@ -18,7 +18,7 @@ action :create do
   end
 
   execute 'Deploy Hosted Registry' do
-    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm registry --selector=${selector_router} -n ${namespace_registry} --config=admin.kubeconfig"
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm registry --selector=${selector_registry} -n ${namespace_registry} --config=admin.kubeconfig"
     environment(
       'selector_registry' => node['cookbook-openshift3']['openshift_hosted_registry_selector'],
       'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
