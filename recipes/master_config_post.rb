@@ -145,12 +145,10 @@ if node['cookbook-openshift3']['openshift_hosted_manage_router']
   end
 end
 
-if node['cookbook-openshift3']['openshift_hosted_manage_registry']
-  openshift_deploy_registry 'Deploy Registry' do
-    persistent_registry node['cookbook-openshift3']['registry_persistent_volume'].empty? ? false : true
-    only_if do
-      node['cookbook-openshift3']['openshift_hosted_manage_registry']
-    end
+openshift_deploy_registry 'Deploy Registry' do
+  persistent_registry node['cookbook-openshift3']['registry_persistent_volume'].empty? ? false : true
+  only_if do
+    node['cookbook-openshift3']['openshift_hosted_manage_registry']
   end
 end
 
