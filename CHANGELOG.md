@@ -1,6 +1,23 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.30
+### Improvement
+- Add the possibility to deploy the cluster metrics
+- Add the possibility to add more manageName serviceaccount in master config
+- Move registry persistent_volume_claim name to explicit LWRP attribute
+- Added integration test for openshift_hosted_manage_registry feature
+- Added integration test for openshift_hosted_manage_router feature
+- Added integration test for persistent_storage feature
+- Refactor router-related resources to new openshift_deploy_router LWRP
+- Move registry persistent_volume_claim name to explicit LWRP attribute
+
+### Bug
+- Fix README.md typo
+- Fix issue with systemd when uninstalling the Openshift
+- Fix issue for systemctl daemon-reload
+- Removed redundant guard clause for registry deloyment
+
 ## v1.10.29
 ### Bug
 - Remove property attributes for resources (backward compatibility)
