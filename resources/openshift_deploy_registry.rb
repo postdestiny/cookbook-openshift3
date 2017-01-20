@@ -12,3 +12,4 @@ actions :create
 default_action :create
 
 attribute :persistent_registry, kind_of: [TrueClass, FalseClass], required: true
+attribute :persistent_volume_claim_name, kind_of: [String], default: ''
