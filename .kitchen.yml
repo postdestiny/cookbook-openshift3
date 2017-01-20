@@ -37,6 +37,14 @@ platforms:
           server: 10.0.2.15
           claim:
             namespace: default
+        - name: registry-storage
+          capacity: 100Mi
+          access_modes: ReadWriteMany
+          path: /srv/registry-storage
+          server: 10.0.2.15
+          claim:
+            namespace: default
+        registry_persistent_volume: registry-storage
         master_servers: &SERVERS
          - ipaddress: 10.0.2.15
            fqdn: origin-centos-72
