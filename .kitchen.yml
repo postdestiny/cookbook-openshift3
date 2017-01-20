@@ -29,6 +29,14 @@ platforms:
         openshift_master_router_subdomain: cloudapps.10.0.2.15.nip.io
         ose_major_version: 1.3
         docker_log_driver: journald
+        persistent_storage:
+        - name: testpv
+          capacity: 100Mi
+          access_modes: ReadOnlyMany
+          path: /srv/testpv
+          server: 10.0.2.15
+          claim:
+            namespace: default
         master_servers: &SERVERS
          - ipaddress: 10.0.2.15
            fqdn: origin-centos-72
