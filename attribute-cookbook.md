@@ -262,7 +262,8 @@ Installs/Configures Openshift 3.x (>= 3.2)
 
 ### Attribute Parameters
 
-- persistent_registry:
+- persistent_registry: whether to enable registry persistence or not.
+- persistent_volume_claim_name: name of persist volume claim to use for registry storage
 
 ## openshift_redeploy_certificate
 

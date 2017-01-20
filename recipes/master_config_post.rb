@@ -147,6 +147,7 @@ end
 
 openshift_deploy_registry 'Deploy Registry' do
   persistent_registry node['cookbook-openshift3']['registry_persistent_volume'].empty? ? false : true
+  persistent_volume_claim_name "#{node['cookbook-openshift3']['registry_persistent_volume']}-claim"
   only_if do
     node['cookbook-openshift3']['openshift_hosted_manage_registry']
   end

@@ -101,7 +101,7 @@ action :create do
       command 'oc volume dc/docker-registry --add --overwrite -t persistentVolumeClaim --claim-name=${registry_claim} --name=registry-storage -n ${namespace_registry} --config=admin.kubeconfig'
       environment(
         'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace'],
-        'registry_claim' => "#{node['cookbook-openshift3']['registry_persistent_volume']}-claim"
+        'registry_claim' => new_resource.persistent_volume_claim_name
       )
       cwd Chef::Config[:file_cache_path]
       not_if '[[ `oc get -o template dc/docker-registry --template={{.spec.template.spec.volumes}} -n ${namespace_registry} --config=admin.kubeconfig` =~ "${registry_claim}" ]]'
