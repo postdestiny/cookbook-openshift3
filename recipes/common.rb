@@ -12,8 +12,8 @@ if run_context.cookbook_collection['iptables'].version >= '3.0.0'
     lines '-A INPUT -j OS_FIREWALL_ALLOW'
   end
 else
-  iptables_rule 'iptables_input_os_firewall_allow' do
-    action :enable
+  iptables_rule 'firewall_jump_rule' do
+    content '-A INPUT -j OS_FIREWALL_ALLOW'
   end
 end
 
