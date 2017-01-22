@@ -7,14 +7,8 @@
 include_recipe 'iptables::default'
 include_recipe 'selinux_policy::default'
 
-if run_context.cookbook_collection['iptables'].version >= '3.0.0'
-  iptables_rule 'firewall_jump_rule' do
-    lines '-A INPUT -j OS_FIREWALL_ALLOW'
-  end
-else
-  iptables_rule 'firewall_jump_rule' do
-    content '-A INPUT -j OS_FIREWALL_ALLOW'
-  end
+iptables_rule 'firewall_jump_rule' do
+  action :enable
 end
 
 if node['cookbook-openshift3']['install_method'].eql? 'yum'
