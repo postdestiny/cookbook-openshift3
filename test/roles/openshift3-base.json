@@ -14,7 +14,7 @@
       "openshift_master_sdn_host_subnet_length": 9,
       "openshift_hosted_manage_router": true,
       "openshift_hosted_manage_registry": true,
-      "openshift_hosted_cluster_metrics": false,
+      "openshift_hosted_cluster_metrics": true,
       "deploy_example": false
     }
   },

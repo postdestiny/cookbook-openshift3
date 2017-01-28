@@ -131,12 +131,16 @@ The name of the key can be set in upper case or lower case
 
 ```json
 {
+  "openshift_master_metrics_public_url": "metrics.domain.local",
   "openshift_hosted_metrics_parameters": {
-    "hawkular_metrics_hostname": "metric.domain.local",
-    "METRIC_DURATION": "30"
+    "HAWKULAR_METRICS_HOSTNAME": "metric.domain.local",
+    "METRIC_DURATION": "30",
+    "IMAGE_VERSION": "v1.4.1"
   }
 }
 ```
+
+Remember to specify an `IMAGE_VERSION` or the `latest` version will be deployed, which may be incompatible with your openshift cluster version.
 
 =====
 
