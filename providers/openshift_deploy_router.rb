@@ -27,6 +27,15 @@ action :create do
     only_if 'oc get namespace/${namespace_router} --no-headers'
   end
 
+  execute 'Create Hosted Router Certificate' do
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} create secret tls router-certs --cert=openshift-router.crt --key=openshift-router.key -n ${namespace_router}"
+    environment(
+      'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace']
+    )
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
+    not_if 'oc get secret router-certs -n $namespace_router --no-headers'
+  end
+
   execute 'Deploy Hosted Router' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm router --selector=${selector_router} -n ${namespace_router} --config=admin.kubeconfig || true"
     environment(
