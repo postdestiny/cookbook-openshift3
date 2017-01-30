@@ -85,9 +85,23 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
   end
 
   execute 'Extract certificate to Node folder' do
-    command "tar xzf #{node['fqdn']}.tgz"
+    command "tar xzf #{node['fqdn']}.tgz && chown -R root:root ."
     cwd node['cookbook-openshift3']['openshift_node_config_dir']
     action :nothing
+  end
+
+  directory "Fix permissions on #{node['cookbook-openshift3']['openshift_node_config_dir']}" do
+    path node['cookbook-openshift3']['openshift_node_config_dir']
+    owner 'root'
+    group 'root'
+    mode '0755'
+  end
+
+  file "Fix permissions on #{node['cookbook-openshift3']['openshift_node_config_dir']}/ca.crt" do
+    path ::File.join(node['cookbook-openshift3']['openshift_node_config_dir'], 'ca.crt')
+    owner 'root'
+    group 'root'
+    mode '0644'
   end
 
   if node['cookbook-openshift3']['deploy_dnsmasq']
