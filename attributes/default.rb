@@ -101,6 +101,7 @@ default['cookbook-openshift3']['openshift_master_debug_level'] = '2'
 default['cookbook-openshift3']['openshift_master_dns_port'] = node['cookbook-openshift3']['deploy_dnsmasq'] == true ? '8053' : '53'
 default['cookbook-openshift3']['openshift_master_metrics_public_url'] = nil
 default['cookbook-openshift3']['openshift_master_image_bulk_imported'] = 5
+default['cookbook-openshift3']['openshift_master_deserialization_cache_size'] = '50000'
 default['cookbook-openshift3']['openshift_master_pod_eviction_timeout'] = ''
 default['cookbook-openshift3']['openshift_master_project_request_message'] = ''
 default['cookbook-openshift3']['openshift_master_project_request_template'] = ''
