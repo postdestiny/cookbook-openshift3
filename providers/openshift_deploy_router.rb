@@ -17,6 +17,25 @@ action :create do
     mode '0644'
   end
 
+  execute 'Annotate Hosted Rouger Project' do
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} annotate --overwrite namespace/${namespace_router} openshift.io/node-selector=${selector_router}"
+    environment(
+      'selector_router' => node['cookbook-openshift3']['openshift_hosted_router_selector'],
+      'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace']
+    )
+    not_if "oc get namespace/${namespace_router} --template '{{ .metadata.annotations }}' | fgrep -q openshift.io/node-selector:${selector_router}"
+    only_if 'oc get namespace/${namespace_router} --no-headers'
+  end
+
+  execute 'Create Hosted Router Certificate' do
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} create secret tls router-certs --cert=openshift-router.crt --key=openshift-router.key -n ${namespace_router}"
+    environment(
+      'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace']
+    )
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
+    not_if 'oc get secret router-certs -n $namespace_router --no-headers'
+  end
+
   execute 'Deploy Hosted Router' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm router --selector=${selector_router} -n ${namespace_router} --config=admin.kubeconfig || true"
     environment(

@@ -22,12 +22,26 @@ platforms:
   - name: centos-7.2
     driver:
       vm_hostname: origin-centos-72
+
+suites:
+  - name: standalone
+    run_list:
+      - role[openshift3-base]
+    verifier:
+      inspec_tests:
+        - test/inspec/standalone
+        - test/inspec/shared
     attributes:
-      cookbook-openshift3:
+      openshift3-shared: &SHARED
+        # use experimental repository while https://github.com/openshift/origin/issues/12567 is open
+        yum_repositories:
+          - name: "centos-openshift-origin"
+            baseurl: "http://buildlogs.centos.org/centos/7/paas/x86_64/openshift-origin/"
+            gpgcheck: false
         # we override these because 10.0.2.15 is whitelisted in $no_proxy
         openshift_common_public_hostname: 10.0.2.15
         openshift_master_router_subdomain: cloudapps.10.0.2.15.nip.io
-        ose_major_version: 1.3
+        ose_major_version: 1.4
         docker_log_driver: journald
         persistent_storage:
         - name: testpv
@@ -51,17 +65,8 @@ platforms:
            labels: region=infra custom=label
            schedulable: false
         node_servers: *SERVERS
-
-suites:
-  - name: standalone
-    run_list:
-      - role[openshift3-base]
-    verifier:
-      inspec_tests:
-        - test/inspec/standalone
-        - test/inspec/shared
-    attributes:
       cookbook-openshift3:
+        << : *SHARED
         openshift_HA: false
 
   - name: cluster-native
@@ -73,6 +78,7 @@ suites:
         - test/inspec/shared
     attributes:
       cookbook-openshift3:
+        << : *SHARED
         openshift_HA: true
         openshift_cluster_name: test-cluster.domain.local
         etcd_servers: *SERVERS

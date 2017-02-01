@@ -50,6 +50,12 @@ action :create do
     not_if '[[ `oc get clusterrolebindings -o jsonpath=\'{.items[?(@.metadata.name == "cluster-readers")].userNames}\' -n openshift-infra --config=admin.kubeconfig` =~ "system:serviceaccount:openshift-infra:heapster" ]]'
   end
 
+  execute 'Add view permission to the openshift-infra project to hawkular SA' do
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm policy add-role-to-user view system:serviceaccount:openshift-infra:hawkular -n openshift-infra"
+    cwd Chef::Config[:file_cache_path]
+    not_if '[[ `oc get rolebinding -o jsonpath=\'{.items[?(@.metadata.name == "view")].userNames}\' -n openshift-infra --config=admin.kubeconfig` =~ "system:serviceaccount:openshift-infra:hawkular" ]]'
+  end
+
   execute 'Deploy Cluster Metrics' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} new-app --template=metrics-deployer-template --as=system:serviceaccount:openshift-infra:metrics-deployer #{new_resource.metrics_params.map { |opt, value| " -p #{opt}=#{value}" }.join(' ')} -n openshift-infra --config=admin.kubeconfig"
     cwd Chef::Config[:file_cache_path]

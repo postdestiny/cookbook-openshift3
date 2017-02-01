@@ -108,6 +108,7 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
 
   template node['cookbook-openshift3']['openshift_node_config_file'] do
     source 'node.yaml.erb'
+    notifies :run, 'execute[daemon-reload]', :immediately
     notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
     notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
   end

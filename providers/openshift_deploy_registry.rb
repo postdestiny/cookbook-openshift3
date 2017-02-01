@@ -17,6 +17,16 @@ action :create do
     mode '0644'
   end
 
+  execute 'Annotate Hosted Registry Project' do
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} annotate --overwrite namespace/${namespace_registry} openshift.io/node-selector=${selector_registry}"
+    environment(
+      'selector_registry' => node['cookbook-openshift3']['openshift_hosted_registry_selector'],
+      'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
+    )
+    not_if "oc get namespace/${namespace_registry} --template '{{ .metadata.annotations }}' | fgrep -q openshift.io/node-selector:${selector_registry}"
+    only_if 'oc get namespace/${namespace_registry} --no-headers'
+  end
+
   execute 'Deploy Hosted Registry' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm registry --selector=${selector_registry} -n ${namespace_registry} --config=admin.kubeconfig"
     environment(
