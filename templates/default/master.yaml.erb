@@ -95,7 +95,9 @@ kubeletClientInfo:
 kubernetesMasterConfig:
   apiLevels:
   - v1
-  apiServerArguments: null
+  apiServerArguments:
+    deserialization-cache-size:
+    - "<%= node['cookbook-openshift3']['openshift_master_deserialization_cache_size'] %>"
   controllerArguments: null
 <% if node['cookbook-openshift3']['openshift_HA'] %>
   masterCount: <%= @masters_size %>

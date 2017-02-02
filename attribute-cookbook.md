@@ -103,6 +103,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_master_dns_port']` -  Defaults to `node['cookbook-openshift3']['deploy_dnsmasq'] == true ? '8053' : '53`.
 * `node['cookbook-openshift3']['openshift_master_metrics_public_url']` -  Defaults to `nil`.
 * `node['cookbook-openshift3']['openshift_master_image_bulk_imported']` -  Defaults to `5`.
+* `node['cookbook-openshift3']['openshift_master_deserialization_cache_size']` - Defaults to `50000` (for small deployments a value of `1000` may be more appropriate).
 * `node['cookbook-openshift3']['openshift_master_pod_eviction_timeout']` -  Defaults to ``.
 * `node['cookbook-openshift3']['openshift_master_project_request_message']` -  Defaults to ``.
 * `node['cookbook-openshift3']['openshift_master_project_request_template']` -  Defaults to ``.
