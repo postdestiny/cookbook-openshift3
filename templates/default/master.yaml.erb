@@ -95,9 +95,11 @@ kubeletClientInfo:
 kubernetesMasterConfig:
   apiLevels:
   - v1
+<% if [1.3, 3.3, 1.4, 3.4].include? node['cookbook-openshift3']['ose_major_version'].to_f %>
   apiServerArguments:
     deserialization-cache-size:
     - "<%= node['cookbook-openshift3']['openshift_master_deserialization_cache_size'] %>"
+<%- end -%>
   controllerArguments: null
 <% if node['cookbook-openshift3']['openshift_HA'] %>
   masterCount: <%= @masters_size %>
