@@ -398,6 +398,14 @@ cd shutit-openshift-cluster
 ./run.sh
 ```
 
+Release Checklist
+=================
+
+- Run kitchen tests
+- Are there any attributes changes? If yes:
+- Update attribute-cookbook.md and
+- Update example roles in README.md
+- Have you updated the CHANGELOG.md?
 
 Development
 ==================

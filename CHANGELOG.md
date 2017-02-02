@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.32
+### Bug
+- Make apiServerArguments conditional on the version for pre-1.3/3.3 versions
+
 ## v1.10.31
 ### Improvement
 - Handle 1.4/3.4 deployment
