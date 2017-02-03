@@ -10,7 +10,7 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 - Handle 1.4/3.4 deployment
 - Clean codes over unused attributes
 - Integration tests for 1.4/3.4
-- Add the possibility to suplly dns-search option via Docker
+- Add the possibility to supply dns-search option via Docker
 - Add the possibility to specify a deserialization cache size parameter. 
 
 ### Bug

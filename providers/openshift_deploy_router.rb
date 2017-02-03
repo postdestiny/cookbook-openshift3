@@ -17,7 +17,7 @@ action :create do
     mode '0644'
   end
 
-  execute 'Annotate Hosted Rouger Project' do
+  execute 'Annotate Hosted Router Project' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} annotate --overwrite namespace/${namespace_router} openshift.io/node-selector=${selector_router}"
     environment(
       'selector_router' => node['cookbook-openshift3']['openshift_hosted_router_selector'],
