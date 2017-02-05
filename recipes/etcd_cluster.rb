@@ -97,6 +97,13 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
       etcd_servers etcd_servers
       only_if { node['cookbook-openshift3']['etcd_add_additional_nodes'] }
     end
+
+    openshift_add_etcd 'Remove additional etcd nodes to cluster' do
+      etcd_servers etcd_servers
+      etcd_servers_to_remove node['cookbook-openshift3']['etcd_removal_servers']
+      not_if { node['cookbook-openshift3']['etcd_removal_servers'].empty? }
+      action :remove_node
+    end
   end
 
   node['cookbook-openshift3']['enabled_firewall_rules_etcd'].each do |rule|
