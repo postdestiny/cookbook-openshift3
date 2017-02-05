@@ -165,13 +165,6 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
     }
   end
 
-  directory "#{node['cookbook-openshift3']['etcd_data_dir']}member" do
-    recursive true
-    action :delete
-    only_if { etcd_servers.find { |etcd_node| etcd_node['fqdn'] == node['fqdn'] }.key?('clear_node') }
-    notifies :restart, 'service[etcd]', :immediately
-  end
-
   service 'etcd' do
     action [:start, :enable]
   end
