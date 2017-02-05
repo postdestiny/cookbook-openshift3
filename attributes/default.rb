@@ -158,6 +158,7 @@ default['cookbook-openshift3']['erb_corsAllowedOrigins'] = ['127.0.0.1', 'localh
 
 default['cookbook-openshift3']['master_generated_certs_dir'] = '/var/www/html/master/generated_certs'
 default['cookbook-openshift3']['etcd_add_additional_nodes'] = false
+default['cookbook-openshift3']['etcd_removal_servers'] = []
 default['cookbook-openshift3']['etcd_conf_dir'] = '/etc/etcd'
 default['cookbook-openshift3']['etcd_ca_dir'] = "#{node['cookbook-openshift3']['etcd_conf_dir']}/ca"
 default['cookbook-openshift3']['etcd_generated_certs_dir'] = '/var/www/html/etcd/generated_certs'
