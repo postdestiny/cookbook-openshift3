@@ -346,7 +346,33 @@ In general, override attributes in the environment should be used when changing 
   }
 }
 ```
+* ADD NEW ETCD SERVERS TO CLUSTER ("etcd_add_additional_nodes" must be set to true and a key called "new_node" should be added to the server(s)"
 
+```json
+...
+      "etcd_add_additional_nodes": true,
+      "etcd_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1"
+        },
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2"
+         
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3"
+        },
+        {
+          "fqdn": "ose4-server.domain.local",
+          "ipaddress": "1.1.1.4",
+          "new_node": true
+        }
+      ]
+...
+```
 ###Once it is done you should assign the node to the relevant environment.###
 ```
 knife node environment set NODE_NAME ENVIRONMENT_NAME
