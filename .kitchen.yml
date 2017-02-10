@@ -33,11 +33,11 @@ suites:
         - test/inspec/shared
     attributes:
       openshift3-shared: &SHARED
-        # use experimental repository while https://github.com/openshift/origin/issues/12567 is open
-        yum_repositories:
-          - name: "centos-openshift-origin"
-            baseurl: "http://buildlogs.centos.org/centos/7/paas/x86_64/openshift-origin/"
-            gpgcheck: false
+        # uncomment to use experimental CentOS PaaS repository for integration tests
+        #yum_repositories:
+        #  - name: "centos-openshift-origin"
+        #    baseurl: "http://buildlogs.centos.org/centos/7/paas/x86_64/openshift-origin/"
+        #    gpgcheck: false
         # we override these because 10.0.2.15 is whitelisted in $no_proxy
         openshift_common_public_hostname: 10.0.2.15
         openshift_master_router_subdomain: cloudapps.10.0.2.15.nip.io
