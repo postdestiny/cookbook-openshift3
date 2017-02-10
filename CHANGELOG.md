@@ -1,6 +1,14 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.33
+### Bug
+- Revert e168f9b, use stable repository URLs again
+
+### Improvement
+- Use stable CentOS PaaS repository during tests
+- Add integration test for hosted metrics feature
+
 ## v1.10.32
 ### Bug
 - Make apiServerArguments conditional on the version for pre-1.3/3.3 versions
