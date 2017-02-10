@@ -9,6 +9,11 @@ You will need a CentOS 7.1+  with "Minimal" installation option and at least 10G
 bash <(curl -s https://raw.githubusercontent.com/IshentRas/cookbook-openshift3/master/scripts/origin_deploy.sh)
 ```
 
+* Delete ORIGIN installation
+```
+bash <(curl -s https://raw.githubusercontent.com/IshentRas/cookbook-openshift3/master/scripts/origin_delete.sh)
+```
+
 * Post installation
 
 Your installation of Origin is completed.
@@ -23,12 +28,8 @@ Access the console via : https://console.${IP}.nip.io:8443/console
 
 You can also login via CLI : oc login -u demo
 
-Next steps for you (To be performed as system:admin --> oc login -u system:admin):
+Next steps for you:
 
-1) Deploy registry -> oadm registry --service-account=registry --credentials=/etc/origin/master/openshift-registry.kubeconfig --config=/etc/origin/master/admin.kubeconfig
-
-2) Deploy router -> oadm router --service-account=router --credentials=/etc/origin/master/openshift-router.kubeconfig
-
-3) Read the [documentation](https://docs.openshift.org/latest/welcome/index.html)
+1) Read the [documentation](https://docs.openshift.org/latest/welcome/index.html)
 
 You should disconnect and reconnect so as to get the benefit of bash-completion on commands

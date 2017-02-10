@@ -38,17 +38,17 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
 
     template "/etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node-dep.service" do
       source 'service_node-deps-containerized.service.erb'
-      notifies :reload, 'service[daemon-reload]', :immediately
+      notifies :run, 'execute[daemon-reload]', :immediately
     end
 
     template "/etc/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-node.service" do
       source 'service_node-containerized.service.erb'
-      notifies :reload, 'service[daemon-reload]', :immediately
+      notifies :run, 'execute[daemon-reload]', :immediately
     end
 
     template '/etc/systemd/system/openvswitch.service' do
       source 'service_openvsitch-containerized.service.erb'
-      notifies :reload, 'service[daemon-reload]', :immediately
+      notifies :run, 'execute[daemon-reload]', :immediately
     end
 
     template '/etc/sysconfig/openvswitch' do
@@ -85,9 +85,23 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
   end
 
   execute 'Extract certificate to Node folder' do
-    command "tar xzf #{node['fqdn']}.tgz"
+    command "tar xzf #{node['fqdn']}.tgz && chown -R root:root ."
     cwd node['cookbook-openshift3']['openshift_node_config_dir']
     action :nothing
+  end
+
+  directory "Fix permissions on #{node['cookbook-openshift3']['openshift_node_config_dir']}" do
+    path node['cookbook-openshift3']['openshift_node_config_dir']
+    owner 'root'
+    group 'root'
+    mode '0755'
+  end
+
+  file "Fix permissions on #{node['cookbook-openshift3']['openshift_node_config_dir']}/ca.crt" do
+    path ::File.join(node['cookbook-openshift3']['openshift_node_config_dir'], 'ca.crt')
+    owner 'root'
+    group 'root'
+    mode '0644'
   end
 
   if node['cookbook-openshift3']['deploy_dnsmasq']
@@ -108,6 +122,7 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
 
   template node['cookbook-openshift3']['openshift_node_config_file'] do
     source 'node.yaml.erb'
+    notifies :run, 'execute[daemon-reload]', :immediately
     notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
     notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-node]", :immediately
   end

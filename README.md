@@ -75,7 +75,7 @@ Override Attributes
 }
 ```
 
-* `node['cookbook-openshift3']['docker_log_driver'`
+* `node['cookbook-openshift3']['docker_log_driver']`
 
 Set to `'json-file'` (default), `'journald'` or any other supported [docker log driver](https://docs.docker.com/engine/admin/logging/overview/).
 Set to '' to disable it.
@@ -107,7 +107,6 @@ Any option can be set, as long as they are supported by the current [docker log 
 ]
 ```
 
-
 * `node['cookbook-openshift3']['persistent_storage']`
 
 * They key called 'claim' is optional and will automatically create a PersistentVolumeClaim within a specified namespace.
@@ -123,6 +122,21 @@ Any option can be set, as long as they are supported by the current [docker log 
     "namespace": "default"
   }
 }
+```
+* `node['cookbook-openshift3']['openshift_hosted_metrics_parameters']`
+
+Any option can be set, as long as they are supported by the current [Metrics deployer template](https://docs.openshift.com/container-platform/latest/install_config/cluster_metrics.html#deployer-template-parameters).
+
+The name of the key can be set in upper case or lower case
+
+```json
+{
+  "openshift_hosted_metrics_parameters": {
+    "hawkular_metrics_hostname": "metric.domain.local",
+    "METRIC_DURATION": "30"
+  }
+}
+```
 
 =====
 
@@ -320,7 +334,7 @@ In general, override attributes in the environment should be used when changing 
         },
         {
           "fqdn": "ose2-server.domain.local",
-          "ipaddress": "1.1.1.2"
+          "ipaddress": "1.1.1.2",
           "labels": "region=user"
         }
       ],
@@ -341,8 +355,8 @@ Run list
 knife node run_list add NODE_NAME 'role[base]'
 ```
 
-Test (ORIGIN)
-==================
+Manual Integration Test (ORIGIN)
+================================
 
 There is a way to quickly test this cookbook. 
 You will need a CentOS 7.1+  with "Minimal" installation option and at least 10GB left on the Volume group. (Later used by Docker)
@@ -351,6 +365,39 @@ You will need a CentOS 7.1+  with "Minimal" installation option and at least 10G
 ```
 bash <(curl -s https://raw.githubusercontent.com/IshentRas/cookbook-openshift3/master/scripts/origin_deploy.sh)
 ```
+
+Automated Integration Tests (KITCHEN)
+=====================================
+
+This cookbook features [inspect](http://inspec.io/) integration tests,
+for both standalone and cluster-native (HA) variants.
+
+Assuming the latest [chef-dk](https://downloads.chef.io/chefdk) is installed,
+running the tests is as simple as:
+
+```sh
+kitchen converge
+# wait a few minutes to give openshift a chance to initialize before running the tests
+kitchen verify
+kitchen destroy
+```
+
+Check the `.kitchen.yml` file to get started.
+
+Automated Integration Tests (SHUTIT)
+=====================================
+
+For multi-node setups, testing can be done using a [ShutIt](http://ianmiell.github.io/shutit) script.
+
+There is a [chef branch](https://github.com/ianmiell/shutit-openshift-cluster/tree/chef), which tests this cookbook.
+
+```sh
+[sudo] pip install shutit
+git clone --recursive https://github.com/ianmiell/shutit-openshift-cluster/tree/chef
+cd shutit-openshift-cluster
+./run.sh
+```
+
 
 Development
 ==================

@@ -1,6 +1,4 @@
 #!/bin/bash
-#
-#
 set -e
 clear
 cat << EOF
@@ -29,8 +27,8 @@ fi
 # Remove existing entries
 sed -i "/$IP/d" /etc/hosts
 echo -e "$IP\t$FQDN" >> /etc/hosts
-hostnamectl set-hostname $FQDN
-systemctl restart systemd-hostnamed.service
+#hostnamectl set-hostname $FQDN
+#systemctl restart systemd-hostnamed.service
 ### Update the server
 echo "Updating system, please wait..."
 yum -y update -q -e 0
@@ -39,12 +37,13 @@ mkdir -p ~/chef-solo-example/{backup,cache,roles,cookbooks,environments}
 cd ~/chef-solo-example/cookbooks
 ### Installing dependencies
 echo "Installing prerequisite packages, please wait..."
-yum -y install -q https://packages.chef.io/stable/el/7/chef-12.13.37-1.el7.x86_64.rpm git
+yum -y install -q https://packages.chef.io/files/stable/chef/12.17.44/el/7/chef-12.17.44-1.el7.x86_64.rpm git
 ### Installing cookbooks
-git clone -q https://github.com/IshentRas/cookbook-openshift3.git
-git clone -q https://github.com/chef-cookbooks/iptables.git
-git clone -q https://github.com/chef-cookbooks/yum.git
-git clone -q https://github.com/BackSlasher/chef-selinuxpolicy.git selinux_policy
+[ -d ~/chef-solo-example/cookbooks/cookbook-openshift3 ] || git clone -q https://github.com/IshentRas/cookbook-openshift3.git
+[ -d ~/chef-solo-example/cookbooks/iptables ] || git clone -q https://github.com/chef-cookbooks/iptables.git
+[ -d ~/chef-solo-example/cookbooks/yum ] || git clone -q https://github.com/chef-cookbooks/yum.git
+[ -d ~/chef-solo-example/cookbooks/selinux_policy ] || git clone -q https://github.com/BackSlasher/chef-selinuxpolicy.git selinux_policy
+[ -d ~/chef-solo-example/cookbooks/compat_resource ] || git clone -q https://github.com/chef-cookbooks/compat_resource.git
 cd ~/chef-solo-example
 ### Create the dedicated environment for Origin deployment
 if [[ $DF =~ ^c ]]
@@ -99,6 +98,7 @@ cat << EOF > environments/origin.json
     "cookbook-openshift3": {
       "openshift_common_public_hostname": "console.${IP}.nip.io",
       "openshift_deployment_type": "origin",
+      "openshift_common_default_nodeSelector": "region=infra",
       "master_servers": [
         {
           "fqdn": "${FQDN}",
@@ -108,7 +108,9 @@ cat << EOF > environments/origin.json
       "node_servers": [
         {
           "fqdn": "${FQDN}",
-          "ipaddress": "$IP"
+          "ipaddress": "$IP",
+          "schedulable": true,
+          "labels": "region=infra"
         }
       ]
     }
@@ -129,7 +131,7 @@ log_location STDOUT
 solo true
 EOF
 ### Deploy OSE !!!!
-chef-solo --environment origin -o recipe[cookbook-openshift3],recipe[cookbook-openshift3::master],recipe[cookbook-openshift3::node] -c ~/chef-solo-example/solo.rb
+chef-solo --environment origin -o recipe[cookbook-openshift3] -c ~/chef-solo-example/solo.rb
 if ! $(oc get project test --config=/etc/origin/master/admin.kubeconfig &> /dev/null)
 then 
   # Create a demo project
@@ -153,11 +155,9 @@ Access the console here : https://console.${IP}.nip.io:8443/console
 
 You can also login via CLI : oc login -u demo
 
-Next steps for you (To be performed as system:admin --> oc login -u system:admin):
+Next steps for you :
 
-1) Deploy registry -> oadm registry --service-account=registry --credentials=/etc/origin/master/openshift-registry.kubeconfig --config=/etc/origin/master/admin.kubeconfig
-2) Deploy router -> oadm router --service-account=router --credentials=/etc/origin/master/openshift-router.kubeconfig
-3) Read the documentation : https://docs.openshift.org/latest/welcome/index.html
+1) Read the documentation : https://docs.openshift.org/latest/welcome/index.html
 
 You should disconnect and reconnect so as to get the benefit of bash-completion on commands
 
