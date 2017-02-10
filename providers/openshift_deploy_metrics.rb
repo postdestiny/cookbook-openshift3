@@ -60,15 +60,6 @@ action :create do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} new-app --template=metrics-deployer-template --as=system:serviceaccount:openshift-infra:metrics-deployer #{new_resource.metrics_params.map { |opt, value| " -p #{opt}=#{value}" }.join(' ')} -n openshift-infra --config=admin.kubeconfig"
     cwd Chef::Config[:file_cache_path]
     not_if '[ `oc get pod -l \'metrics-infra in (hawkular-cassandra,hawkular-metrics,heapster)\' --no-headers -n openshift-infra | grep -cw Running` -ge 3 ]'
-    notifies :run, 'execute[Wait for image pull and deployer pod to be completed (300 seconds max)]', :immediately
-  end
-
-  execute 'Wait for image pull and deployer pod to be completed (300 seconds max)' do
-    cwd Chef::Config[:file_cache_path]
-    command '[ `oc get pod --selector=app=metrics-deployer-template --sort-by=\'{.metadata.creationTimestamp}\' | tail -1 | awk \'{print $3}\'` == \'Completed\' ]'
-    action :nothing
-    retries 30
-    retry_delay 10
   end
   new_resource.updated_by_last_action(true)
 end
