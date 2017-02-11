@@ -32,8 +32,11 @@ action :add_node do
         'ETCD_NODE_FQDN' => etcd['fqdn'],
         'ETCD_NODE_IP' => etcd['ipaddress']
       )
+<<<<<<< HEAD
       retries 1
       ignore_failure true
+=======
+>>>>>>> aba2d72349732b570ee8a6fe438aa97aa20d8961
     end
   end
   new_resource.updated_by_last_action(true)
@@ -61,8 +64,11 @@ action :remove_node do
         'CA' => node['cookbook-openshift3']['etcd_ca_cert'],
         'ETCD_NODE_FQDN' => etcd['fqdn']
       )
+<<<<<<< HEAD
       retries 1
       ignore_failure true
+=======
+>>>>>>> aba2d72349732b570ee8a6fe438aa97aa20d8961
     end
   end
   new_resource.updated_by_last_action(true)
