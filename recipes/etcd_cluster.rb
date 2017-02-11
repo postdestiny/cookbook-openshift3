@@ -100,8 +100,8 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
 
     openshift_add_etcd 'Remove additional etcd nodes to cluster' do
       etcd_servers etcd_servers
-      etcd_servers_to_remove node['cookbook-openshift3']['etcd_removal_servers']
-      not_if { node['cookbook-openshift3']['etcd_removal_servers'].empty? }
+      etcd_servers_to_remove node['cookbook-openshift3']['etcd_remove_servers']
+      not_if { node['cookbook-openshift3']['etcd_remove_servers'].empty? }
       action :remove_node
     end
   end

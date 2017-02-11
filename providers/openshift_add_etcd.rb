@@ -16,8 +16,8 @@ action :add_node do
   etcd_servers.each do |etcd|
     bash 'add_etcd_nodes_if_needed' do
       code <<-EOH
-        liste_nodes=$(etcdctl -C https://${ETCD_SERVER}:${ETCD_CLIENT_PORT} --cert-file $CRT --key-file $KEY --ca-file $CA member list | cut -d' ' -f2)
-        if [[ ! $liste_nodes =~ "$ETCD_NODE_FQDN" ]]
+        list_of_nodes=$(etcdctl -C https://${ETCD_SERVER}:${ETCD_CLIENT_PORT} --cert-file $CRT --key-file $KEY --ca-file $CA member list | cut -d' ' -f2)
+        if [[ ! $list_of_nodes =~ "$ETCD_NODE_FQDN" ]]
         then
           etcdctl -C https://${ETCD_SERVER}:${ETCD_CLIENT_PORT} --cert-file $CRT --key-file $KEY --ca-file $CA member add $ETCD_NODE_FQDN https://${ETCD_NODE_IP}:${ETCD_PEER_PORT}
         fi
@@ -45,9 +45,9 @@ action :remove_node do
   etcd_servers_to_remove.each do |etcd|
     bash 'remove_etcd_nodes_if_needed' do
       code <<-EOH
-        liste_nodes=$(etcdctl -C https://${ETCD_SERVER}:${ETCD_CLIENT_PORT} --cert-file $CRT --key-file $KEY --ca-file $CA member list | cut -d' ' -f2)
+        list_of_nodes=$(etcdctl -C https://${ETCD_SERVER}:${ETCD_CLIENT_PORT} --cert-file $CRT --key-file $KEY --ca-file $CA member list | cut -d' ' -f2)
         ID_SERVER=$(etcdctl -C https://${ETCD_SERVER}:${ETCD_CLIENT_PORT} --cert-file $CRT --key-file $KEY --ca-file $CA member list | grep $ETCD_NODE_FQDN | cut -d':' -f1)
-        if [[ $liste_nodes =~ "$ETCD_NODE_FQDN" ]]
+        if [[ $list_of_nodes =~ "$ETCD_NODE_FQDN" ]]
         then
           etcdctl -C https://${ETCD_SERVER}:${ETCD_CLIENT_PORT} --cert-file $CRT --key-file $KEY --ca-file $CA member remove $ID_SERVER
         fi

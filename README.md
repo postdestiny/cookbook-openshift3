@@ -373,11 +373,11 @@ In general, override attributes in the environment should be used when changing 
       ]
 ...
 ```
-* REMOVE ETCD SERVERS FROM CLUSTER ("etcd_removal_servers" must be define and list all servers you want to remove. etcd_servers should be your desire state"
+* REMOVE ETCD SERVERS FROM CLUSTER ("etcd_remove_servers" must be define and list all servers you want to remove. etcd_servers should be your desire state"
 
 ```json
 ...
-      "etcd_removal_servers": [
+      "etcd_remove_servers": [
         {
           "fqdn": "ose4-server.domain.local",
         }
