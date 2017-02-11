@@ -32,6 +32,8 @@ action :add_node do
         'ETCD_NODE_FQDN' => etcd['fqdn'],
         'ETCD_NODE_IP' => etcd['ipaddress']
       )
+      retries 1
+      ignore_failure true
     end
   end
   new_resource.updated_by_last_action(true)
@@ -59,6 +61,8 @@ action :remove_node do
         'CA' => node['cookbook-openshift3']['etcd_ca_cert'],
         'ETCD_NODE_FQDN' => etcd['fqdn']
       )
+      retries 1
+      ignore_failure true
     end
   end
   new_resource.updated_by_last_action(true)
