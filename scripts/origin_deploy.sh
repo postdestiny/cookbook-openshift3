@@ -65,7 +65,7 @@ cat << EOF > environments/origin.json
       "openshift_common_public_hostname": "console.${IP}.nip.io",
       "openshift_deployment_type": "origin",
       "deploy_containerized": true,
-      "openshift_docker_image_version": "v1.4.1"
+      "openshift_docker_image_version": "v1.4.1",
       "master_servers": [
         {
           "fqdn": "${FQDN}",
