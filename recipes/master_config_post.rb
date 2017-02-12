@@ -144,3 +144,8 @@ openshift_deploy_metrics 'Deploy Cluster Metrics' do
     node['cookbook-openshift3']['openshift_hosted_cluster_metrics']
   end
 end
+
+file "#{Chef::Config[:file_cache_path]}/admin.kubeconfig" do
+  action :delete
+  only_if { File.exist? "#{Chef::Config[:file_cache_path]}/admin.kubeconfig" }
+end

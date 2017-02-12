@@ -1,10 +1,18 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.34
+### Bug
+- Adjust predicates and priorities based on ose_major_version
+- Fix containerized deployment
+
+### Improvement
+- Give the possibility to add or remove etcd server members
+- Improve ETCD deployment for single etcd server
+
 ## v1.10.33
 ### Bug
 - Revert e168f9b, use stable repository URLs again
-- Adjust predicates and priorities based on ose_major_version
 
 ### Improvement
 - Use stable CentOS PaaS repository during tests

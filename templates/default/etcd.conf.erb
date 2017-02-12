@@ -1,25 +1,30 @@
+<% if @etcd_servers.size > 1 %>
 ETCD_NAME=<%= node['fqdn'] %>
 ETCD_LISTEN_PEER_URLS=https://<%= @etcd_servers.find{ |etcd| etcd['fqdn'] == node['fqdn']}['ipaddress'] %>:<%= node['cookbook-openshift3']['etcd_peer_port'] %>
+<% else %>
+ETCD_NAME=default
+<% end %>
 ETCD_DATA_DIR=<%= node['cookbook-openshift3']['etcd_data_dir'] %>
-#ETCD_SNAPSHOT_COUNTER="10000"
-ETCD_HEARTBEAT_INTERVAL="500"
-ETCD_ELECTION_TIMEOUT="2500"
+#ETCD_SNAPSHOT_COUNTER=10000
+ETCD_HEARTBEAT_INTERVAL=500
+ETCD_ELECTION_TIMEOUT=2500
 ETCD_LISTEN_CLIENT_URLS=https://<%= @etcd_servers.find{ |etcd| etcd['fqdn'] == node['fqdn']}['ipaddress'] %>:<%= node['cookbook-openshift3']['etcd_client_port'] %>
-#ETCD_MAX_SNAPSHOTS="5"
-#ETCD_MAX_WALS="5"
-#ETCD_CORS=""
+#ETCD_MAX_SNAPSHOTS=5
+#ETCD_MAX_WALS=5
+#ETCD_CORS=
 
+<% if @etcd_servers.size > 1 %>
 #[cluster]
 ETCD_INITIAL_ADVERTISE_PEER_URLS=https://<%= @etcd_servers.find{ |etcd| etcd['fqdn'] == node['fqdn']}['ipaddress'] %>:<%= node['cookbook-openshift3']['etcd_peer_port'] %>
 ETCD_INITIAL_CLUSTER=<%= @etcd_servers.map{ |srv| "#{srv['fqdn']}=https://#{srv['ipaddress']}:2380" }.join(',') %>
-ETCD_INITIAL_CLUSTER_STATE=<%= node['cookbook-openshift3']['etcd_initial_cluster_state'] %>
+ETCD_INITIAL_CLUSTER_STATE=<%= @initial_cluster_state %>
 ETCD_INITIAL_CLUSTER_TOKEN=<%= node['cookbook-openshift3']['etcd_initial_cluster_token'] %>
 #ETCD_DISCOVERY=""
 #ETCD_DISCOVERY_SRV=""
 #ETCD_DISCOVERY_FALLBACK="proxy"
 #ETCD_DISCOVERY_PROXY=""
+<% end %>
 ETCD_ADVERTISE_CLIENT_URLS=https://<%= @etcd_servers.find{ |etcd| etcd['fqdn'] == node['fqdn']}['ipaddress'] %>:<%= node['cookbook-openshift3']['etcd_client_port'] %>
-
 #[proxy]
 #ETCD_PROXY="off"
 

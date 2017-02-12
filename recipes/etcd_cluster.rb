@@ -92,6 +92,18 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
         creates "#{node['cookbook-openshift3']['etcd_generated_certs_dir']}/etcd-#{etcd_master['fqdn']}.tgz"
       end
     end
+
+    openshift_add_etcd 'Add additional etcd nodes to cluster' do
+      etcd_servers etcd_servers
+      only_if { node['cookbook-openshift3']['etcd_add_additional_nodes'] }
+    end
+
+    openshift_add_etcd 'Remove additional etcd nodes to cluster' do
+      etcd_servers etcd_servers
+      etcd_servers_to_remove node['cookbook-openshift3']['etcd_remove_servers']
+      not_if { node['cookbook-openshift3']['etcd_remove_servers'].empty? }
+      action :remove_node
+    end
   end
 
   node['cookbook-openshift3']['enabled_firewall_rules_etcd'].each do |rule|
@@ -101,6 +113,25 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
   end
 
   package 'etcd'
+
+  if node['cookbook-openshift3']['deploy_containerized']
+    execute 'Pull ETCD docker image' do
+      command "docker pull #{node['cookbook-openshift3']['openshift_docker_etcd_image']}"
+      not_if "docker images  | grep #{node['cookbook-openshift3']['openshift_docker_etcd_image']}"
+    end
+
+    template "/etc/systemd/system/#{node['cookbook-openshift3']['etcd_service_name']}.service" do
+      source 'service_etcd-containerized.service.erb'
+      notifies :run, 'execute[daemon-reload]', :immediately
+    end
+
+    ruby_block 'Mask ETCD service' do
+      block do
+        Mixlib::ShellOut.new('systemctl mask etcd').run_command
+      end
+      action :nothing
+    end
+  end
 
   remote_file "Retrieve certificate from ETCD Master[#{etcd_servers.first['fqdn']}]" do
     path "#{node['cookbook-openshift3']['etcd_conf_dir']}/etcd-#{node['fqdn']}.tgz"
@@ -144,11 +175,21 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
 
   template "#{node['cookbook-openshift3']['etcd_conf_dir']}/etcd.conf" do
     source 'etcd.conf.erb'
-    notifies :restart, 'service[etcd]', :immediately
-    variables etcd_servers: etcd_servers
+    notifies :restart, 'service[etcd-service]', :immediately
+    variables lazy {
+      {
+        etcd_servers: etcd_servers,
+        initial_cluster_state: etcd_servers.find { |etcd_node| etcd_node['fqdn'] == node['fqdn'] }.key?('new_node') ? 'existing' : node['cookbook-openshift3']['etcd_initial_cluster_state']
+      }
+    }
   end
 
-  service 'etcd' do
+  service 'etcd-service' do
     action [:start, :enable]
+  end
+
+  cookbook_file '/etc/profile.d/etcdctl.sh' do
+    source 'etcdctl.sh'
+    mode '0755'
   end
 end

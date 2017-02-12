@@ -187,13 +187,16 @@ if master_servers.first['fqdn'] != node['fqdn']
     action :nothing
   end
 
-  package node['cookbook-openshift3']['openshift_service_type']
+  package node['cookbook-openshift3']['openshift_service_type'] do
+    not_if { node['cookbook-openshift3']['deploy_containerized'] }
+  end
 end
 
 package "#{node['cookbook-openshift3']['openshift_service_type']}-master" do
   action :install
   version node['cookbook-openshift3']['ose_version'] unless node['cookbook-openshift3']['ose_version'].nil?
   notifies :run, 'execute[daemon-reload]', :immediately
+  not_if { node['cookbook-openshift3']['deploy_containerized'] }
 end
 
 execute 'Create the policy file' do
@@ -221,12 +224,12 @@ template "/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']
 end
 
 template node['cookbook-openshift3']['openshift_master_api_systemd'] do
-  source 'service_master-api.service.erb'
+  source node['cookbook-openshift3']['deploy_containerized'] == true ? 'service_master-api-containerized.service.erb' : 'service_master-api.service.erb'
   notifies :run, 'execute[daemon-reload]', :immediately
 end
 
 template node['cookbook-openshift3']['openshift_master_controllers_systemd'] do
-  source 'service_master-controllers.service.erb'
+  source node['cookbook-openshift3']['deploy_containerized'] == true ? 'service_master-controllers-containerized.service.erb' : 'service_master-controllers.service.erb'
   notifies :run, 'execute[daemon-reload]', :immediately
 end
 

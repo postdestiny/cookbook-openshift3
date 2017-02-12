@@ -4,30 +4,6 @@
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
-if node['cookbook-openshift3']['deploy_containerized']
-  execute 'Pull CLI docker image' do
-    command "docker pull #{node['cookbook-openshift3']['openshift_docker_cli_image']}:#{node['cookbook-openshift3']['openshift_docker_image_version']}"
-    not_if "docker images  | grep #{node['cookbook-openshift3']['openshift_docker_cli_image']}.*#{node['cookbook-openshift3']['openshift_docker_image_version']}"
-  end
-
-  template '/usr/local/bin/openshift' do
-    source 'openshift_cli.erb'
-    mode '0755'
-  end
-
-  %w(oadm oc kubectl).each do |client_symlink|
-    link "/usr/local/bin/#{client_symlink}" do
-      to '/usr/local/bin/openshift'
-      link_type :hard
-    end
-  end
-
-  execute 'Pull MASTER docker image' do
-    command "docker pull #{node['cookbook-openshift3']['openshift_docker_master_image']}:#{node['cookbook-openshift3']['openshift_docker_image_version']}"
-    not_if "docker images  | grep #{node['cookbook-openshift3']['openshift_docker_master_image']}.*#{node['cookbook-openshift3']['openshift_docker_image_version']}"
-  end
-end
-
 execute 'Create the master certificates' do
   command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} ca create-master-certs \
           --hostnames=#{node['cookbook-openshift3']['erb_corsAllowedOrigins'].join(',')} \
