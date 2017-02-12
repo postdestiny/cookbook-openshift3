@@ -8,6 +8,7 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 
 ### Improvement
 - Give the possibility to add or remove etcd server members
+- Improve ETCD deployment for single etcd server
 
 ## v1.10.33
 ### Bug
