@@ -4,6 +4,7 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 ## v1.10.34
 ### Bug
 - Adjust predicates and priorities based on ose_major_version
+- Fix containerized deployment
 
 ### Improvement
 - Give the possibility to add or remove etcd server members

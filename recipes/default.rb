@@ -24,7 +24,9 @@ end
 
 service 'httpd'
 
-service 'etcd'
+service 'etcd-service' do
+  service_name node['cookbook-openshift3']['etcd_service_name']
+end
 
 service 'docker'
 
