@@ -1,6 +1,12 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.35
+### Bug
+- Fix ETCD service defined in 2 places
+- Fix cookstyle issues
+- Fix admin.kubeconfig logic
+
 ## v1.10.34
 ### Bug
 - Adjust predicates and priorities based on ose_major_version
