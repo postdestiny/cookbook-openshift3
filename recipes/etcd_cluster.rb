@@ -185,6 +185,7 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
   end
 
   service 'etcd-service' do
+    service_name node['cookbook-openshift3']['etcd_service_name']
     action [:start, :enable]
   end
 
