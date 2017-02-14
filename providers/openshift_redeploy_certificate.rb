@@ -12,10 +12,6 @@ def whyrun_supported?
 end
 
 action :redeploy do
-  remote_file "#{Chef::Config[:file_cache_path]}/admin.kubeconfig" do
-    source 'file:///etc/origin/master/admin.kubeconfig'
-    mode '0644'
-  end
   execute 'Backup etcd stuff' do
     command 'tar czvf etcd-backup-$(date +%s).tar.gz -C /etc/etcd/ca /etc/etcd/ca.crt /var/www/html/etcd --ignore-failed-read --remove-files || true'
     cwd '/etc/etcd'

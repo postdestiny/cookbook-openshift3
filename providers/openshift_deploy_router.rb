@@ -12,11 +12,6 @@ def whyrun_supported?
 end
 
 action :create do
-  remote_file "#{Chef::Config[:file_cache_path]}/admin.kubeconfig" do
-    source 'file:///etc/origin/master/admin.kubeconfig'
-    mode '0644'
-  end
-
   execute 'Annotate Hosted Router Project' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} annotate --overwrite namespace/${namespace_router} openshift.io/node-selector=${selector_router}"
     environment(
@@ -42,17 +37,17 @@ action :create do
       'selector_router' => node['cookbook-openshift3']['openshift_hosted_router_selector'],
       'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace']
     )
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     only_if '[[ `oc get pod --selector=router=router --config=admin.kubeconfig | wc -l` -eq 0 ]]'
   end
 
   execute 'Auto Scale Router based on label' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} scale dc/router --replicas=${replica_number} -n ${namespace_router} --config=admin.kubeconfig"
     environment(
-      'replica_number' => Mixlib::ShellOut.new("oc get node --no-headers --selector=#{node['cookbook-openshift3']['openshift_hosted_router_selector']} --config=#{Chef::Config[:file_cache_path]}/admin.kubeconfig | wc -l").run_command.stdout.strip,
+      'replica_number' => Mixlib::ShellOut.new("oc get node --no-headers --selector=#{node['cookbook-openshift3']['openshift_hosted_router_selector']} --config=#{node['cookbook-openshift3']['openshift_master_config_dir']}/admin.kubeconfig | wc -l").run_command.stdout.strip,
       'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace']
     )
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     not_if '[[ `oc get pod --selector=router=router --config=admin.kubeconfig --no-headers | wc -l` -eq ${replica_number} ]]'
   end
 

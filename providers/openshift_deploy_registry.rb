@@ -12,11 +12,6 @@ def whyrun_supported?
 end
 
 action :create do
-  remote_file "#{Chef::Config[:file_cache_path]}/admin.kubeconfig" do
-    source 'file:///etc/origin/master/admin.kubeconfig'
-    mode '0644'
-  end
-
   execute 'Annotate Hosted Registry Project' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} annotate --overwrite namespace/${namespace_registry} openshift.io/node-selector=${selector_registry}"
     environment(
@@ -33,7 +28,7 @@ action :create do
       'selector_registry' => node['cookbook-openshift3']['openshift_hosted_registry_selector'],
       'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
     )
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     only_if '[[ `oc get pod --selector=docker-registry=default --no-headers --config=admin.kubeconfig | wc -l` -eq 0 ]]'
   end
 
@@ -43,7 +38,7 @@ action :create do
       'registry_svc_ip' => `#{node['cookbook-openshift3']['openshift_common_client_binary']} get service docker-registry -o jsonpath='{.spec.clusterIP}' --config=admin.kubeconfig -n #{node['cookbook-openshift3']['openshift_hosted_registry_namespace']}`,
       'docker_registry_route_hostname' => "docker-registry-#{node['cookbook-openshift3']['openshift_hosted_registry_namespace']}-#{node['cookbook-openshift3']['openshift_master_router_subdomain']}"
     )
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     not_if "[[ -f #{node['cookbook-openshift3']['openshift_master_config_dir']}/registry.crt && -f #{node['cookbook-openshift3']['openshift_master_config_dir']}/registry.key ]]"
   end
 
@@ -54,7 +49,7 @@ action :create do
       'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace'],
       'docker_registry_route_hostname' => "docker-registry-#{node['cookbook-openshift3']['openshift_hosted_registry_namespace']}-#{node['cookbook-openshift3']['openshift_master_router_subdomain']}"
     )
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     only_if '[[ `oc get secret registry-certificates -n ${namespace_registry} --no-headers --config=admin.kubeconfig | wc -l` -eq 0 ]]'
   end
 
@@ -65,7 +60,7 @@ action :create do
         'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace'],
         'sa' => service_account
       )
-      cwd Chef::Config[:file_cache_path]
+      cwd node['cookbook-openshift3']['openshift_master_config_dir']
       not_if '[[ `oc get -o template sa/${sa} --template={{.secrets}} -n ${namespace_registry} --config=admin.kubeconfig` =~ "registry-certificates" ]]'
     end
   end
@@ -75,7 +70,7 @@ action :create do
     environment(
       'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
     )
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     not_if '[[ `oc get dc/docker-registry -o jsonpath=\'{.spec.template.spec.volumes[*].secret.secretName}\' -n ${namespace_registry} --no-headers --config=admin.kubeconfig` =~ registry-certificate ]]'
   end
 
@@ -84,7 +79,7 @@ action :create do
     environment(
       'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
     )
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     not_if '[[ `oc env dc/docker-registry --list -n ${namespace_registry} --config=admin.kubeconfig` =~ "REGISTRY_HTTP_TLS_CERTIFICATE=/etc/secrets/registry.crt" && `oc env dc/docker-registry --list -n ${namespace_registry} --config=admin.kubeconfig` =~ "REGISTRY_HTTP_TLS_KEY=/etc/secrets/registry.key" ]]'
   end
 
@@ -93,7 +88,7 @@ action :create do
     environment(
       'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
     )
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     not_if '[[ `oc get dc/docker-registry -o jsonpath=\'{.spec.template.spec.containers[*].livenessProbe.httpGet.scheme}\' -n ${namespace_registry} --no-headers --config=admin.kubeconfig` =~ "HTTPS" ]]'
   end
 
@@ -102,7 +97,7 @@ action :create do
     environment(
       'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
     )
-    cwd Chef::Config[:file_cache_path]
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     not_if '[[ `oc get dc/docker-registry -o jsonpath=\'{.spec.template.spec.containers[*].readinessProbe.httpGet.scheme}\' -n ${namespace_registry} --no-headers --config=admin.kubeconfig` =~ "HTTPS" ]]'
   end
 
@@ -113,16 +108,16 @@ action :create do
         'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace'],
         'registry_claim' => new_resource.persistent_volume_claim_name
       )
-      cwd Chef::Config[:file_cache_path]
+      cwd node['cookbook-openshift3']['openshift_master_config_dir']
       not_if '[[ `oc get -o template dc/docker-registry --template={{.spec.template.spec.volumes}} -n ${namespace_registry} --config=admin.kubeconfig` =~ "${registry_claim}" ]]'
     end
     execute 'Auto Scale Registry based on label' do
       command "#{node['cookbook-openshift3']['openshift_common_client_binary']} scale dc/docker-registry --replicas=${replica_number} -n ${namespace_registry} --config=admin.kubeconfig"
       environment(
-        'replica_number' => Mixlib::ShellOut.new("oc get node --no-headers --selector=#{node['cookbook-openshift3']['openshift_hosted_registry_selector']} --config=#{Chef::Config[:file_cache_path]}/admin.kubeconfig | wc -l").run_command.stdout.strip,
+        'replica_number' => Mixlib::ShellOut.new("oc get node --no-headers --selector=#{node['cookbook-openshift3']['openshift_hosted_registry_selector']} --config=#{node['cookbook-openshift3']['openshift_master_config_dir']}/admin.kubeconfig | wc -l").run_command.stdout.strip,
         'namespace_registry' => node['cookbook-openshift3']['openshift_hosted_registry_namespace']
       )
-      cwd Chef::Config[:file_cache_path]
+      cwd node['cookbook-openshift3']['openshift_master_config_dir']
       not_if '[[ `oc get pod --selector=docker-registry=default --config=admin.kubeconfig --no-headers | wc -l` -eq ${replica_number} ]]'
     end
   end
