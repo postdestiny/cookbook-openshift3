@@ -23,7 +23,7 @@ action :create do
   end
 
   execute 'Create Hosted Router Certificate' do
-    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} create secret tls router-certs --cert=openshift-router.crt --key=openshift-router.key -n ${namespace_router}"
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} create secret generic router-certs --from-file=openshift-router.crt --from-file=openshift-router.key -n ${namespace_router}"
     environment(
       'namespace_router' => node['cookbook-openshift3']['openshift_hosted_router_namespace']
     )
