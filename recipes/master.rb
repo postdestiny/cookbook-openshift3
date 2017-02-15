@@ -71,7 +71,7 @@ if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }
     variables lazy {
       {
         secret_authentication: Mixlib::ShellOut.new('/usr/bin/openssl rand -base64 24').run_command.stdout.strip,
-        secret_encryption: Mixlib::ShellOut.new('/usr/bin/openssl rand -base64 24').run_command.stdout.strip
+        secret_encryption: Mixlib::ShellOut.new('/usr/bin/openssl rand -base64 24').run_command.stdout.strip,
       }
     }
     action :create_if_missing
