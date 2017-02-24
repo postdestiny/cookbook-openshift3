@@ -144,10 +144,10 @@ Remember to specify an `IMAGE_VERSION` or the `latest` version will be deployed,
 
 ## Cloud Providers Integration
 
-Cloud providers integration requires passing some sensetive credentials to OpenShift. This cookbook uses encrypted data bags as a safest way to achieve this. Thus you should have: 
+Cloud providers integration requires passing some sensetive credentials to OpenShift. This cookbook uses encrypted data bags as the safest way to achieve this. Thus you should have: 
 
 - running Chef Server
-- encrypted data bags with cloud providers credentials
+- encrypted data bags with cloud providers' credentials
 
 *Currently only AWS integration is supported.*
 
@@ -170,7 +170,7 @@ To integrate your OpenShift installation with AWS you should have following attr
 
 You should also have data bag named `cloud-provider` (`data_bag_name` attribute above) and encrypted with some shared secret data bag item named `aws` (`data_bag_item_name` attribute above) at your Chef Server. If `secret_file` attribute from above is *not* defined a default for Chef Client shared secret file will be used (`/etc/chef/encrypted_data_bag_secret`). For more information see [official Chef docs](https://docs.chef.io/data_bags.html#encrypt-a-data-bag-item).
 
-Data bag item content should be like:
+Data bag item content should be of the form:
 
 ```json
 {
