@@ -1,84 +1,84 @@
 oauthConfig:
 <% if node['cookbook-openshift3']['openshift_master_asset_config'] %>
-<% if node['cookbook-openshift3']['openshift_master_asset_config'].has_key?('templates') %>
+  <% if node['cookbook-openshift3']['openshift_master_asset_config'].has_key?('templates') %>
   templates:
     login: <%= node['cookbook-openshift3']['openshift_master_asset_config']['templates']%>
-<% end %>
+  <% end %>
 <% end %>
   assetPublicURL: <%= node['cookbook-openshift3']['openshift_master_console_url'] %>/
   grantConfig:
     method: <%= node['cookbook-openshift3']['openshift_master_oauth_grant_method'] %>
   identityProviders:
-<% for identityProvider in node['cookbook-openshift3']['oauth_Identities'] %>
+<% node['cookbook-openshift3']['oauth_Identities'].each do |identityProvider| %>
   - name: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['name']%>
     challenge: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['challenge']%>
     login: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['login']%>
     provider:
       apiVersion: v1
       kind: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] %>
-<% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'HTPasswdPasswordIdentityProvider' -%>
+  <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'HTPasswdPasswordIdentityProvider' -%>
       file: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['filename'] %>
-<% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'BasicAuthPasswordIdentityProvider' -%>
+  <% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'BasicAuthPasswordIdentityProvider' -%>
       url: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['url'] %>
-<% for key in ['ca' , 'certFile' , 'keyFile'] %>
-<% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?(key) %>
-      <%= key %>: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider][key] %>
-<% end %>
-<% end %>
-<% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'RequestHeaderIdentityProvider' -%>
+    <% ['ca' , 'certFile' , 'keyFile'].each do |key| %>
+      <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?(key) %>
+        <%= key %>: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider][key] %>
+      <% end %>
+    <% end %>
+  <% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'RequestHeaderIdentityProvider' -%>
       headers:
-<% for header in node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['headers'] -%>
+    <% node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['headers'].each do |header| -%>
       - <%= header %>
-<% end %>
-<% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('clientCA')%>
+    <% end %>
+    <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('clientCA')%>
       clientCA: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['clientCA'] %>
-<% end %>
-<% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'GitHubIdentityProvider' -%>
+    <% end %>
+  <% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'GitHubIdentityProvider' -%>
       clientID: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['clientID'] %>
       clientSecret: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['clientSecret'] %>
-<% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('organizations') %>
+    <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('organizations') %>
       organizations:
-<% for organization in node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['organizations'] %>
+      <% node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['organizations'].each do |organization| %>
       - <%= organization %>
-<% end %>
-<% end %>
-<% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'GoogleIdentityProvider' -%>
+      <% end %>
+    <% end %>
+  <% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'GoogleIdentityProvider' -%>
       clientID: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['clientID'] %>
       clientSecret: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['clientSecret'] %>
-<% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('hostedDomain') %>
+    <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('hostedDomain') %>
       hostedDomain: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['hostedDomain'] %>
-<% end %>
-<% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'OpenIDIdentityProvider' -%>
+    <% end %>
+  <% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'OpenIDIdentityProvider' -%>
       clientID: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['clientID'] %>
       clientSecret: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['clientSecret'] %>
       claims:
         id: 
         - <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['claims']['id'] %>
-<% for claim_key in ['preferredUsername', 'name', 'email'] %>
-<% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['claims'].has_key?(claim_key) %>
+    <% ['preferredUsername', 'name', 'email'].each do |claim_key| %>
+      <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['claims'].has_key?(claim_key) %>
         <%= claim_key %>: 
         - <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['claims'][claim_key] %>
-<% end %>
-<% end %>
+      <% end %>
+    <% end %>
       urls:
         authorize: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['urls']['authorize'] %>
         token: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['urls']['token'] %>
-<% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['urls'].has_key?('userInfo') %>
+    <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['urls'].has_key?('userInfo') %>
         userInfo: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['urls']['userInfo'] %>
-<% end %>
-<% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('extraScopes') %>
+    <% end %>
+    <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('extraScopes') %>
       extraScopes:
-<% for scope in node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['extraScopes'] %>
+      <% node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['extraScopes'].each do |scope| %>
       - <%= scope %>
-<% end %>
-<% end %>
-<% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('extraAuthorizeParameters') %>
+      <% end %>
+    <% end %>
+    <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?('extraAuthorizeParameters') %>
       extraAuthorizeParameters:
-<% node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['extraAuthorizeParameters'].each_pair do |param_key , param_value| %>
+      <% node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['extraAuthorizeParameters'].each_pair do |param_key , param_value| %>
         <%= param_key %>: <%= param_value %>
-<% end %>
-<% end %>
-<% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'LDAPPasswordIdentityProvider' -%>
+      <% end %>
+    <% end %>
+  <% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'LDAPPasswordIdentityProvider' -%>
       attributes:
         id:
         - <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['ldap_preferred_username'] %>
@@ -92,7 +92,7 @@ oauthConfig:
       bindPassword: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['ldap_bind_password'] %>
       insecure: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['ldap_insecure'] %>
       url: "ldap://<%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['ldap_server'] %>/<%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['ldap_base_ou'] %>?<%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['ldap_preferred_username'] %>?sub?(objectClass=*)"
-<% end -%>
+  <% end -%>
 <% end -%>
   masterPublicURL: <%= node['cookbook-openshift3']['openshift_master_public_api_url'] %>
   masterURL: <%= node['cookbook-openshift3']['openshift_master_api_url'] %>
