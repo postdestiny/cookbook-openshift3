@@ -219,8 +219,21 @@ if node['cookbook-openshift3']['oauth_Identity'] == 'HTPasswdPasswordIdentityPro
   end
 end
 
+sysconfig_vars = {}
+
+if node['cookbook-openshift3']['openshift_cloud_provider'] == 'aws'
+  secret_file = node['cookbook-openshift3']['openshift_cloud_providers']['aws']['secret_file'] || nil
+  aws_vars = Chef::EncryptedDataBagItem.load(node['cookbook-openshift3']['openshift_cloud_providers']['aws']['data_bag_name'], node['cookbook-openshift3']['openshift_cloud_providers']['aws']['data_bag_item_name'], secret_file)
+
+  sysconfig_vars['aws_access_key_id'] = aws_vars['access_key_id']
+  sysconfig_vars['aws_secret_access_key'] = aws_vars['secret_access_key']
+end
+
 template "/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master" do
   source 'service_master.sysconfig.erb'
+  variables(sysconfig_vars)
+  notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-api]", :delayed
+  notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :delayed
 end
 
 template node['cookbook-openshift3']['openshift_master_api_systemd'] do
@@ -235,12 +248,16 @@ end
 
 template node['cookbook-openshift3']['openshift_master_api_sysconfig'] do
   source 'service_master-api.sysconfig.erb'
+  variables(sysconfig_vars)
   notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-api]", :immediately
+  notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-api]", :delayed
 end
 
 template node['cookbook-openshift3']['openshift_master_controllers_sysconfig'] do
   source 'service_master-controllers.sysconfig.erb'
+  variables(sysconfig_vars)
   notifies :enable, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
+  notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :delayed
 end
 
 openshift_create_master 'Create master configuration file' do

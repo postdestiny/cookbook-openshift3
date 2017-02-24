@@ -99,8 +99,20 @@ kubernetesMasterConfig:
   apiServerArguments:
     deserialization-cache-size:
     - "<%= node['cookbook-openshift3']['openshift_master_deserialization_cache_size'] %>"
+<% if node['cookbook-openshift3']['openshift_cloud_provider'] %>
+    cloud-provider:
+    - <%= node['cookbook-openshift3']['openshift_cloud_provider'] %>
+    cloud-config:
+    - <%= node['cookbook-openshift3']['openshift_cloud_provider_config_dir']%>/<%= node['cookbook-openshift3']['openshift_cloud_provider'] %>.conf
 <%- end -%>
-  controllerArguments: null
+<%- end -%>
+  controllerArguments: 
+<% if node['cookbook-openshift3']['openshift_cloud_provider'] %>
+    cloud-provider:
+    - <%= node['cookbook-openshift3']['openshift_cloud_provider'] %>
+    cloud-config:
+    - <%= node['cookbook-openshift3']['openshift_cloud_provider_config_dir']%>/<%= node['cookbook-openshift3']['openshift_cloud_provider'] %>.conf
+<%- end -%> 
 <% if node['cookbook-openshift3']['openshift_HA'] %>
   masterCount: <%= @masters_size %>
 <%- else -%>

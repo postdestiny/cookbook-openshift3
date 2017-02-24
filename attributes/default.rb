@@ -58,6 +58,7 @@ default['cookbook-openshift3']['openshift_data_dir'] = '/var/lib/origin'
 default['cookbook-openshift3']['openshift_common_base_dir'] = '/etc/origin'
 default['cookbook-openshift3']['openshift_common_master_dir'] = '/etc/origin'
 default['cookbook-openshift3']['openshift_common_node_dir'] = '/etc/origin'
+default['cookbook-openshift3']['openshift_common_cloud_provider_dir'] = '/etc/origin'
 default['cookbook-openshift3']['openshift_common_portal_net'] = '172.30.0.0/16'
 default['cookbook-openshift3']['openshift_common_first_svc_ip'] = node['cookbook-openshift3']['openshift_common_portal_net'].split('/')[0].gsub(/\.0$/, '.1')
 default['cookbook-openshift3']['openshift_common_default_nodeSelector'] = 'region=user'
@@ -77,6 +78,7 @@ default['cookbook-openshift3']['openshift_common_use_openshift_sdn'] = true
 default['cookbook-openshift3']['openshift_common_sdn_network_plugin_name'] = 'redhat/openshift-ovs-subnet'
 default['cookbook-openshift3']['openshift_common_svc_names'] = ['openshift', 'openshift.default', 'openshift.default.svc', "openshift.default.svc.#{node['cookbook-openshift3']['osn_cluster_dns_domain']}", 'kubernetes', 'kubernetes.default', 'kubernetes.default.svc', "kubernetes.default.svc.#{node['cookbook-openshift3']['osn_cluster_dns_domain']}", node['cookbook-openshift3']['openshift_common_first_svc_ip']]
 default['cookbook-openshift3']['openshift_common_registry_url'] = node['cookbook-openshift3']['openshift_deployment_type'] =~ /enterprise/ ? 'openshift3/ose-${component}:${version}' : 'openshift/origin-${component}:${version}'
+default['cookbook-openshift3']['openshift_cloud_provider_config_dir'] = "#{node['cookbook-openshift3']['openshift_common_cloud_provider_dir']}/cloudprovider"
 default['cookbook-openshift3']['openshift_docker_insecure_registry_arg'] = []
 default['cookbook-openshift3']['openshift_docker_add_registry_arg'] = []
 default['cookbook-openshift3']['openshift_docker_block_registry_arg'] = []
