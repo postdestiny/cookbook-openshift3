@@ -179,7 +179,7 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
     variables lazy {
       {
         etcd_servers: etcd_servers,
-        initial_cluster_state: etcd_servers.find { |etcd_node| etcd_node['fqdn'] == node['fqdn'] }.key?('new_node') ? 'existing' : node['cookbook-openshift3']['etcd_initial_cluster_state']
+        initial_cluster_state: etcd_servers.find { |etcd_node| etcd_node['fqdn'] == node['fqdn'] }.key?('new_node') ? 'existing' : node['cookbook-openshift3']['etcd_initial_cluster_state'],
       }
     }
   end
