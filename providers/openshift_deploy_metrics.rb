@@ -12,6 +12,7 @@ def whyrun_supported?
 end
 
 action :create do
+  ose_major_version =  node['cookbook-openshift3']['deploy_containerized'] == true ? node['cookbook-openshift3']['openshift_docker_image_version'] : node['cookbook-openshift3']['ose_major_version']
   execute 'Deploy metrics-deployer secret' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} secrets new metrics-deployer ${metrics_deployer_secrets} -n openshift-infra --config=admin.kubeconfig"
     environment(
@@ -27,11 +28,11 @@ action :create do
     only_if '[[ `oc get sa/metrics-deployer -n openshift-infra --no-headers --config=admin.kubeconfig | wc -l` -eq 0 ]]'
   end
 
-  execute 'Link secret to metrics-deployer Service Account' do
-    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} secrets link metrics-deployer metrics-deployer -n openshift-infra --config=admin.kubeconfig"
-    cwd node['cookbook-openshift3']['openshift_master_config_dir']
-    not_if '[[ `oc get -o template sa/metrics-deployer --template={{.secrets}} -n openshift-infra --config=admin.kubeconfig` =~ \'name:metrics-deployer]\' ]]'
-  end
+  #execute 'Link secret to metrics-deployer Service Account' do
+  #  command "#{node['cookbook-openshift3']['openshift_common_client_binary']} secrets link metrics-deployer metrics-deployer -n openshift-infra --config=admin.kubeconfig"
+  #  cwd node['cookbook-openshift3']['openshift_master_config_dir']
+  #  not_if '[[ `oc get -o template sa/metrics-deployer --template={{.secrets}} -n openshift-infra --config=admin.kubeconfig` =~ \'name:metrics-deployer]\' ]]'
+  #end
 
   execute 'Add edit permission to the openshift-infra project to metrics-deployer SA' do
     command "#{node['cookbook-openshift3']['openshift_common_client_binary']} adm policy add-role-to-user edit system:serviceaccount:openshift-infra:metrics-deployer -n openshift-infra --config=admin.kubeconfig"
@@ -52,8 +53,11 @@ action :create do
   end
 
   execute 'Deploy Cluster Metrics' do
-    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} new-app --template=metrics-deployer-template --as=system:serviceaccount:openshift-infra:metrics-deployer #{new_resource.metrics_params.map { |opt, value| " -p #{opt}=#{value}" }.join(' ')} -n openshift-infra --config=admin.kubeconfig"
+    command "#{node['cookbook-openshift3']['openshift_common_client_binary']} new-app --template=metrics-deployer-template ${service_account} #{new_resource.metrics_params.map { |opt, value| " -p #{opt}=#{value}" }.join(' ')} -n openshift-infra --config=admin.kubeconfig"
     cwd node['cookbook-openshift3']['openshift_master_config_dir']
+    environment(
+      'service_account' => ose_major_version.split('.')[1].to_i.between?(3, 4) ? '--as=system:serviceaccount:openshift-infra:metrics-deployer' : ''
+    )
     not_if '[ `oc get pod -l \'metrics-infra in (hawkular-cassandra,hawkular-metrics,heapster)\' --no-headers -n openshift-infra | grep -cw Running` -ge 3 ]'
   end
   new_resource.updated_by_last_action(true)

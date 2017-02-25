@@ -38,7 +38,7 @@ end
 
 template node['cookbook-openshift3']['openshift_master_scheduler_conf'] do
   source 'scheduler.json.erb'
-  variables ose_major_version: node['cookbook-openshift3']['ose_major_version']
+  variables ose_major_version: node['cookbook-openshift3']['deploy_containerized'] == true ? node['cookbook-openshift3']['openshift_docker_image_version'] : node['cookbook-openshift3']['ose_major_version']
   notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master]", :delayed
 end
 
