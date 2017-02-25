@@ -14,12 +14,12 @@ if node['cookbook-openshift3']['openshift_cloud_provider']
     end
 
     config_vars = {
-      'aws' => {}
+      'aws' => {},
     }
 
     case node['cookbook-openshift3']['openshift_cloud_provider']
-      when 'aws'
-        config_vars['aws']['zone'] = Chef::HTTP.new('http://169.254.169.254/latest/meta-data/placement/availability-zone').get('/')
+    when 'aws'
+      config_vars['aws']['zone'] = Chef::HTTP.new('http://169.254.169.254/latest/meta-data/placement/availability-zone').get('/')
     end
 
     config_file = "#{node['cookbook-openshift3']['openshift_cloud_provider_config_dir']}/#{node['cookbook-openshift3']['openshift_cloud_provider']}.conf"
