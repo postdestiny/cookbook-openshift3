@@ -67,3 +67,5 @@ ruby_block 'Change HTTPD port xfer' do
   action :nothing
   notifies :restart, 'service[httpd]', :immediately
 end
+
+include_recipe 'cookbook-openshift3::cloud_provider'

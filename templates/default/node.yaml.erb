@@ -48,6 +48,12 @@ kubeletArguments:
     - "<%= node['cookbook-openshift3']['openshift_node_image_gc_high_threshold'] %>"
   image-gc-low-threshold:
     - "<%= node['cookbook-openshift3']['openshift_node_image_gc_low_threshold'] %>"
+<% if node['cookbook-openshift3']['openshift_cloud_provider'] %>
+  cloud-provider:
+  - <%= node['cookbook-openshift3']['openshift_cloud_provider'] %>
+  cloud-config:
+  - <%= node['cookbook-openshift3']['openshift_cloud_provider_config_dir']%>/<%= node['cookbook-openshift3']['openshift_cloud_provider'] %>.conf
+<%- end -%>
 proxyArguments:
   proxy-mode:
     - iptables

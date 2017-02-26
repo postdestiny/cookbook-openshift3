@@ -142,6 +142,46 @@ The name of the key can be set in upper case or lower case
 
 Remember to specify an `IMAGE_VERSION` or the `latest` version will be deployed, which may be incompatible with your openshift cluster version.
 
+## Cloud Providers Integration
+
+Cloud providers integration requires passing some sensetive credentials to OpenShift. This cookbook uses encrypted data bags as the safest way to achieve this. Thus you should have: 
+
+- running Chef Server
+- encrypted data bags with cloud providers' credentials
+
+*Currently only AWS integration is supported.*
+
+### AWS 
+
+To integrate your OpenShift installation with AWS you should have following attributes for `cookbook-openshift3` cookbook:
+
+```json
+{
+  "openshift_cloud_provider": "aws",
+  "openshift_cloud_providers": {
+    "aws": {
+      "data_bag_name": "cloud-provider",
+      "data_bag_item_name": "aws",
+      "secret_file": "/etc/chef/shared_secret"
+    }
+  }
+}
+```
+
+You should also have data bag named `cloud-provider` (`data_bag_name` attribute above) and encrypted with some shared secret data bag item named `aws` (`data_bag_item_name` attribute above) at your Chef Server. If `secret_file` attribute from above is *not* defined a default for Chef Client shared secret file will be used (`/etc/chef/encrypted_data_bag_secret`). For more information see [official Chef docs](https://docs.chef.io/data_bags.html#encrypt-a-data-bag-item).
+
+Data bag item content should be of the form:
+
+```json
+{
+  "id": "aws",
+  "access_key_id": "your_access_key_id",
+  "secret_access_key": "your_secret_access_key"
+}
+```
+
+Please note: `id` value should be exactly the same as `data_bag_item_name` attribute value from above.
+
 =====
 
 Include the default recipe in a CHEF role so as to ease the deployment. 
