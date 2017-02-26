@@ -17,6 +17,18 @@ Requirements
 * Support Origin version from 1.1.1+
 * Default the installation to 1.4 or 3.4
 
+**Highly recommended**: explicitly set `node['cookbook-openshift3']['ose_version']`, `node['cookbook-openshift3']['ose_major_version']`
+and ideally `node['cookbook-openshift3']['docker_version']` to be safe when a major version is released on the
+CentOS PaaS repository; this cookbook does NOT support upgrade between major versions, so lock your package versions
+in your openshift3 role or environment.
+
+Test Matrix
+===========
+
+| Platform | OSE 1.4.1 | OSE 1.3.3 | OSE 1.2.1 |
+|----------|-----------|-----------|-----------|
+| centos 7.2 | PASS | PASS | open issues: #76 |
+
 Override Attributes
 ===================
 
@@ -467,6 +479,9 @@ Automated Integration Tests (KITCHEN)
 
 This cookbook features [inspect](http://inspec.io/) integration tests,
 for both standalone and cluster-native (HA) variants.
+
+**Attention**: the `.kitchen.yml` tests all the versions listed in the [Test Matrix](#Test Matrix),
+so use `kitchen list` and selective `kitchen converge` to only test a subset of the versions.
 
 Assuming the latest [chef-dk](https://downloads.chef.io/chefdk) is installed,
 running the tests is as simple as:
