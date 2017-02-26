@@ -210,10 +210,10 @@ template node['cookbook-openshift3']['openshift_master_scheduler_conf'] do
   notifies :restart, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-api]", :delayed
 end
 
-if node['cookbook-openshift3']['oauth_Identity'] == 'HTPasswdPasswordIdentityProvider'
+if node['cookbook-openshift3']['oauth_Identities'].include? 'HTPasswdPasswordIdentityProvider'
   package 'httpd-tools'
 
-  template node['cookbook-openshift3']['openshift_master_identity_provider'][node['cookbook-openshift3']['oauth_Identity']]['filename'] do
+  template node['cookbook-openshift3']['openshift_master_identity_provider']['HTPasswdPasswordIdentityProvider']['filename'] do
     source 'htpasswd.erb'
     mode '600'
   end

@@ -176,10 +176,11 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['etcd_client_port']` -  Defaults to `2379`.
 * `node['cookbook-openshift3']['etcd_peer_port']` -  Defaults to `2380`.
 * `node['cookbook-openshift3']['oauth_Identity']` -  Defaults to `HTPasswdPasswordIdentityProvider`.
+* `node['cookbook-openshift3']['oauth_Identities']` -  Defaults to `[node['cookbook-openshift3']['oauth_Identity']]`.
 * `node['cookbook-openshift3']['openshift_master_identity_provider']['HTPasswdPasswordIdentityProvider']` -  Defaults to `{ ... }`.
 * `node['cookbook-openshift3']['openshift_master_identity_provider']['LDAPPasswordIdentityProvider']` -  Defaults to `{ ... }`.
 * `node['cookbook-openshift3']['openshift_master_identity_provider']['RequestHeaderIdentityProvider']` -  Defaults to `{ ... }`.
-* `node['cookbook-openshift3']['openshift_master_htpasswd']` -  Defaults to `#{default['cookbook-openshift3']['openshift_common_master_dir']}/openshift-passwd`.
+* `node['cookbook-openshift3']['openshift_master_htpasswd']` -  Defaults to `#{node['cookbook-openshift3']['openshift_common_master_dir']}/openshift-passwd`.
 * `node['cookbook-openshift3']['openshift_master_htpasswd_users']` -  Defaults to `[ ... ]`.
 
 # Recipes
