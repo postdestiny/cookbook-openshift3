@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.37
+### Bug
+- Emergency update for fixing ose_major_version when running standalone deployment
+
 ## v1.10.36
 ### Bug
 - Fixed cookstyle offenses
