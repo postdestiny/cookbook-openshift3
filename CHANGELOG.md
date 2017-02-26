@@ -1,6 +1,18 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.36
+### Bug
+- Fixed cookstyle offenses
+- Revert the ETCD change causing issue when adding / removing members
+- Make secret call compatible with x.2 version(s)
+
+### Improvement
+- Expand .kitchen.yml to test OSE v1.4.1, v1.3.3 and v1.2.1
+- Improved code readability
+- Added support for multiple identity providers
+- Added support for AWS cloud provider
+
 ## v1.10.35
 ### Bug
 - Fix ETCD service defined in 2 places

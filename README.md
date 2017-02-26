@@ -400,6 +400,8 @@ In general, override attributes in the environment should be used when changing 
 ```
 * ADD NEW ETCD SERVERS TO CLUSTER ("etcd_add_additional_nodes" must be set to true and a key called "new_node" should be added to the server(s)". If the server was previously part of the cluster, remember to clear its data directory before starting CHEF)
 
+**Members `must` be added one by one !!!**
+
 ```json
 ...
       "etcd_add_additional_nodes": true,
@@ -425,7 +427,9 @@ In general, override attributes in the environment should be used when changing 
       ]
 ...
 ```
-* REMOVE ETCD SERVERS FROM CLUSTER ("etcd_remove_servers" must be define and list all servers you want to remove. etcd_servers should be your desire state"
+* REMOVE ETCD SERVERS FROM CLUSTER ("etcd_remove_servers" must be define and list all servers you want to remove. etcd_servers should be your desire state")
+
+**You can remove all members in once!!!**
 
 ```json
 ...
