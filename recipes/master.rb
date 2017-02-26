@@ -37,7 +37,7 @@ if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }
 
     execute 'Add bash completion for oc' do
       command '/usr/local/bin/oc completion bash > /etc/bash_completion.d/oc'
-      not_if { ::File.exist?('/etc/bash_completion.d/oc') }
+      not_if { ::File.exist?('/etc/bash_completion.d/oc') || node['cookbook-openshift3']['openshift_docker_image_version'] =~ /v1.2/i }
     end
 
     execute 'Pull MASTER docker image' do

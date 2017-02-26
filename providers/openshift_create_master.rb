@@ -49,7 +49,8 @@ action :create do
         standalone_registry: new_resource.standalone_registry,
         erb_master_named_certificates: named_certificates,
         etcd_servers: new_resource.etcd_servers,
-        masters_size: new_resource.masters_size
+        masters_size: new_resource.masters_size,
+        ose_major_version: node['cookbook-openshift3']['deploy_containerized'] == true ? node['cookbook-openshift3']['openshift_docker_image_version'] : node['cookbook-openshift3']['ose_major_version']
       )
       notifies :restart, "service[#{new_resource.openshift_service_type}-master-api]", :delayed
       notifies :restart, "service[#{new_resource.openshift_service_type}-master-controllers]", :delayed
