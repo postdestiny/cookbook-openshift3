@@ -34,6 +34,10 @@ action :redeploy do
     command 'rm -f $(ls -I serviceaccounts\* -I registry\*)'
     cwd '/etc/origin/master'
   end
+  execute 'Remove root kubeconfig' do
+    command 'rm -f config'
+    cwd '/root/.kube'
+  end
   include_recipe 'cookbook-openshift3::default'
   new_resource.updated_by_last_action(true)
 end
