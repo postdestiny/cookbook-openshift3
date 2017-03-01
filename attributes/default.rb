@@ -144,6 +144,8 @@ default['cookbook-openshift3']['openshift_node_maximum_dead_containers_per_conta
 default['cookbook-openshift3']['openshift_node_maximum_dead_containers'] = '100'
 default['cookbook-openshift3']['openshift_node_image_gc_high_threshold'] = '90'
 default['cookbook-openshift3']['openshift_node_image_gc_low_threshold'] = '80'
+default['cookbook-openshift3']['openshift_node_cadvisor_port'] = nil # usually set to '4194'
+default['cookbook-openshift3']['openshift_node_read_only_port'] = nil # usually set to '10255'
 
 default['cookbook-openshift3']['openshift_hosted_manage_router'] = true
 default['cookbook-openshift3']['openshift_hosted_router_selector'] = 'region=infra'

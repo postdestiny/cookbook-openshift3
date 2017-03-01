@@ -48,6 +48,14 @@ kubeletArguments:
     - "<%= node['cookbook-openshift3']['openshift_node_image_gc_high_threshold'] %>"
   image-gc-low-threshold:
     - "<%= node['cookbook-openshift3']['openshift_node_image_gc_low_threshold'] %>"
+<% if node['cookbook-openshift3']['openshift_node_cadvisor_port'] %>
+  cadvisor-port:
+    - "<%= node['cookbook-openshift3']['openshift_node_cadvisor_port'] %>"
+<%- end -%>
+<% if node['cookbook-openshift3']['openshift_node_read_only_port'] %>
+  read-only-port:
+    - "<%= node['cookbook-openshift3']['openshift_node_read_only_port'] %>"
+<%- end -%>
 <% if node['cookbook-openshift3']['openshift_cloud_provider'] %>
   cloud-provider:
   - <%= node['cookbook-openshift3']['openshift_cloud_provider'] %>
