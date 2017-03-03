@@ -73,7 +73,7 @@ openshift_create_pv 'Create Persistent Storage' do
   persistent_storage node['cookbook-openshift3']['persistent_storage']
 end
 
-node_servers.each do |nodes|
+node_servers.reject { |h| h.key?('skip_run') }.each do |nodes|
   execute "Set schedulability for Master node : #{nodes['fqdn']}" do
     command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} manage-node #{nodes['fqdn']} --schedulable=${schedulability} --config=admin.kubeconfig"
     environment(

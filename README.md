@@ -455,6 +455,37 @@ In general, override attributes in the environment should be used when changing 
       ]
 ...
 ```
+* EXCLUDE NODES FROM SCHEDULING AND LABELLING("skip_run" must be define and the node will be excluded when enforcing labels and schedulability")
+  
+  Ex (ose2 and ose3 will be skipped when enforcing the schedulable and labels parts.)
+```json
+...
+      "node_servers": [
+        {
+          "fqdn": "ose1-server.domain.local",
+          "ipaddress": "1.1.1.1",
+          "schedulable": true,
+          "labels": "region=infra"
+        },
+        {
+          "fqdn": "ose2-server.domain.local",
+          "ipaddress": "1.1.1.2",
+          "schedulable": true,
+          "labels": "region=infra",
+	  "skip_run": true
+        },
+        {
+          "fqdn": "ose3-server.domain.local",
+          "ipaddress": "1.1.1.3",
+          "schedulable": true,
+          "labels": "region=infra",
+	  "skip_run": true
+        }
+      ]
+
+...
+```
+
 ###Once it is done you should assign the node to the relevant environment.###
 ```
 knife node environment set NODE_NAME ENVIRONMENT_NAME
