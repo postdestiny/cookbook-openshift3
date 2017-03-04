@@ -427,7 +427,7 @@ In general, override attributes in the environment should be used when changing 
       ]
 ...
 ```
-* REMOVE ETCD SERVERS FROM CLUSTER ("etcd_remove_servers" must be define and list all servers you want to remove. etcd_servers should be your desire state")
+* REMOVE ETCD SERVERS FROM CLUSTER ("etcd_remove_servers" must be defined and list all servers you want to remove. etcd_servers should be your desire state")
 
 **You can remove all members in once!!!**
 
@@ -455,7 +455,7 @@ In general, override attributes in the environment should be used when changing 
       ]
 ...
 ```
-* EXCLUDE NODES FROM SCHEDULING AND LABELLING("skip_run" must be define and the node will be excluded when enforcing labels and schedulability")
+* EXCLUDE NODES FROM SCHEDULING AND LABELLING("skip_run" must be defined and the node will be excluded when enforcing labels and schedulability")
   
   Ex (ose2 and ose3 will be skipped when enforcing the schedulable and labels parts.)
 ```json

@@ -4,7 +4,7 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 ## v1.10.38
 ### Improvement
 - Give the possibility of adding cAdvisor port and read-only port for kubelet arguments
-- Give the possibility of skip nodes when applying schedulability and labelling
+- Give the possibility of skipping nodes when applying schedulability and labelling
 
 ## v1.10.37
 ### Bug
