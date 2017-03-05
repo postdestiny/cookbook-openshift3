@@ -1,6 +1,14 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.38
+### Improvement
+- Give the possibility of adding cAdvisor port and read-only port for kubelet arguments
+- Give the possibility of skipping nodes when applying schedulability and labelling
+
+### Bug
+- Fix issue reported by https://github.com/IshentRas/cookbook-openshift3/issues/77
+
 ## v1.10.37
 ### Bug
 - Emergency update for fixing ose_major_version when running standalone deployment
