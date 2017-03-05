@@ -5,6 +5,7 @@
 # Copyright (c) 2015 The Authors, All Rights Reserved.
 
 master_servers = node['cookbook-openshift3']['master_servers']
+version = node['cookbook-openshift3']['deploy_containerized'] == true ? node['cookbook-openshift3']['openshift_docker_image_version'][1..-1].to_f.round(1) : node['cookbook-openshift3']['ose_major_version'].to_f.round(1)
 
 include_recipe 'cookbook-openshift3::etcd_cluster'
 
@@ -78,7 +79,7 @@ if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }
   end
 
   remote_directory node['cookbook-openshift3']['openshift_common_examples_base'] do
-    source 'openshift_examples'
+    source "openshift_examples/v#{version}"
     owner 'root'
     group 'root'
     action :create
@@ -87,7 +88,7 @@ if master_servers.find { |server_master| server_master['fqdn'] == node['fqdn'] }
   end
 
   remote_directory node['cookbook-openshift3']['openshift_common_hosted_base'] do
-    source "openshift_hosted_templates/#{node['cookbook-openshift3']['openshift_hosted_type']}"
+    source "openshift_hosted_templates/v#{version}/#{node['cookbook-openshift3']['openshift_hosted_type']}"
     owner 'root'
     group 'root'
     action :create
