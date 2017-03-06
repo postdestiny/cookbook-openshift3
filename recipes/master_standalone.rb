@@ -21,7 +21,7 @@ if node['cookbook-openshift3']['openshift_master_ca_certificate']['data_bag_name
   end
 
   file "#{node['cookbook-openshift3']['openshift_master_config_dir']}/ca.serial.txt" do
-    content '1'
+    content '00'
     mode '0644'
     action :create_if_missing
   end
