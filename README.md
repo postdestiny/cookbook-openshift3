@@ -194,6 +194,59 @@ Data bag item content should be of the form:
 
 Please note: `id` value should be exactly the same as `data_bag_item_name` attribute value from above.
 
+**Alternatively** you can attach IAM policies to your AWS instances and do *not* provide AWS credentials in encrypted data bags. In this case you should have the following attribute for `cookbook-openshift3` cookbook:
+
+```json
+{
+  "openshift_cloud_provider": "aws"
+}
+```
+
+and the following IAM policy attached to your *master* servers:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ec2:*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "elasticloadbalancing:*",
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+and the following IAM policy attached to your *node* servers: 
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ec2:Describe*",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "ec2:AttachVolume",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "ec2:DetachVolume",
+      "Resource": "*"
+    }
+  ]
+}
+```
+
 =====
 
 Include the default recipe in a CHEF role so as to ease the deployment. 

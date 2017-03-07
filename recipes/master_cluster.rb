@@ -222,11 +222,13 @@ end
 sysconfig_vars = {}
 
 if node['cookbook-openshift3']['openshift_cloud_provider'] == 'aws'
-  secret_file = node['cookbook-openshift3']['openshift_cloud_providers']['aws']['secret_file'] || nil
-  aws_vars = Chef::EncryptedDataBagItem.load(node['cookbook-openshift3']['openshift_cloud_providers']['aws']['data_bag_name'], node['cookbook-openshift3']['openshift_cloud_providers']['aws']['data_bag_item_name'], secret_file)
+  if node['cookbook-openshift3']['openshift_cloud_providers']['aws']['data_bag_name'] && node['cookbook-openshift3']['openshift_cloud_providers']['aws']['data_bag_item_name']
+    secret_file = node['cookbook-openshift3']['openshift_cloud_providers']['aws']['secret_file'] || nil
+    aws_vars = Chef::EncryptedDataBagItem.load(node['cookbook-openshift3']['openshift_cloud_providers']['aws']['data_bag_name'], node['cookbook-openshift3']['openshift_cloud_providers']['aws']['data_bag_item_name'], secret_file)
 
-  sysconfig_vars['aws_access_key_id'] = aws_vars['access_key_id']
-  sysconfig_vars['aws_secret_access_key'] = aws_vars['secret_access_key']
+    sysconfig_vars['aws_access_key_id'] = aws_vars['access_key_id']
+    sysconfig_vars['aws_secret_access_key'] = aws_vars['secret_access_key']
+  end
 end
 
 template "/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master" do
