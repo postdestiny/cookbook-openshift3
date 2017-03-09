@@ -127,6 +127,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_master_api_systemd']` -  Defaults to `/usr/lib/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-master-api.service`.
 * `node['cookbook-openshift3']['openshift_master_controllers_sysconfig']` -  Defaults to `/etc/sysconfig/#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers`.
 * `node['cookbook-openshift3']['openshift_master_controllers_systemd']` -  Defaults to `/usr/lib/systemd/system/#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers.service`.
+* `node['cookbook-openshift3']['openshift_master_ca_certificate']` -  Defaults to `{ 'data_bag_name' => nil, 'data_bag_item_name' => nil, 'secret_file' => nil }`.
 * `node['cookbook-openshift3']['openshift_master_named_certificates']` -  Defaults to `%w()`.
 * `node['cookbook-openshift3']['openshift_master_scheduler_conf']` -  Defaults to `#{node['cookbook-openshift3']['openshift_master_config_dir']}/scheduler.json`.
 * `node['cookbook-openshift3']['openshift_master_managed_names_additional']` -  Defaults to `%w()`.

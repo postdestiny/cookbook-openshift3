@@ -125,6 +125,29 @@ end
 end
 
 if master_servers.first['fqdn'] == node['fqdn']
+  if node['cookbook-openshift3']['openshift_master_ca_certificate']['data_bag_name'] && node['cookbook-openshift3']['openshift_master_ca_certificate']['data_bag_item_name']
+    secret_file = node['cookbook-openshift3']['openshift_master_ca_certificate']['secret_file'] || nil
+    ca_vars = Chef::EncryptedDataBagItem.load(node['cookbook-openshift3']['openshift_master_ca_certificate']['data_bag_name'], node['cookbook-openshift3']['openshift_master_ca_certificate']['data_bag_item_name'], secret_file)
+
+    file "#{node['cookbook-openshift3']['openshift_master_config_dir']}/ca.key" do
+      content Base64.decode64(ca_vars['key_base64'])
+      mode '0600'
+      action :create_if_missing
+    end
+
+    file "#{node['cookbook-openshift3']['openshift_master_config_dir']}/ca.crt" do
+      content Base64.decode64(ca_vars['cert_base64'])
+      mode '0644'
+      action :create_if_missing
+    end
+
+    file "#{node['cookbook-openshift3']['openshift_master_config_dir']}/ca.serial.txt" do
+      content '00'
+      mode '0644'
+      action :create_if_missing
+    end
+  end
+
   execute 'Create the master certificates' do
     command "#{node['cookbook-openshift3']['openshift_common_admin_binary']} ca create-master-certs \
             --hostnames=#{node['cookbook-openshift3']['erb_corsAllowedOrigins'].uniq.join(',')} \
