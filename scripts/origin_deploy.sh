@@ -13,11 +13,6 @@ IP_DETECT=$(ip route get 8.8.8.8 | awk 'NR==1 {print $NF}')
 DF=""
 read -p "Please enter the FQDN of the server: " FQDN
 read -p "Please enter the IP of the server (Auto Detect): $IP_DETECT" IP
-while [ -z $DF ];
-do
-  read -p "Please enter the deployment type ([r]pm or [c]ontainer):" DF
-  echo
-done
 
 if [ -z $IP ] 
 then IP=$IP_DETECT
@@ -35,7 +30,7 @@ mkdir -p ~/chef-solo-example/{backup,cache,roles,cookbooks,environments}
 cd ~/chef-solo-example/cookbooks
 ### Installing dependencies
 echo "Installing prerequisite packages, please wait..."
-curl -L https://omnitruck.chef.io/install.sh | bash
+curl -s -L https://omnitruck.chef.io/install.sh | bash
 yum install -y git
 ### Installing cookbooks
 [ -d ~/chef-solo-example/cookbooks/cookbook-openshift3 ] || git clone -q https://github.com/IshentRas/cookbook-openshift3.git
@@ -45,8 +40,6 @@ yum install -y git
 [ -d ~/chef-solo-example/cookbooks/compat_resource ] || git clone -q https://github.com/chef-cookbooks/compat_resource.git
 cd ~/chef-solo-example
 ### Create the dedicated environment for Origin deployment
-if [[ $DF =~ ^c ]]
-then
 cat << EOF > environments/origin.json
 {
   "name": "origin",
@@ -85,44 +78,6 @@ cat << EOF > environments/origin.json
   }
 }
 EOF
-else
-cat << EOF > environments/origin.json
-{
-  "name": "origin",
-  "description": "",
-  "cookbook_versions": {
-
-  },
-  "json_class": "Chef::Environment",
-  "chef_type": "environment",
-  "default_attributes": {
-
-  },
-  "override_attributes": {
-    "cookbook-openshift3": {
-      "openshift_common_public_hostname": "console.${IP}.nip.io",
-      "openshift_deployment_type": "origin",
-      "openshift_common_default_nodeSelector": "region=infra",
-      "openshift_master_router_subdomain": "cloudapps.${IP}.nip.io",
-      "master_servers": [
-        {
-          "fqdn": "${FQDN}",
-          "ipaddress": "$IP"
-        }
-      ],
-      "node_servers": [
-        {
-          "fqdn": "${FQDN}",
-          "ipaddress": "$IP",
-          "schedulable": true,
-          "labels": "region=infra"
-        }
-      ]
-    }
-  }
-}
-EOF
-fi
 ### Specify the configuration details for chef-solo
 cat << EOF > ~/chef-solo-example/solo.rb
 cookbook_path [
@@ -163,4 +118,6 @@ Next steps for you :
 
 You should disconnect and reconnect so as to get the benefit of bash-completion on commands
 
+##############################
+########## DONE ##############
 EOF
