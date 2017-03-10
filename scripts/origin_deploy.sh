@@ -27,8 +27,6 @@ fi
 # Remove existing entries
 sed -i "/$IP/d" /etc/hosts
 echo -e "$IP\t$FQDN" >> /etc/hosts
-#hostnamectl set-hostname $FQDN
-#systemctl restart systemd-hostnamed.service
 ### Update the server
 echo "Updating system, please wait..."
 yum -y update -q -e 0
