@@ -1,6 +1,14 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.39
+### Improvement
+- Give the possibility of adding custom master CA certificate
+- Give the possibility of supporting AWS IAM based integration
+
+### Bug
+- Fix dnsIP for dedicated nameserver within PODS (Default to IP of the node)
+
 ## v1.10.38
 ### Improvement
 - Give the possibility of adding cAdvisor port and read-only port for kubelet arguments
