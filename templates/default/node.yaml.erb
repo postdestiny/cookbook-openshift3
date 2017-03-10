@@ -1,6 +1,7 @@
 allowDisabledDocker: false
 apiVersion: v1
 dnsDomain: <%=node['cookbook-openshift3']['osn_cluster_dns_domain'] %>
+dnsIP: <%=node['cookbook-openshift3']['osn_cluster_dns_ip'] %>
 dockerConfig:
   execHandlerName: ""
 iptablesSyncPeriod: "<%= node['cookbook-openshift3']['openshift_node_iptables_sync_period'] %>"
