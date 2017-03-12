@@ -1,6 +1,11 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.40
+### Bug
+- Fix bug for enterprise version (Hosted template files)
+- Fix deletion of service files
+
 ## v1.10.39
 ### Improvement
 - Give the possibility of adding custom master CA certificate
