@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.41
+### Bug
+- Fix AWS issue when using empty data bag
+
 ## v1.10.40
 ### Bug
 - Fix bug for enterprise version (Hosted template files)
