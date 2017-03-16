@@ -29,6 +29,8 @@ action :create do
       print 'No SAN detected'
     ensure
       names = subject_alt_name.nil? ? common_name : common_name + subject_alt_name
+      names = names.uniq # openshift fails if the same entry is listed twice, eg. when common_name is also listed in subject_alt_name
+
       named_hash = {}
       named_hash.store('certfile', named['certfile'])
       named_hash.store('keyfile', named['keyfile'])
