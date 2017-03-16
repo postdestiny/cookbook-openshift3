@@ -30,6 +30,7 @@ action :create do
     ensure
       names = subject_alt_name.nil? ? common_name : common_name + subject_alt_name
       names = names.uniq # openshift fails if the same entry is listed twice, eg. when common_name is also listed in subject_alt_name
+      names -= [node['cookbook-openshift3']['openshift_common_api_hostname']] # named certificate apply only to public hostnames, not internal ones.
 
       named_hash = {}
       named_hash.store('certfile', named['certfile'])
