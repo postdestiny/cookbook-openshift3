@@ -150,6 +150,8 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_hosted_router_selector']` -  Defaults to `region=infra`.
 * `node['cookbook-openshift3']['openshift_hosted_router_namespace']` -  Defaults to `default`.
 * `node['cookbook-openshift3']['openshift_hosted_manage_registry']` -  Defaults to `true`.
+* `node['cookbook-openshift3']['openshift_hosted_router_certfile']` - Defaults to `"#{node['cookbook-openshift3']['openshift_master_config_dir']}/openshift-router.crt"`.
+* `node['cookbook-openshift3']['openshift_hosted_router_keyfile']` - Defaults to `"#{node['cookbook-openshift3']['openshift_master_config_dir']}/openshift-router.key"`.
 * `node['cookbook-openshift3']['openshift_hosted_registry_selector']` -  Defaults to `region=infra`.
 * `node['cookbook-openshift3']['openshift_hosted_registry_namespace']` -  Defaults to `default`.
 * `node['cookbook-openshift3']['openshift_hosted_cluster_metrics']` -  Defaults to `false`.
