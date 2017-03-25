@@ -25,7 +25,8 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['master_servers']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['etcd_servers']` -  Defaults to `[ ... ]`.
 * `node['cookbook-openshift3']['node_servers']` -  Defaults to `[ ... ]`.
-* `node['cookbook-openshift3']['openshift_common_public_hostname']` -  Defaults to `node['fqdn']`.
+* `node['cookbook-openshift3']['openshift_common_api_hostname']` -  Defaults to `node['fqdn']`.
+* `node['cookbook-openshift3']['openshift_common_public_hostname']` -  Defaults to `node['cookbook-openshift3']['openshift_common_api_hostname']`.
 * `node['cookbook-openshift3']['openshift_master_embedded_etcd']` -  Defaults to `true`.
 * `node['cookbook-openshift3']['openshift_master_etcd_port']` -  Defaults to `4001`.
 * `node['cookbook-openshift3']['master_etcd_cert_prefix']` -  Defaults to ``.
@@ -118,7 +119,7 @@ Installs/Configures Openshift 3.x (>= 3.2)
 * `node['cookbook-openshift3']['openshift_master_access_token_max_seconds']` -  Defaults to `86400`.
 * `node['cookbook-openshift3']['openshift_master_auth_token_max_seconds']` -  Defaults to `500`.
 * `node['cookbook-openshift3']['openshift_master_public_api_url']` -  Defaults to `https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}`.
-* `node['cookbook-openshift3']['openshift_master_api_url']` -  Defaults to `https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}`.
+* `node['cookbook-openshift3']['openshift_master_api_url']` -  Defaults to `https://#{node['cookbook-openshift3']['openshift_common_api_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}`.
 * `node['cookbook-openshift3']['openshift_master_loopback_api_url']` -  Defaults to `https://#{node['fqdn']}:#{node['cookbook-openshift3']['openshift_master_api_port']}`.
 * `node['cookbook-openshift3']['openshift_master_console_url']` -  Defaults to `https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_console_port']}/console`.
 * `node['cookbook-openshift3']['openshift_master_policy']` -  Defaults to `#{node['cookbook-openshift3']['openshift_master_config_dir']}/policy.json`.

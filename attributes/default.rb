@@ -13,12 +13,14 @@ default['cookbook-openshift3']['etcd_servers'] = []
 default['cookbook-openshift3']['node_servers'] = []
 
 if node['cookbook-openshift3']['openshift_HA']
-  default['cookbook-openshift3']['openshift_common_public_hostname'] = node['cookbook-openshift3']['openshift_cluster_name']
+  default['cookbook-openshift3']['openshift_common_api_hostname'] = node['cookbook-openshift3']['openshift_cluster_name']
+  default['cookbook-openshift3']['openshift_common_public_hostname'] = node['cookbook-openshift3']['openshift_common_api_hostname']
   default['cookbook-openshift3']['openshift_master_embedded_etcd'] = false
   default['cookbook-openshift3']['openshift_master_etcd_port'] = '2379'
   default['cookbook-openshift3']['master_etcd_cert_prefix'] = 'master.etcd-'
 else
-  default['cookbook-openshift3']['openshift_common_public_hostname'] = node['fqdn']
+  default['cookbook-openshift3']['openshift_common_api_hostname'] = node['fqdn']
+  default['cookbook-openshift3']['openshift_common_public_hostname'] = node['cookbook-openshift3']['openshift_common_api_hostname']
   default['cookbook-openshift3']['openshift_master_embedded_etcd'] = true
   default['cookbook-openshift3']['openshift_master_etcd_port'] = '4001'
   default['cookbook-openshift3']['master_etcd_cert_prefix'] = ''
@@ -120,7 +122,7 @@ default['cookbook-openshift3']['openshift_master_session_secrets_file'] = "#{nod
 default['cookbook-openshift3']['openshift_master_access_token_max_seconds'] = '86400'
 default['cookbook-openshift3']['openshift_master_auth_token_max_seconds'] = '500'
 default['cookbook-openshift3']['openshift_master_public_api_url'] = "https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}"
-default['cookbook-openshift3']['openshift_master_api_url'] = "https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}"
+default['cookbook-openshift3']['openshift_master_api_url'] = "https://#{node['cookbook-openshift3']['openshift_common_api_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']}"
 default['cookbook-openshift3']['openshift_master_loopback_api_url'] = "https://#{node['fqdn']}:#{node['cookbook-openshift3']['openshift_master_api_port']}"
 default['cookbook-openshift3']['openshift_master_console_url'] = "https://#{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_console_port']}/console"
 default['cookbook-openshift3']['openshift_master_policy'] = "#{node['cookbook-openshift3']['openshift_master_config_dir']}/policy.json"
@@ -161,7 +163,7 @@ default['cookbook-openshift3']['openshift_hosted_cluster_metrics'] = false
 default['cookbook-openshift3']['openshift_hosted_metrics_secrets'] = ''
 default['cookbook-openshift3']['openshift_hosted_metrics_parameters'] = {}
 
-default['cookbook-openshift3']['erb_corsAllowedOrigins'] = ['127.0.0.1', 'localhost', node['cookbook-openshift3']['openshift_common_hostname'], node['cookbook-openshift3']['openshift_common_public_hostname']] + node['cookbook-openshift3']['openshift_common_svc_names']
+default['cookbook-openshift3']['erb_corsAllowedOrigins'] = ['127.0.0.1', 'localhost', node['cookbook-openshift3']['openshift_common_hostname'], node['cookbook-openshift3']['openshift_common_api_hostname'], node['cookbook-openshift3']['openshift_common_public_hostname']].uniq + node['cookbook-openshift3']['openshift_common_svc_names']
 
 default['cookbook-openshift3']['master_generated_certs_dir'] = '/var/www/html/master/generated_certs'
 default['cookbook-openshift3']['etcd_add_additional_nodes'] = false

@@ -308,7 +308,7 @@ ruby_block "Mask #{node['cookbook-openshift3']['openshift_service_type']}-master
 end
 
 execute 'Wait for API to become available' do
-  command "echo | openssl s_client -connect #{node['cookbook-openshift3']['openshift_common_public_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']} -servername #{node['cookbook-openshift3']['openshift_common_public_hostname']}"
+  command "echo | openssl s_client -connect #{node['cookbook-openshift3']['openshift_common_api_hostname']}:#{node['cookbook-openshift3']['openshift_master_api_port']} -servername #{node['cookbook-openshift3']['openshift_common_api_hostname']}"
   retries 15
   retry_delay 2
   notifies :start, "service[#{node['cookbook-openshift3']['openshift_service_type']}-master-controllers]", :immediately
