@@ -82,9 +82,8 @@ if etcd_servers.find { |server_etcd| server_etcd['fqdn'] == node['fqdn'] }
         end
       end
 
-      link "#{node['cookbook-openshift3']['etcd_generated_certs_dir']}/etcd-#{etcd_master['fqdn']}/ca.crt" do
-        to "#{node['cookbook-openshift3']['etcd_ca_dir']}/ca.crt"
-        link_type :hard
+      remote_file "#{node['cookbook-openshift3']['etcd_generated_certs_dir']}/etcd-#{etcd_master['fqdn']}/ca.crt" do
+        source "file://#{node['cookbook-openshift3']['etcd_ca_dir']}/ca.crt"
       end
 
       execute "Create a tarball of the etcd certs for #{etcd_master['fqdn']}" do
