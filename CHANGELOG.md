@@ -1,6 +1,18 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.42
+### Improvement
+- Replace most hard link usage with local copy
+- Change http server binding to default IP address
+- Give the possibility to specify custom certificate for hosted router
+
+### Bug
+- Fix CHEF-3694 warning due to redundant package resource
+- Removed potentially unsafe identity providers defaults
+- Fix named certificates when common_name is also listed in alternative names
+- Allow distinct hostnames for internal and public API access
+
 ## v1.10.41
 ### Bug
 - Fix AWS issue when using empty data bag
