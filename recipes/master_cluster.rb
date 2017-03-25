@@ -207,10 +207,6 @@ if master_servers.first['fqdn'] != node['fqdn']
     cwd node['cookbook-openshift3']['openshift_master_config_dir']
     action :nothing
   end
-
-  package node['cookbook-openshift3']['openshift_service_type'] do
-    not_if { node['cookbook-openshift3']['deploy_containerized'] }
-  end
 end
 
 package "#{node['cookbook-openshift3']['openshift_service_type']}-master" do
