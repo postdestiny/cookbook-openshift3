@@ -47,7 +47,7 @@ if node_servers.find { |server_node| server_node['fqdn'] == node['fqdn'] }
     end
 
     template '/etc/systemd/system/openvswitch.service' do
-      source 'service_openvsitch-containerized.service.erb'
+      source 'service_openvswitch-containerized.service.erb'
       notifies :run, 'execute[daemon-reload]', :immediately
     end
 

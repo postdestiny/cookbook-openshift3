@@ -13,29 +13,29 @@ end
 
 action :redeploy do
   execute 'Backup etcd stuff' do
-    command 'tar czvf etcd-backup-$(date +%s).tar.gz -C /etc/etcd/ca /etc/etcd/ca.crt /var/www/html/etcd --ignore-failed-read --remove-files || true'
-    cwd '/etc/etcd'
+    command "tar czvf etcd-backup-$(date +%s).tar.gz -C #{node['cookbook-openshift3']['etcd_conf_dir']}/ca #{node['cookbook-openshift3']['etcd_conf_dir']}/ca.crt /var/www/html/etcd --ignore-failed-read --remove-files || true"
+    cwd node['cookbook-openshift3']['etcd_conf_dir']
   end
   %W(peer* server* etcd-#{node['fqdn']}.tgz).each do |certs|
     execute 'Delete Peer/Server certs' do
       command "rm -rf #{certs} || true"
-      cwd '/etc/etcd'
+      cwd node['cookbook-openshift3']['etcd_conf_dir']
     end
   end
   execute 'Backup master stuff' do
-    command 'tar czvf master-backup-$(date +%s).tar.gz /etc/origin/master /var/www/html/master --ignore-failed-read && rm -rf /var/www/html/master'
-    cwd '/etc/origin'
-    only_if '[ -a /etc/origin/master ]'
+    command "tar czvf master-backup-$(date +%s).tar.gz #{node['cookbook-openshift3']['openshift_master_config_dir']} /var/www/html/master --ignore-failed-read && rm -rf /var/www/html/master"
+    cwd node['cookbook-openshift3']['openshift_common_base_dir']
+    only_if "[ -a #{node['cookbook-openshift3']['openshift_master_config_dir']} ]"
   end
   execute 'Backup node stuff' do
-    command 'tar czvf node-backup-$(date +%s).tar.gz /etc/origin/node /var/www/html/node --ignore-failed-read --remove-files'
-    cwd '/etc/origin'
-    only_if '[ -a /etc/origin/node ]'
+    command "tar czvf node-backup-$(date +%s).tar.gz #{node['cookbook-openshift3']['openshift_node_config_dir']} /var/www/html/node --ignore-failed-read --remove-files"
+    cwd node['cookbook-openshift3']['openshift_common_base_dir']
+    only_if "[ -a #{node['cookbook-openshift3']['openshift_node_config_dir']} ]"
   end
   execute 'Delete old certs' do
     command 'rm -f $(ls -I serviceaccounts\* -I registry\*)'
-    cwd '/etc/origin/master'
-    only_if '[ -a /etc/origin/master ]'
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']}
+    only_if "[ -a #{node['cookbook-openshift3']['openshift_master_config_dir']} ]"
   end
   execute 'Remove root kubeconfig' do
     command 'rm -f config'
