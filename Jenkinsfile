@@ -1,4 +1,4 @@
-# Testing Jenkinsfile
+// Testing Jenkinsfile
 echo 'hello jenkins'
 
 node('welles') {
