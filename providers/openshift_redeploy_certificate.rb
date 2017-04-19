@@ -34,7 +34,7 @@ action :redeploy do
   end
   execute 'Delete old certs' do
     command 'rm -f $(ls -I serviceaccounts\* -I registry\*)'
-    cwd node['cookbook-openshift3']['openshift_master_config_dir']}
+    cwd node['cookbook-openshift3']['openshift_master_config_dir']
     only_if "[ -a #{node['cookbook-openshift3']['openshift_master_config_dir']} ]"
   end
   execute 'Remove root kubeconfig' do
