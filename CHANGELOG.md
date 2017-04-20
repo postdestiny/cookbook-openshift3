@@ -3,12 +3,12 @@ This file is used to list changes made in each version of the Openshift 3 cookbo
 
 ## v1.10.43
 ### Improvement
-- Jenkinsfile added for test automation
-- More config items used rather than hard-coded values
+- Added Jenkinsfile
+- Rename file: service_openvsitch-containerized.service.erb -> service_openvswitch-containerized.service.erb
 
 ### Bug
-- Spelling mistake with openvsitch -> openvswitch corrected
-- Certificate redeploy handles separated etcd cluster
+- Fix redeploy certs for separate etcd cluster
+- Use more config items rather than hard-coded values in delete node
 
 ## v1.10.42
 ### Improvement
