@@ -1,6 +1,15 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.43
+### Improvement
+- Jenkinsfile added for test automation
+- More config items used rather than hard-coded values
+
+### Bug
+- Spelling mistake with openvsitch -> openvswitch corrected
+- Certificate redeploy handles separated etcd cluster
+
 ## v1.10.42
 ### Improvement
 - Replace most hard link usage with local copy
