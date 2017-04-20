@@ -1,6 +1,16 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.43
+### Improvement
+- Added Jenkinsfile
+- Rename file: service_openvsitch-containerized.service.erb -> service_openvswitch-containerized.service.erb
+
+### Bug
+- Fix redeploy certs for separate etcd cluster
+- Use more config items rather than hard-coded values in delete node
+
+
 ## v1.10.42
 ### Improvement
 - Replace most hard link usage with local copy
