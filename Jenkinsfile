@@ -21,14 +21,15 @@ try {
 	        }
 	    }
 	}
-	
-	stage('kitchen') {
-	    node(nodename) {
-	        dir(builddir) {
-				sh 'for i in $(kitchen list -b); do kitchen converge $i; kitchen verify $i; kitchen destroy $i; done'
-	        }
-		}
-	}
+
+	// Seeing persistent 'SCP did not finish successfully (255):  (Net::SCP::Error)' errors	
+	//stage('kitchen') {
+	//    node(nodename) {
+	//        dir(builddir) {
+	//			sh 'for i in $(kitchen list -b); do kitchen converge $i; kitchen verify $i; kitchen destroy $i; done'
+	//        }
+	//	}
+	//}
 	
 	stage('shutit_tests') {
 	    node(nodename) {
