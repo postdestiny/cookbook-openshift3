@@ -1,6 +1,11 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.45
+### Bug
+- Certificate redeployment code fixed to remove node certs
+- Certificate redeployment - run etcd code only if etcd on the node (eg standalone)
+
 ## v1.10.44
 ### Improvement
 - Upgrade from x.2 to x.3 supported
