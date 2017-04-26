@@ -2,6 +2,9 @@
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
 ## v1.10.45
+### Improvement
+- Jenkinsfile has resilient kitchen tests reinstated
+
 ### Bug
 - Certificate redeployment code fixed to remove node certs
 - Certificate redeployment - run etcd code only if etcd on the node (eg standalone)
