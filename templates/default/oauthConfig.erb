@@ -22,7 +22,7 @@ oauthConfig:
       url: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['url'] %>
     <% ['ca' , 'certFile' , 'keyFile'].each do |key| %>
       <% if node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider].has_key?(key) %>
-        <%= key %>: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider][key] %>
+      <%= key %>: <%= node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider][key] %>
       <% end %>
     <% end %>
   <% elsif node['cookbook-openshift3']['openshift_master_identity_provider'][identityProvider]['kind'] == 'RequestHeaderIdentityProvider' -%>
