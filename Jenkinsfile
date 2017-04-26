@@ -22,16 +22,17 @@ try {
     }
   }
 
-  sh 'git clone --recursive --depth 1 https://github.com/IshentRas/cookbook-openshift3'
-  dir('cookbook-openshift3') {
-    stage('kitchen') {
-      def l = sh(script: 'kitchen list -b', returnStdout: true).trim().tokenize()
-      for (f in l) {
-        // Seeing persistent 'SCP did not finish successfully (255):  (Net::SCP::Error)' errors, so retry added.
-        retry(10) {
-          sh('kitchen converge ' + f)
-          sh('kitchen verify ' + f)
-          sh('kitchen destroy ' + f)
+  stage('kitchen') {
+    node(nodename) {
+      dir('cookbook-openshift3') {
+        def l = sh(script: 'kitchen list -b', returnStdout: true).trim().tokenize()
+        for (f in l) {
+          // Seeing persistent 'SCP did not finish successfully (255):  (Net::SCP::Error)' errors, so retry added.
+          retry(10) {
+            sh('kitchen converge ' + f)
+            sh('kitchen verify ' + f)
+            sh('kitchen destroy ' + f)
+          }
         }
       }
     }
