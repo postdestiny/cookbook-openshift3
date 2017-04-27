@@ -4,7 +4,7 @@ default['cookbook-openshift3']['oauth_Identities'] = [node['cookbook-openshift3'
 
 # See https://github.com/IshentRas/cookbook-openshift3/issues/115 - if you want ca/certFile/keyFile as per below, you need to add it into your config.
 # default['cookbook-openshift3']['openshift_master_identity_provider']['BasicAuthPasswordIdentityProvider'] = { 'name' => 'basic_auth', 'login' => true, 'challenge' => true, 'kind' => 'BasicAuthPasswordIdentityProvider', 'url' => 'https://www.example.com/remote-idp', 'ca' => '', 'certFile' => '', 'keyFile' => '' }
-default['cookbook-openshift3']['openshift_master_identity_provider']['BasicAuthPasswordIdentityProvider'] = { 'name' => 'basic_auth', 'login' => true, 'challenge' => true, 'kind' => 'BasicAuthPasswordIdentityProvider', 'url' => 'https://www.example.com/remote-idp'}
+default['cookbook-openshift3']['openshift_master_identity_provider']['BasicAuthPasswordIdentityProvider'] = { 'name' => 'basic_auth', 'login' => true, 'challenge' => true, 'kind' => 'BasicAuthPasswordIdentityProvider', 'url' => 'https://www.example.com/remote-idp' }
 
 default['cookbook-openshift3']['openshift_master_identity_provider']['GitHubIdentityProvider'] = { 'name' => 'github_auth', 'login' => true, 'challenge' => false, 'kind' => 'GitHubIdentityProvider', 'clientID' => 'github_client_id', 'clientSecret' => 'github_client_secret' }
 
