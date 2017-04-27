@@ -1,6 +1,10 @@
 # Openshift 3 Cookbook CHANGELOG
 This file is used to list changes made in each version of the Openshift 3 cookbook.
 
+## v1.10.46
+### Bug
+- Spacing corrected and defaults not included as per discussion in #115
+
 ## v1.10.45
 ### Improvement
 - Jenkinsfile has resilient kitchen tests reinstated
