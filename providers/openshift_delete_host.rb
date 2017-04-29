@@ -12,11 +12,16 @@ def whyrun_supported?
 end
 
 action :delete do
-  %W(#{node['cookbook-openshift3']['openshift_service_type']}-node openvswitch #{node['cookbook-openshift3']['openshift_service_type']}-master #{node['cookbook-openshift3']['openshift_service_type']}-master-api #{node['cookbook-openshift3']['openshift_service_type']}-master-api-controllers etcd).each do |remove_service|
+  %W(#{node['cookbook-openshift3']['openshift_service_type']}-node openvswitch #{node['cookbook-openshift3']['openshift_service_type']}-master #{node['cookbook-openshift3']['openshift_service_type']}-master-api #{node['cookbook-openshift3']['openshift_service_type']}-master-api-controllers etcd etcd_container).each do |remove_service|
     service remove_service do
       action [:stop, :disable]
       ignore_failure true
     end
+  end
+
+  service 'docker' do
+    action :stop
+    only_if { node['cookbook-openshift3']['deploy_containerized'] }
   end
 
   Mixlib::ShellOut.new('systemctl reset-failed').run_command
